@@ -273,13 +273,13 @@ function DisclaimerScreen({ onFamily, onNurse, onModal }) {
         <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: "linear-gradient(90deg, transparent, #c8a97e, transparent)" }} />
         <div style={{ fontSize: 32, marginBottom: 10 }}>🕊️</div>
         <h3 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 24, fontWeight: 400, color: S.goldLight, marginBottom: 8, lineHeight: 1.2 }}>
-          I'm a family member or caregiver
+          Family member or caregiver
         </h3>
         <p style={{ fontSize: 13, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.6, marginBottom: 20 }}>
           Someone I love is declining and I need guidance, clarity, and a roadmap.
         </p>
         <div style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", borderRadius: 8, padding: "14px 24px", display: "inline-block" }}>
-          <span style={{ color: S.dark, fontSize: 14, fontWeight: 700, fontFamily: "sans-serif" }}>Take Me Through It →</span>
+          <span style={{ color: S.dark, fontSize: 14, fontWeight: 700, fontFamily: "sans-serif" }}>Show Me What To Do →</span>
         </div>
         <p style={{ fontSize: 11, color: S.textFaint, marginTop: 10, fontFamily: "sans-serif" }}>Free to start · No credit card</p>
       </div>
