@@ -1,700 +1,932 @@
-import { useState } from "react";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LifeGuide — Family Care Navigator</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #c8a97e;
+    --gold-light: #e8d5b7;
+    --gold-dim: rgba(200,169,126,0.15);
+    --dark: #0a1520;
+    --dark-mid: #111e2b;
+    --dark-card: #0f1a25;
+    --text: #d4ccc4;
+    --text-dim: #7a7268;
+    --text-faint: #3a3530;
+  }
 
-// ─── STRIPE LINKS ─────────────────────────────────────────────────────────────
-const STRIPE_MONTHLY = "https://buy.stripe.com/bJedRagpY67wbUwdVqgw000";
-const STRIPE_6MONTH = "https://buy.stripe.com/5kQ00k3DcdzYaQsbNigw001";
-const STRIPE_ANNUAL = "https://buy.stripe.com/9B65kE4Hg7bA1fSdVqgw002";
+  * { margin: 0; padding: 0; box-sizing: border-box; }
 
-// ─── LEGAL ───────────────────────────────────────────────────────────────────
-const DISCLAIMER = "LifeGuide is an informational resource and family navigation tool. It does not provide medical advice, diagnosis, or treatment recommendations. All information provided is for general educational purposes only. Always consult your physician, hospice team, or qualified healthcare provider regarding any medical decisions. Use of LifeGuide does not create a patient-provider relationship.";
+  html { scroll-behavior: smooth; }
 
-const TERMS = `Last updated: May 2026
+  body {
+    background: var(--dark);
+    color: var(--text);
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+  }
 
-1. INFORMATIONAL PURPOSE ONLY
-LifeGuide provides general information and organizational tools for families navigating end-of-life situations. Nothing in this app constitutes medical, legal, or financial advice.
+  /* NOISE TEXTURE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
 
-2. NO MEDICAL ADVICE
-LifeGuide does not diagnose conditions, recommend treatments, or predict medical outcomes. Always consult licensed medical professionals for healthcare decisions.
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 24px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(to bottom, rgba(10,21,32,0.95), transparent);
+  }
 
-3. NO LIABILITY
-LifeGuide, its founders, and partners are not liable for any decisions made based on information provided in this app. You use this app at your own discretion.
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--gold-light);
+    letter-spacing: 2px;
+    text-decoration: none;
+  }
 
-4. SUBSCRIPTION & BILLING
-Monthly subscriptions are billed at $20/month. 6-month access is $97 one time. Annual access is $167 one time. You may cancel monthly subscriptions at any time.
+  .nav-cta {
+    background: transparent;
+    border: 1px solid rgba(200,169,126,0.4);
+    color: var(--gold);
+    padding: 10px 24px;
+    font-family: 'Jost', sans-serif;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.3s;
+    text-decoration: none;
+  }
 
-5. PRIVACY
-We collect only your email address and payment information processed securely via Stripe. We do not collect, store, or share any medical information about you or your loved ones.
+  .nav-cta:hover {
+    background: var(--gold-dim);
+    border-color: var(--gold);
+  }
 
-6. CHANGES
-We reserve the right to update these terms at any time. Continued use of the app constitutes acceptance of updated terms.`;
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 120px 24px 80px;
+    position: relative;
+    overflow: hidden;
+  }
 
-const PRIVACY = `Last updated: May 2026
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse 60% 50% at 50% 60%, rgba(200,169,126,0.06) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 30% at 30% 20%, rgba(200,169,126,0.03) 0%, transparent 60%);
+  }
 
-WHAT WE COLLECT
-- Email address (for account access)
-- Payment information (processed by Stripe — we never see your card details)
-- Anonymous usage data
+  .hero-line {
+    width: 1px;
+    height: 80px;
+    background: linear-gradient(to bottom, transparent, var(--gold), transparent);
+    margin: 0 auto 48px;
+    animation: fadeIn 1.5s ease forwards;
+  }
 
-WHAT WE DO NOT COLLECT
-- Medical records or health information
-- Information about the person receiving care
-- Social Security numbers or government IDs
+  .hero-badge {
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: fadeUp 1s ease 0.3s forwards;
+  }
 
-HOW WE USE YOUR DATA
-- To provide access to your LifeGuide account
-- To process your subscription payment
-- To improve the app experience
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(56px, 10vw, 96px);
+    font-weight: 300;
+    line-height: 1.0;
+    color: var(--gold-light);
+    margin-bottom: 16px;
+    opacity: 0;
+    animation: fadeUp 1s ease 0.5s forwards;
+    letter-spacing: -1px;
+  }
 
-WE DO NOT sell your data, share with advertisers, or store health information.
+  .hero-title em {
+    font-style: italic;
+    color: var(--gold);
+  }
 
-CONTACT: lorenz@thelifeguide.app`;
+  .hero-subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(18px, 3vw, 26px);
+    font-weight: 300;
+    color: var(--text-dim);
+    margin-bottom: 48px;
+    opacity: 0;
+    animation: fadeUp 1s ease 0.7s forwards;
+    font-style: italic;
+    max-width: 600px;
+    line-height: 1.6;
+  }
 
-// ─── QUIZ ─────────────────────────────────────────────────────────────────────
-const questions = [
-  {
-    id: "situation",
-    question: "What best describes your situation right now?",
-    options: [
-      { label: "My parent is declining and I don't know what to do", value: "parent_declining" },
-      { label: "A loved one was just diagnosed with a terminal illness", value: "terminal_diagnosis" },
-      { label: "We just received a hospice referral", value: "hospice_referral" },
-      { label: "My loved one is already in hospice", value: "in_hospice" },
-    ],
-  },
-  {
-    id: "role",
-    question: "What is your role in this situation?",
-    options: [
-      { label: "Adult child caring for a parent", value: "adult_child" },
-      { label: "Spouse or partner", value: "spouse" },
-      { label: "Sibling coordinating with family", value: "sibling" },
-      { label: "Primary caregiver", value: "caregiver" },
-    ],
-  },
-  {
-    id: "urgency",
-    question: "How would you describe where things are right now?",
-    options: [
-      { label: "Early stages — we have some time", value: "early" },
-      { label: "Things are progressing faster than expected", value: "progressing" },
-      { label: "We're in crisis mode right now", value: "crisis" },
-      { label: "We're preparing for what comes after", value: "after" },
-    ],
-  },
-  {
-    id: "biggest_need",
-    question: "What do you need most right now?",
-    options: [
-      { label: "Know what steps to take next", value: "next_steps" },
-      { label: "Help with paperwork and legal documents", value: "documents" },
-      { label: "Questions to ask the doctor", value: "doctor_prep" },
-      { label: "Help coordinating my family", value: "family_coord" },
-    ],
-  },
-];
+  .hero-desc {
+    font-size: 16px;
+    line-height: 1.8;
+    color: var(--text-dim);
+    max-width: 520px;
+    margin: 0 auto 56px;
+    opacity: 0;
+    animation: fadeUp 1s ease 0.9s forwards;
+  }
 
-// ─── FREE FIRST WEEK GUIDE CONTENT ───────────────────────────────────────────
+  .hero-form {
+    display: flex;
+    gap: 0;
+    max-width: 480px;
+    width: 100%;
+    margin: 0 auto;
+    opacity: 0;
+    animation: fadeUp 1s ease 1.1s forwards;
+  }
 
-const documentTeaserStep = {
-  day: "Essential",
-  title: "The 5 documents every family needs — and most don't have.",
-  detail: "Regardless of where you are in this journey, these 5 legal and medical documents are non-negotiable. Missing even one of them can cause enormous stress, family conflict, and expense at the worst possible time. Here's what they are:",
-  action: "Start with Power of Attorney — it must be signed while your loved one still has legal capacity. Do not wait on this one.",
-  icon: "📋",
-  teaser: [
-    { name: "Power of Attorney (POA)", desc: "Authorizes someone to make financial decisions on their behalf." },
-    { name: "Healthcare Proxy / Medical POA", desc: "Names who makes medical decisions if they cannot speak for themselves." },
-    { name: "Living Will / Advance Directive", desc: "Documents their wishes — resuscitation, ventilators, feeding tubes." },
-    { name: "POLST / DNR Form", desc: "A medical order signed by a doctor. Critical for hospice situations." },
-    { name: "Medicare & Insurance Info", desc: "All cards, numbers, and policy documents organized in one place." },
-  ],
-  locked: "The full Document Vault shows you exactly how to get each one in your state, what order to complete them, and what to watch out for."
-};
-const firstWeekGuide = {
-  parent_declining: [
-    {
-      day: "Today",
-      title: "Take a breath. You don't have to figure it all out right now.",
-      detail: "The most important thing you can do today is be present. You are not behind. You have not missed anything yet. Start by writing down three things: who is your loved one's primary doctor, what medications are they currently on, and who in the family needs to be informed. That's it for today.",
-      action: "Call one family member and say: 'We need to talk about what's happening and make a plan together.'",
-      icon: "🫁"
-    },
-    {
-      day: "This Week",
-      title: "Schedule a family meeting — even if it's uncomfortable.",
-      detail: "The families who navigate this best are the ones who get on the same page early. Old conflicts will resurface under stress — that's normal. But someone needs to be the designated point of contact with doctors and someone needs to coordinate day to day care. These don't have to be the same person. A 30 minute video call this week will save months of conflict later.",
-      action: "Text your siblings or family: 'Can we do a quick call this week about [name]? I want to make sure we're all on the same page.'",
-      icon: "👨‍👩‍👧‍👦"
-    },
-    {
-      day: "This Week",
-      title: "Have an honest conversation with their doctor.",
-      detail: "Most families avoid asking the hard question — what is the prognosis? But knowing the realistic timeline changes everything about how you plan. You don't have to ask 'how long do they have' — instead ask: 'What should we realistically expect over the next few months?' and 'At what point should we consider hospice?' Doctors are often waiting for families to open this door.",
-      action: "Call the doctor's office and say: 'I'd like to schedule a family meeting to discuss my [parent's] prognosis and care plan.'",
-      icon: "🏥"
-    },
-  ],
-  terminal_diagnosis: [
-    {
-      day: "Today",
-      title: "This is shocking. Give yourself permission to feel that.",
-      detail: "A terminal diagnosis is one of the most traumatic things a family can receive. In the next 24 hours you don't need to make any major decisions. What you need to do is make sure your loved one is not alone, and that you have someone you can call. Write down the diagnosis exactly as the doctor said it — you'll need this for insurance, second opinions, and future appointments.",
-      action: "Write down: the exact diagnosis, the doctor's name and number, and the date. Keep this somewhere safe.",
-      icon: "💙"
-    },
-    {
-      day: "This Week",
-      title: "Get a second opinion — and ask about a palliative care referral.",
-      detail: "A second opinion is not a betrayal of your doctor — it is your right and it is smart. Many hospitals have palliative care teams whose entire job is managing comfort and quality of life alongside treatment. Ask for a referral immediately. Palliative care is not hospice — it can happen alongside active treatment and it makes everything more manageable.",
-      action: "Call the hospital or clinic and ask: 'Does your facility have a palliative care team? I'd like a referral for my [loved one].'",
-      icon: "⚕️"
-    },
-    {
-      day: "This Week",
-      title: "Start the legal documents now — while there is time.",
-      detail: "This is the most urgent practical step and the one families delay the longest. Power of attorney and a healthcare proxy must be signed while your loved one still has the legal capacity to do so. If they lose this capacity before documents are signed, the process becomes exponentially harder and more expensive. You don't need a lawyer for basic advance directives — your state likely has free forms online.",
-      action: "Search '[your state] advance directive form free' — most states have a free PDF you can download, print, and sign with two witnesses.",
-      icon: "📄"
-    },
-  ],
-  hospice_referral: [
-    {
-      day: "Today",
-      title: "Hospice is not giving up. It is choosing quality of life.",
-      detail: "The biggest misconception about hospice is that it means giving up or that death is imminent. Hospice is a philosophy of care that prioritizes comfort and dignity. Patients often live longer in hospice than they would have continued aggressive treatment. Hospice also provides your family with a nurse on call 24/7, a social worker, a chaplain, and bereavement support. You are not alone in this.",
-      action: "Ask the hospice team: 'What services are included? Who do we call after hours? What does a typical week look like?'",
-      icon: "🕊️"
-    },
-    {
-      day: "Today",
-      title: "Understand what Medicare covers — it is more than you think.",
-      detail: "If your loved one is on Medicare, hospice is fully covered under Medicare Part A with no deductibles or copays for hospice services. This includes nursing visits, medications related to the terminal diagnosis, medical equipment like a hospital bed or wheelchair, aide services, and bereavement counseling for the family after. You should not be paying out of pocket for these services.",
-      action: "Ask the hospice coordinator: 'Can you walk me through exactly what is covered under Medicare for our situation?'",
-      icon: "💼"
-    },
-    {
-      day: "This Week",
-      title: "Set up the home for comfort and safety.",
-      detail: "Your hospice team will help with this but there are things you can do now. Clear pathways for walking and wheelchair access. Set up a comfortable area where your loved one spends most of their time. Make sure medications are organized and labeled. Keep a notebook by their bed to log symptoms, medications given, and questions for the nurse. This notebook becomes invaluable.",
-      action: "Start a notebook. Write today's date at the top. Log your loved one's mood, pain level, appetite, and any concerns. Bring this to every nurse visit.",
-      icon: "📓"
-    },
-  ],
-  in_hospice: [
-    {
-      day: "Today",
-      title: "You are doing the hardest, most loving thing possible.",
-      detail: "Being present through this process is a profound act of love. Many families feel guilt — that they should be doing more, that they made the wrong choice, that they are not handling it well enough. You are handling it. The fact that you are here, looking for guidance, means you care deeply. That is enough.",
-      action: "Today, just be present. Sit with your loved one. Hold their hand. Play music they love. You don't have to talk.",
-      icon: "💙"
-    },
-    {
-      day: "This Week",
-      title: "Know the signs that things are changing.",
-      detail: "As the body prepares for death, there are physical signs that typically appear days or weeks before. Increased sleep and difficulty waking. Reduced appetite and thirst — this is normal and not causing suffering. Changes in breathing — periods of no breathing followed by deeper breaths. Skin color changes, especially in the hands and feet. Your hospice nurse will walk you through what to watch for specifically in your loved one's case. Do not be afraid to ask.",
-      action: "Ask your hospice nurse: 'What specific signs should we watch for that tell us things are changing? When should we call you?'",
-      icon: "👁️"
-    },
-    {
-      day: "This Week",
-      title: "Take care of yourself — you cannot pour from an empty cup.",
-      detail: "Caregiver burnout is real and it happens fast. You need sleep. You need food. You need people around you. If you are the primary caregiver, build a rotation with other family members or friends for overnight shifts. Accept help when it is offered. Your hospice social worker can also connect you with respite care — temporary relief care so you can rest. You are not abandoning your loved one by taking care of yourself.",
-      action: "Identify one person you can call tonight just to talk — not to update them on the situation, but to be heard yourself.",
-      icon: "🫶"
-    },
-  ],
-};
+  .hero-input {
+    flex: 1;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(200,169,126,0.2);
+    border-right: none;
+    color: var(--text);
+    padding: 18px 24px;
+    font-family: 'Jost', sans-serif;
+    font-size: 14px;
+    font-weight: 300;
+    outline: none;
+    border-radius: 2px 0 0 2px;
+    transition: border-color 0.3s;
+  }
 
-// ─── LOCKED FEATURES ──────────────────────────────────────────────────────────
-const lockedFeatures = [
-  { icon: "🏥", title: "Doctor Visit Prep AI", desc: "Answer 3 questions about your loved one's condition. Get 10 personalized questions to bring to your next appointment. Never leave a doctor's office wishing you'd asked something." },
-  { icon: "📋", title: "Document Vault", desc: "Power of attorney, living will, DNR, POLST, Medicare forms — every document explained in plain language with direct links to complete them in your state. Step by step." },
-  { icon: "👨‍👩‍👧", title: "Family Coordination Hub", desc: "Assign roles, share updates, keep everyone informed without the chaos of group texts. Who handles appointments. Who manages finances. Who is the medical point of contact." },
-  { icon: "📊", title: "Stage by Stage Guide", desc: "What to expect physically and emotionally at each stage of decline. No surprises. No being blindsided. Knowledge is the antidote to fear." },
-  { icon: "🌙", title: "The Final Days Guide", desc: "What the last days actually look like. What is normal. What means call the nurse now. How to be present. What to say. Written by those who have been there." },
-  { icon: "🌅", title: "After — The First 30 Days", desc: "Death certificate, funeral basics, notifying accounts, bereavement leave, grief resources. A calm guide for the logistical and emotional storm that follows." },
-];
+  .hero-input::placeholder { color: var(--text-faint); }
+  .hero-input:focus { border-color: rgba(200,169,126,0.5); }
 
-// ─── STYLES ───────────────────────────────────────────────────────────────────
-const S = {
-  dark: "#0a1520",
-  darkMid: "#111e2b",
-  darkCard: "#0f1a25",
-  gold: "#c8a97e",
-  goldLight: "#e8d5b7",
-  text: "#ffffff",
-  textDim: "#c0b8b0",
-  textFaint: "#8a8278",
-};
+  .hero-btn {
+    background: linear-gradient(135deg, var(--gold), #a8895e);
+    border: none;
+    color: var(--dark);
+    padding: 18px 32px;
+    font-family: 'Jost', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 0 2px 2px 0;
+    transition: opacity 0.3s;
+    white-space: nowrap;
+  }
 
-// ─── MODAL ────────────────────────────────────────────────────────────────────
-function Modal({ title, content, onClose }) {
-  return (
-    <div onClick={onClose} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.85)", zIndex: 200, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
-      <div onClick={e => e.stopPropagation()} style={{ background: S.darkCard, border: "1px solid rgba(200,169,126,0.2)", borderRadius: 16, padding: 32, maxWidth: 480, width: "100%", maxHeight: "80vh", overflow: "hidden", display: "flex", flexDirection: "column" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
-          <h3 style={{ fontSize: 18, color: S.goldLight, fontFamily: "Cormorant Garamond, serif", fontWeight: 400 }}>{title}</h3>
-          <button onClick={onClose} style={{ background: "none", border: "none", color: S.textFaint, fontSize: 24, cursor: "pointer" }}>×</button>
-        </div>
-        <div style={{ overflowY: "auto", flex: 1 }}>
-          <pre style={{ fontSize: 12, color: S.textDim, lineHeight: 1.8, fontFamily: "sans-serif", whiteSpace: "pre-wrap", margin: 0 }}>{content}</pre>
-        </div>
-        <button onClick={onClose} style={{ marginTop: 20, background: "rgba(200,169,126,0.1)", border: "1px solid rgba(200,169,126,0.3)", borderRadius: 8, color: S.gold, padding: 12, cursor: "pointer", fontFamily: "sans-serif", fontSize: 13 }}>Close</button>
+  .hero-btn:hover { opacity: 0.85; }
+
+  .hero-note {
+    font-size: 11px;
+    color: var(--text-faint);
+    margin-top: 16px;
+    letter-spacing: 1px;
+    opacity: 0;
+    animation: fadeUp 1s ease 1.3s forwards;
+  }
+
+  /* DIVIDER */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  .divider-line { flex: 1; height: 1px; background: rgba(200,169,126,0.1); }
+  .divider-icon { color: var(--gold); font-size: 18px; opacity: 0.5; }
+
+  /* SECTIONS */
+  section { position: relative; z-index: 1; }
+
+  .section-inner {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 100px 24px;
+  }
+
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 20px;
+    display: block;
+  }
+
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(36px, 5vw, 56px);
+    font-weight: 300;
+    line-height: 1.15;
+    color: var(--gold-light);
+    margin-bottom: 24px;
+  }
+
+  .section-title em { font-style: italic; color: var(--gold); }
+
+  .section-body {
+    font-size: 16px;
+    line-height: 1.9;
+    color: var(--text-dim);
+    max-width: 580px;
+  }
+
+  /* PROBLEM SECTION */
+  .problem { background: var(--dark-mid); }
+
+  .problem-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: center;
+  }
+
+  .pain-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 40px;
+  }
+
+  .pain-item {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    padding: 20px;
+    background: rgba(0,0,0,0.2);
+    border: 1px solid rgba(255,255,255,0.04);
+    border-radius: 4px;
+  }
+
+  .pain-icon { font-size: 18px; flex-shrink: 0; margin-top: 2px; }
+
+  .pain-text { font-size: 15px; line-height: 1.6; color: var(--text-dim); }
+
+  /* HOW IT WORKS */
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    margin-top: 64px;
+  }
+
+  .step {
+    padding: 36px 28px;
+    background: var(--dark-card);
+    border: 1px solid rgba(200,169,126,0.1);
+    border-radius: 4px;
+    position: relative;
+    transition: border-color 0.3s;
+  }
+
+  .step:hover { border-color: rgba(200,169,126,0.3); }
+
+  .step-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 64px;
+    font-weight: 300;
+    color: rgba(200,169,126,0.1);
+    line-height: 1;
+    margin-bottom: 20px;
+  }
+
+  .step-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--gold-light);
+    margin-bottom: 12px;
+  }
+
+  .step-body { font-size: 14px; line-height: 1.7; color: var(--text-dim); }
+
+  /* FEATURES */
+  .features-bg { background: var(--dark-mid); }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    margin-top: 64px;
+  }
+
+  .feature {
+    padding: 32px;
+    border: 1px solid rgba(200,169,126,0.08);
+    border-radius: 4px;
+    transition: all 0.3s;
+    background: rgba(0,0,0,0.15);
+  }
+
+  .feature:hover {
+    border-color: rgba(200,169,126,0.25);
+    background: rgba(200,169,126,0.03);
+  }
+
+  .feature-icon { font-size: 28px; margin-bottom: 16px; }
+
+  .feature-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    color: var(--gold-light);
+    margin-bottom: 10px;
+    font-weight: 400;
+  }
+
+  .feature-body { font-size: 14px; line-height: 1.7; color: var(--text-dim); }
+
+  /* QUOTE */
+  .quote-section { text-align: center; }
+
+  .quote-mark {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 120px;
+    color: rgba(200,169,126,0.1);
+    line-height: 0.5;
+    margin-bottom: 32px;
+  }
+
+  .quote-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(24px, 4vw, 40px);
+    font-weight: 300;
+    font-style: italic;
+    color: var(--gold-light);
+    line-height: 1.4;
+    max-width: 700px;
+    margin: 0 auto 32px;
+  }
+
+  .quote-attr { font-size: 13px; color: var(--text-faint); letter-spacing: 2px; text-transform: uppercase; }
+
+  /* PRICING */
+  .pricing-card {
+    max-width: 480px;
+    margin: 64px auto 0;
+    background: var(--dark-card);
+    border: 1px solid rgba(200,169,126,0.25);
+    border-radius: 8px;
+    padding: 56px 48px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .pricing-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+
+  .pricing-label {
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 24px;
+    display: block;
+  }
+
+  .pricing-amount {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 80px;
+    font-weight: 300;
+    color: var(--gold-light);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .pricing-period { font-size: 14px; color: var(--text-dim); margin-bottom: 36px; letter-spacing: 1px; }
+
+  .pricing-features {
+    list-style: none;
+    text-align: left;
+    margin-bottom: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .pricing-feature {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    font-size: 14px;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  .pricing-check { color: var(--gold); flex-shrink: 0; margin-top: 1px; }
+
+  .pricing-btn {
+    width: 100%;
+    background: linear-gradient(135deg, var(--gold), #a8895e);
+    border: none;
+    color: var(--dark);
+    padding: 20px;
+    font-family: 'Jost', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: opacity 0.3s;
+  }
+
+  .pricing-btn:hover { opacity: 0.85; }
+
+  .pricing-note { font-size: 12px; color: var(--text-faint); margin-top: 16px; }
+
+  /* DISCLAIMER */
+  .disclaimer-bar {
+    background: rgba(200,169,126,0.05);
+    border-top: 1px solid rgba(200,169,126,0.1);
+    border-bottom: 1px solid rgba(200,169,126,0.1);
+    padding: 20px 24px;
+    text-align: center;
+  }
+
+  .disclaimer-bar p {
+    font-size: 11px;
+    color: var(--text-faint);
+    line-height: 1.6;
+    max-width: 700px;
+    margin: 0 auto;
+    letter-spacing: 0.5px;
+  }
+
+  .disclaimer-bar strong { color: var(--text-dim); font-weight: 400; }
+
+  /* CTA SECTION */
+  .cta-section {
+    text-align: center;
+    background: var(--dark-mid);
+  }
+
+  .cta-form {
+    display: flex;
+    gap: 0;
+    max-width: 480px;
+    margin: 40px auto 0;
+  }
+
+  /* FOOTER */
+  footer {
+    padding: 48px 24px;
+    text-align: center;
+    border-top: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .footer-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    color: var(--gold);
+    margin-bottom: 16px;
+    font-weight: 300;
+    letter-spacing: 3px;
+  }
+
+  .footer-tagline {
+    font-size: 12px;
+    color: var(--text-faint);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 32px;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 32px;
+    justify-content: center;
+    margin-bottom: 32px;
+  }
+
+  .footer-links a {
+    font-size: 11px;
+    color: var(--text-faint);
+    text-decoration: none;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: color 0.3s;
+  }
+
+  .footer-links a:hover { color: var(--gold); }
+
+  .footer-disclaimer {
+    font-size: 11px;
+    color: var(--text-faint);
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+    opacity: 0.6;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* SUCCESS STATE */
+  .success-msg {
+    display: none;
+    color: var(--gold);
+    font-size: 14px;
+    margin-top: 16px;
+    font-style: italic;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+  }
+
+  /* MOBILE */
+  @media (max-width: 768px) {
+    nav { padding: 20px 24px; }
+    .problem-grid { grid-template-columns: 1fr; }
+    .steps { grid-template-columns: 1fr; }
+    .features-grid { grid-template-columns: 1fr; }
+    .hero-form { flex-direction: column; }
+    .hero-input { border-right: 1px solid rgba(200,169,126,0.2); border-bottom: none; border-radius: 2px 2px 0 0; }
+    .hero-btn { border-radius: 0 0 2px 2px; }
+    .cta-form { flex-direction: column; }
+    .pricing-card { padding: 40px 28px; }
+    .footer-links { flex-wrap: wrap; gap: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">LifeGuide</a>
+  <div style="display: flex; gap: 16px; align-items: center;">
+    <a href="#lifeguidepro" class="nav-cta" style="border-color: rgba(200,169,126,0.6); display: flex; align-items: center; gap: 8px;">
+      <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--gold); display: inline-block; animation: pulse 2s infinite;"></span>
+      LifeGuide Pro — For Nurses
+    </a>
+    <a href="#waitlist" class="nav-cta">Join Waitlist</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-line"></div>
+  <p class="hero-badge">Family Care Navigator</p>
+  <h1 class="hero-title">When someone you love<br>is <em>declining</em></h1>
+  <p class="hero-subtitle">You shouldn't have to figure it out alone.</p>
+  <p class="hero-desc">
+    LifeGuide walks families through the most difficult journey of their lives —
+    step by step, document by document, question by question.
+    From the first hard conversation to what comes after.
+  </p>
+  <div class="hero-form" id="waitlist">
+    <input type="email" class="hero-input" placeholder="Your email address" id="hero-email">
+    <button class="hero-btn" onclick="joinWaitlist('hero-email', 'hero-success')">Join Waitlist</button>
+  </div>
+  <p class="success-msg" id="hero-success">You're on the list. We'll be in touch. 🕊️</p>
+  <p class="hero-note">Free to join · No credit card · Launching soon</p>
+</section>
+
+<!-- DIVIDER -->
+<div class="divider" style="padding: 0 24px;">
+  <div class="divider-line"></div>
+  <div class="divider-icon">🕊️</div>
+  <div class="divider-line"></div>
+</div>
+
+<!-- PROBLEM -->
+<section class="problem">
+  <div class="section-inner">
+    <div class="problem-grid">
+      <div class="reveal">
+        <span class="section-label">The Problem</span>
+        <h2 class="section-title">Families are left<br><em>completely lost.</em></h2>
+        <p class="section-body">
+          When a loved one starts declining, nobody hands you a roadmap.
+          You're Googling at 2am, missing critical paperwork, asking the wrong
+          questions at doctor visits, and trying to hold your family together
+          — all while grieving.
+        </p>
+        <p class="section-body" style="margin-top: 20px;">
+          There's no app, no guide, no single place that meets you in that moment
+          of panic and tells you exactly what to do next.
+        </p>
+        <p class="section-body" style="margin-top: 20px; font-style: italic; color: #9a9288;">
+          Until now.
+        </p>
+      </div>
+      <ul class="pain-list reveal">
+        <li class="pain-item">
+          <span class="pain-icon">😰</span>
+          <span class="pain-text">"I don't even know what questions to ask the doctor."</span>
+        </li>
+        <li class="pain-item">
+          <span class="pain-icon">📋</span>
+          <span class="pain-text">"We never got the power of attorney signed in time."</span>
+        </li>
+        <li class="pain-item">
+          <span class="pain-icon">👨‍👩‍👧‍👦</span>
+          <span class="pain-text">"My siblings are fighting and nobody knows who's in charge."</span>
+        </li>
+        <li class="pain-item">
+          <span class="pain-icon">🌙</span>
+          <span class="pain-text">"I was up until 3am reading Medicare websites that made no sense."</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section>
+  <div class="section-inner">
+    <div class="reveal" style="text-align: center; max-width: 600px; margin: 0 auto;">
+      <span class="section-label">How It Works</span>
+      <h2 class="section-title">Your personal roadmap,<br>built in <em>2 minutes.</em></h2>
+    </div>
+    <div class="steps">
+      <div class="step reveal">
+        <div class="step-num">01</div>
+        <div class="step-title">Tell us your situation</div>
+        <p class="step-body">Answer 4 simple questions about where you are — who needs care, what stage you're in, and what you need most right now.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">02</div>
+        <div class="step-title">Get your roadmap</div>
+        <p class="step-body">LifeGuide builds a personalized step-by-step navigator — exactly what to do this week, next week, and beyond. Nothing generic.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">03</div>
+        <div class="step-title">Walk through it together</div>
+        <p class="step-body">Check off steps, prep for doctor visits, organize your family, and access expert resources — all in one calm, private place.</p>
       </div>
     </div>
-  );
-}
+  </div>
+</section>
 
-// ─── DISCLAIMER + ENTRY COMBINED ─────────────────────────────────────────────
-function DisclaimerScreen({ onFamily, onNurse, onModal }) {
-  return (
-    <div style={{ maxWidth: 520, width: "100%", margin: "0 auto", padding: "60px 24px 40px", textAlign: "center" }}>
-
-      {/* Logo */}
-      <div style={{ width: 64, height: 64, borderRadius: "50%", background: "linear-gradient(135deg, #c8a97e, #e8d5b7)", margin: "0 auto 20px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28, boxShadow: "0 0 40px rgba(200,169,126,0.3)" }}>🕊️</div>
-      <h1 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 40, fontWeight: 300, color: S.goldLight, marginBottom: 4, letterSpacing: -1 }}>LifeGuide</h1>
-      <p style={{ fontSize: 11, letterSpacing: 4, textTransform: "uppercase", color: S.gold, marginBottom: 28, fontFamily: "sans-serif" }}>Family Care Navigator</p>
-
-      {/* Disclaimer */}
-      <div style={{ background: "rgba(200,169,126,0.06)", border: "1px solid rgba(200,169,126,0.2)", borderRadius: 14, padding: "18px 20px", marginBottom: 28, textAlign: "left" }}>
-        <p style={{ fontSize: 11, letterSpacing: 2, textTransform: "uppercase", color: S.gold, fontFamily: "sans-serif", marginBottom: 8 }}>⚠ Important Notice</p>
-        <p style={{ fontSize: 12, color: S.textDim, lineHeight: 1.7, fontFamily: "sans-serif" }}>{DISCLAIMER}</p>
+<!-- FEATURES -->
+<section class="features-bg">
+  <div class="section-inner">
+    <div class="reveal" style="text-align: center; max-width: 600px; margin: 0 auto 0;">
+      <span class="section-label">What's Inside</span>
+      <h2 class="section-title">Everything your family<br><em>actually needs.</em></h2>
+    </div>
+    <div class="features-grid">
+      <div class="feature reveal">
+        <div class="feature-icon">🗺️</div>
+        <div class="feature-title">Personalized Navigator</div>
+        <p class="feature-body">A custom roadmap based on your exact situation. Step-by-step, prioritized, and updated as things change.</p>
       </div>
-
-      {/* Who are you */}
-      <p style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 22, color: S.goldLight, marginBottom: 20 }}>Who are you here for?</p>
-
-      {/* Family — Primary */}
-      <div onClick={onFamily} style={{
-        background: "linear-gradient(135deg, rgba(200,169,126,0.15), rgba(200,169,126,0.05))",
-        border: "1px solid rgba(200,169,126,0.4)",
-        borderRadius: 16, padding: "28px 24px", marginBottom: 12,
-        cursor: "pointer", transition: "all 0.3s",
-        boxShadow: "0 8px 40px rgba(200,169,126,0.15)",
-        position: "relative", overflow: "hidden"
-      }}
-        onMouseOver={e => e.currentTarget.style.boxShadow = "0 12px 48px rgba(200,169,126,0.25)"}
-        onMouseOut={e => e.currentTarget.style.boxShadow = "0 8px 40px rgba(200,169,126,0.15)"}
-      >
-        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: "linear-gradient(90deg, transparent, #c8a97e, transparent)" }} />
-        <div style={{ fontSize: 32, marginBottom: 10 }}>🕊️</div>
-        <h3 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 24, fontWeight: 400, color: S.goldLight, marginBottom: 8, lineHeight: 1.2 }}>
-          I'm a family member or caregiver
-        </h3>
-        <p style={{ fontSize: 13, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.6, marginBottom: 20 }}>
-          Someone I love is declining and I need guidance, clarity, and a roadmap.
-        </p>
-        <div style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", borderRadius: 8, padding: "14px 24px", display: "inline-block" }}>
-          <span style={{ color: S.dark, fontSize: 14, fontWeight: 700, fontFamily: "sans-serif" }}>Get My Free First Week Guide →</span>
-        </div>
-        <p style={{ fontSize: 11, color: S.textFaint, marginTop: 10, fontFamily: "sans-serif" }}>Free to start · No credit card</p>
+      <div class="feature reveal">
+        <div class="feature-icon">📋</div>
+        <div class="feature-title">Document Checklist</div>
+        <p class="feature-body">Power of attorney, living will, DNR, Medicare — explained in plain language with links to get them done.</p>
       </div>
-
-      {/* Nurse — Secondary */}
-      <div onClick={onNurse} style={{
-        background: "rgba(255,255,255,0.02)",
-        border: "1px solid rgba(255,255,255,0.1)",
-        borderRadius: 12, padding: "16px 20px", marginBottom: 20,
-        cursor: "pointer", transition: "all 0.3s",
-        display: "flex", alignItems: "center", gap: 14, textAlign: "left"
-      }}
-        onMouseOver={e => { e.currentTarget.style.background = "rgba(255,255,255,0.04)"; e.currentTarget.style.borderColor = "rgba(200,169,126,0.2)"; }}
-        onMouseOut={e => { e.currentTarget.style.background = "rgba(255,255,255,0.02)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)"; }}
-      >
-        <div style={{ fontSize: 24, flexShrink: 0 }}>⚕️</div>
-        <div style={{ flex: 1 }}>
-          <p style={{ fontSize: 15, color: S.textDim, fontFamily: "Cormorant Garamond, serif", marginBottom: 2 }}>I'm a hospice or healthcare professional</p>
-          <p style={{ fontSize: 12, color: S.textFaint, fontFamily: "sans-serif" }}>Learn about LifeGuide Pro — built for care teams</p>
-        </div>
-        <span style={{ color: S.textFaint, fontSize: 18, flexShrink: 0 }}>→</span>
+      <div class="feature reveal">
+        <div class="feature-icon">🏥</div>
+        <div class="feature-title">Doctor Visit Prep</div>
+        <p class="feature-body">Walk into every appointment with the right questions. Generated based on your loved one's condition and stage.</p>
       </div>
+      <div class="feature reveal">
+        <div class="feature-icon">👨‍👩‍👧</div>
+        <div class="feature-title">Family Coordination</div>
+        <p class="feature-body">Assign roles, share updates, and reduce the chaos of group texts. Everyone stays on the same page.</p>
+      </div>
+      <div class="feature reveal">
+        <div class="feature-icon">💙</div>
+        <div class="feature-title">Grief & Transition Guide</div>
+        <p class="feature-body">What to expect emotionally. What happens after. Bereavement resources and a gentle path forward.</p>
+      </div>
+      <div class="feature reveal">
+        <div class="feature-icon">🔒</div>
+        <div class="feature-title">Private & Secure</div>
+        <p class="feature-body">We never collect medical information. Your family's journey stays completely private. Always.</p>
+      </div>
+    </div>
+  </div>
+</section>
 
-      <p style={{ fontSize: 11, color: S.textFaint, fontFamily: "sans-serif", lineHeight: 1.6 }}>
-        By continuing you agree to our{" "}
-        <span onClick={() => onModal("terms")} style={{ color: S.gold, cursor: "pointer", textDecoration: "underline" }}>Terms</span>
-        {" "}and{" "}
-        <span onClick={() => onModal("privacy")} style={{ color: S.gold, cursor: "pointer", textDecoration: "underline" }}>Privacy Policy</span>.
+<!-- QUOTE -->
+<section class="quote-section">
+  <div class="section-inner" style="text-align: center;">
+    <div class="reveal">
+      <div class="quote-mark">"</div>
+      <p class="quote-text">
+        The hardest part isn't the grief. It's not knowing what to do next.
+      </p>
+      <p class="quote-attr">— Every family going through this</p>
+    </div>
+  </div>
+</section>
+
+<!-- DISCLAIMER BAR -->
+<div class="disclaimer-bar">
+  <p>
+    <strong>Important:</strong> LifeGuide is an informational and organizational tool only.
+    It does not provide medical advice, diagnosis, or treatment recommendations.
+    Always consult your physician, hospice team, or qualified healthcare provider
+    regarding any medical decisions.
+  </p>
+</div>
+
+<!-- PRICING -->
+
+
+<!-- CTA -->
+<!-- LIFEGUIDE PRO COMING SOON -->
+<section id="lifeguidepro" style="background: var(--dark);">
+  <div class="section-inner">
+    <div class="reveal" style="text-align: center; max-width: 700px; margin: 0 auto;">
+      <div style="display: inline-flex; align-items: center; gap: 10px; background: rgba(200,169,126,0.08); border: 1px solid rgba(200,169,126,0.2); border-radius: 20px; padding: 8px 20px; margin-bottom: 32px;">
+        <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--gold); display: inline-block; animation: pulse 2s infinite;"></span>
+        <span style="font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); font-family: sans-serif;">Coming Soon</span>
+      </div>
+      <h2 class="section-title">Introducing<br><em>LifeGuide Pro</em></h2>
+      <p class="section-body" style="margin: 0 auto 48px; text-align: center;">
+        Built for the professionals who show up every day for families in crisis.
+        Hospice nurses, social workers, chaplains, and care teams —
+        LifeGuide Pro gives you the tools to support every family you serve.
       </p>
     </div>
-  );
+
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 56px;" class="reveal">
+      <div style="padding: 32px 28px; background: rgba(200,169,126,0.04); border: 1px solid rgba(200,169,126,0.12); border-radius: 8px; text-align: center; position: relative; overflow: hidden;">
+        <div style="position: absolute; top: 16px; right: 16px; background: rgba(200,169,126,0.1); border: 1px solid rgba(200,169,126,0.2); border-radius: 10px; padding: 3px 10px; font-size: 9px; letter-spacing: 2px; color: var(--gold); font-family: sans-serif; text-transform: uppercase;">Pro</div>
+        <div style="font-size: 32px; margin-bottom: 16px;">📤</div>
+        <div style="font-family: 'Cormorant Garamond', serif; font-size: 18px; color: var(--gold-light); margin-bottom: 10px;">Family Onboarding</div>
+        <p style="font-size: 13px; color: var(--text-dim); line-height: 1.6;">Send a personalized LifeGuide link to every new family on day one. No more paper packets.</p>
+      </div>
+      <div style="padding: 32px 28px; background: rgba(200,169,126,0.04); border: 1px solid rgba(200,169,126,0.12); border-radius: 8px; text-align: center; position: relative; overflow: hidden;">
+        <div style="position: absolute; top: 16px; right: 16px; background: rgba(200,169,126,0.1); border: 1px solid rgba(200,169,126,0.2); border-radius: 10px; padding: 3px 10px; font-size: 9px; letter-spacing: 2px; color: var(--gold); font-family: sans-serif; text-transform: uppercase;">Pro</div>
+        <div style="font-size: 32px; margin-bottom: 16px;">📊</div>
+        <div style="font-family: 'Cormorant Garamond', serif; font-size: 18px; color: var(--gold-light); margin-bottom: 10px;">Family Dashboard</div>
+        <p style="font-size: 13px; color: var(--text-dim); line-height: 1.6;">See where each family is in their journey. Know what they need before they call you.</p>
+      </div>
+      <div style="padding: 32px 28px; background: rgba(200,169,126,0.04); border: 1px solid rgba(200,169,126,0.12); border-radius: 8px; text-align: center; position: relative; overflow: hidden;">
+        <div style="position: absolute; top: 16px; right: 16px; background: rgba(200,169,126,0.1); border: 1px solid rgba(200,169,126,0.2); border-radius: 10px; padding: 3px 10px; font-size: 9px; letter-spacing: 2px; color: var(--gold); font-family: sans-serif; text-transform: uppercase;">Pro</div>
+        <div style="font-size: 32px; margin-bottom: 16px;">💬</div>
+        <div style="font-family: 'Cormorant Garamond', serif; font-size: 18px; color: var(--gold-light); margin-bottom: 10px;">Direct Messaging</div>
+        <p style="font-size: 13px; color: var(--text-dim); line-height: 1.6;">Share resources, notes, and updates directly into the family's guide. Everything in one place.</p>
+      </div>
+    </div>
+
+    <div class="reveal" style="max-width: 520px; margin: 0 auto; background: rgba(200,169,126,0.05); border: 1px solid rgba(200,169,126,0.2); border-radius: 12px; padding: 40px; text-align: center;">
+      <p style="font-family: 'Cormorant Garamond', serif; font-size: 22px; color: var(--gold-light); margin-bottom: 8px; font-style: italic;">Are you a hospice professional?</p>
+      <p style="font-size: 14px; color: var(--text-dim); margin-bottom: 28px; line-height: 1.6;">Join the LifeGuide Pro waitlist. Early access members help shape the product and lock in founding pricing.</p>
+      <div style="display: flex; gap: 0;">
+        <input type="email" id="pro-email" placeholder="Your work email" style="flex: 1; background: rgba(255,255,255,0.04); border: 1px solid rgba(200,169,126,0.2); border-right: none; color: var(--text); padding: 16px 20px; font-family: 'Jost', sans-serif; font-size: 14px; outline: none; border-radius: 2px 0 0 2px;">
+        <button onclick="joinWaitlist('pro-email', 'pro-success')" style="background: linear-gradient(135deg, var(--gold), #a8895e); border: none; color: var(--dark); padding: 16px 24px; font-family: 'Jost', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; border-radius: 0 2px 2px 0; white-space: nowrap;">Join Pro List</button>
+      </div>
+      <p class="success-msg" id="pro-success">You're on the Pro list. We'll be in touch. 🕊️</p>
+      <p style="font-size: 11px; color: var(--text-faint); margin-top: 12px;">No commitment · We'll reach out when Pro launches</p>
+    </div>
+  </div>
+</section>
+
+<style>
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
 }
+@media (max-width: 768px) {
+  .pro-grid { grid-template-columns: 1fr !important; }
+}
+</style>
 
-// ─── NURSE PRO SCREEN ─────────────────────────────────────────────────────────
-function NurseScreen({ onBack }) {
-  const [submitted, setSubmitted] = useState(false);
-  const [email, setEmail] = useState("");
+<section class="cta-section">
+  <div class="section-inner" style="text-align: center;">
+    <div class="reveal">
+      <span class="section-label">Get Early Access</span>
+      <h2 class="section-title">Be the first to know<br>when we <em>launch.</em></h2>
+      <p class="section-body" style="margin: 0 auto; text-align: center; max-width: 480px;">
+        Join the waitlist and be first in line. Early members lock in $20/month forever —
+        including every feature we add.
+      </p>
+      <div class="cta-form">
+        <input type="email" class="hero-input" placeholder="Your email address" id="cta-email" style="border-right: none; border-radius: 2px 0 0 2px;">
+        <button class="hero-btn" onclick="joinWaitlist('cta-email', 'cta-success')" style="border-radius: 0 2px 2px 0;">Join Waitlist</button>
+      </div>
+      <p class="success-msg" id="cta-success">You're on the list. We'll be in touch. 🕊️</p>
+      <p style="font-size: 12px; color: var(--text-faint); margin-top: 16px;">
+        No spam. No credit card. Just a heads up when we're ready.
+      </p>
+    </div>
+  </div>
+</section>
 
-  const handleSubmit = async () => {
-    if (!email || !email.includes("@")) return;
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">LifeGuide</div>
+  <p class="footer-tagline">Family Care Navigator</p>
+  <div class="footer-links">
+    <a href="#">Terms of Service</a>
+    <a href="#">Privacy Policy</a>
+    <a href="mailto:lorenz@lifeguideapp.com">Contact</a>
+  </div>
+  <p class="footer-disclaimer">
+    LifeGuide is not a medical provider and does not offer medical advice, diagnosis, or treatment.
+    All content is for informational purposes only. Always consult qualified healthcare professionals
+    for medical decisions. © 2026 LifeGuide. All rights reserved.
+  </p>
+</footer>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 100);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+
+  // Waitlist form
+  async function joinWaitlist(inputId, successId, tag = 'waitlist') {
+    const emailEl = document.getElementById(inputId);
+    const email = emailEl.value;
+    if (!email || !email.includes('@')) {
+      emailEl.style.borderColor = 'rgba(255,100,100,0.5)';
+      return;
+    }
+    const btn = emailEl.nextElementSibling;
+    if (btn) btn.textContent = 'Joining...';
+
     try {
-      await fetch("/api/subscribe", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, tag: "lifeguide-pro-nurse" }),
+      const res = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, tag }),
       });
-      setSubmitted(true);
-    } catch (e) {
-      setSubmitted(true);
+
+      if (res.ok) {
+        emailEl.value = '';
+        emailEl.style.display = 'none';
+        if (btn) btn.style.display = 'none';
+        document.getElementById(successId).style.display = 'block';
+      } else {
+        if (btn) btn.textContent = 'Try Again';
+      }
+    } catch (err) {
+      if (btn) btn.textContent = 'Try Again';
     }
-  };
+  }
+</script>
 
-  return (
-    <div style={{ maxWidth: 520, width: "100%", margin: "0 auto", padding: "60px 24px 120px" }}>
-      <button onClick={onBack} style={{ background: "none", border: "none", color: S.textFaint, fontSize: 13, cursor: "pointer", fontFamily: "sans-serif", marginBottom: 32, display: "flex", alignItems: "center", gap: 8 }}>
-        ← Back
-      </button>
-
-      <div style={{ textAlign: "center", marginBottom: 40 }}>
-        <div style={{ fontSize: 48, marginBottom: 16 }}>⚕️</div>
-        <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(200,169,126,0.08)", border: "1px solid rgba(200,169,126,0.2)", borderRadius: 20, padding: "6px 16px", marginBottom: 20 }}>
-          <span style={{ width: 6, height: 6, borderRadius: "50%", background: S.gold, display: "inline-block", animation: "pulse 2s infinite" }} />
-          <span style={{ fontSize: 11, color: S.gold, fontFamily: "sans-serif", letterSpacing: 2, textTransform: "uppercase" }}>Coming Soon</span>
-        </div>
-        <h2 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 34, fontWeight: 300, color: S.goldLight, marginBottom: 12, lineHeight: 1.2 }}>LifeGuide Pro</h2>
-        <p style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 18, fontStyle: "italic", color: S.textDim, marginBottom: 24 }}>For hospice nurses, social workers, and care teams</p>
-        <p style={{ fontSize: 14, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.7, marginBottom: 40 }}>
-          You show up every day for families in the hardest moments of their lives. LifeGuide Pro gives you the tools to support every family you serve — from onboarding to the final days.
-        </p>
-      </div>
-
-      {/* Pro Features */}
-      <div style={{ display: "flex", flexDirection: "column", gap: 14, marginBottom: 40 }}>
-        {[
-          { icon: "📤", title: "Family Onboarding", desc: "Send a personalized LifeGuide link to every new family on day one. No more paper packets." },
-          { icon: "📊", title: "Family Dashboard", desc: "See where each family is in their journey. Know what they need before they call you." },
-          { icon: "💬", title: "Direct Messaging", desc: "Share resources and notes directly into the family's guide. Everything in one place." },
-          { icon: "📋", title: "Custom Resource Library", desc: "Build your own resource library for your patients. Tailored to your organization." },
-        ].map((f, i) => (
-          <div key={i} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 12, padding: "18px 20px", display: "flex", gap: 14, alignItems: "flex-start" }}>
-            <span style={{ fontSize: 22, flexShrink: 0 }}>{f.icon}</span>
-            <div>
-              <p style={{ fontSize: 15, color: S.goldLight, fontFamily: "Cormorant Garamond, serif", marginBottom: 4 }}>{f.title}</p>
-              <p style={{ fontSize: 12, color: S.textFaint, fontFamily: "sans-serif", lineHeight: 1.6 }}>{f.desc}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Pro Waitlist */}
-      <div style={{ background: "rgba(200,169,126,0.06)", border: "1px solid rgba(200,169,126,0.2)", borderRadius: 16, padding: "28px 24px", textAlign: "center" }}>
-        {submitted ? (
-          <div>
-            <p style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 22, color: S.goldLight, marginBottom: 8 }}>You're on the list. 🕊️</p>
-            <p style={{ fontSize: 13, color: S.textDim, fontFamily: "sans-serif" }}>We'll reach out when LifeGuide Pro launches. Thank you for what you do.</p>
-          </div>
-        ) : (
-          <div>
-            <p style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 20, color: S.goldLight, marginBottom: 8 }}>Join the LifeGuide Pro waitlist</p>
-            <p style={{ fontSize: 13, color: S.textDim, fontFamily: "sans-serif", marginBottom: 20 }}>Early access members help shape the product and lock in founding pricing.</p>
-            <div style={{ display: "flex", gap: 0, marginBottom: 12 }}>
-              <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Your work email" style={{ flex: 1, background: "rgba(255,255,255,0.04)", border: "1px solid rgba(200,169,126,0.2)", borderRight: "none", color: S.text, padding: "14px 18px", fontFamily: "sans-serif", fontSize: 14, outline: "none", borderRadius: "8px 0 0 8px" }} />
-              <button onClick={handleSubmit} style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", border: "none", color: S.dark, padding: "14px 20px", fontFamily: "sans-serif", fontSize: 13, fontWeight: 700, cursor: "pointer", borderRadius: "0 8px 8px 0", whiteSpace: "nowrap" }}>Join Pro List</button>
-            </div>
-            <p style={{ fontSize: 11, color: S.textFaint, fontFamily: "sans-serif" }}>No commitment · We'll reach out when Pro launches</p>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-function WelcomeScreen({ onStart }) {
-  return (
-    <div style={{ maxWidth: 520, width: "100%", textAlign: "center", margin: "0 auto", padding: "80px 24px 40px" }}>
-      <div style={{ width: 1, height: 48, background: "linear-gradient(to bottom, transparent, #c8a97e, transparent)", margin: "0 auto 32px" }} />
-      <p style={{ fontSize: 11, letterSpacing: 4, textTransform: "uppercase", color: S.gold, marginBottom: 28, fontFamily: "sans-serif" }}>Family Care Navigator</p>
-      <h1 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "clamp(44px, 10vw, 80px)", fontWeight: 300, lineHeight: 1.0, color: S.goldLight, marginBottom: 16, letterSpacing: -1 }}>
-        When someone you love<br />is <em style={{ fontStyle: "italic", color: S.gold }}>declining</em>
-      </h1>
-      <p style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "clamp(18px, 3vw, 24px)", fontWeight: 300, color: S.textDim, marginBottom: 32, fontStyle: "italic", lineHeight: 1.6 }}>
-        You shouldn't have to figure it out alone.
-      </p>
-      <p style={{ fontSize: 15, lineHeight: 1.8, color: S.textDim, marginBottom: 20, maxWidth: 440, margin: "0 auto 20px" }}>
-        LifeGuide walks your family through the most difficult journey of their lives — step by step, document by document, question by question.
-      </p>
-      <p style={{ fontSize: 14, lineHeight: 1.7, color: S.gold, marginBottom: 48, maxWidth: 440, margin: "0 auto 48px", fontStyle: "italic", fontFamily: "Cormorant Garamond, serif", fontSize: 20 }}>
-        Start with your free First Week Guide — built specifically for your situation.
-      </p>
-      <button onClick={onStart} style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", color: S.dark, border: "none", borderRadius: 8, padding: "20px 56px", fontSize: 16, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif", letterSpacing: 1, boxShadow: "0 8px 32px rgba(200,169,126,0.3)" }}>
-        Get My Free First Week Guide →
-      </button>
-      <p style={{ fontSize: 12, color: S.textFaint, marginTop: 20, fontFamily: "sans-serif" }}>Takes 2 minutes · Free · No credit card</p>
-    </div>
-  );
-}
-
-// ─── QUIZ ─────────────────────────────────────────────────────────────────────
-function QuizScreen({ currentQ, onAnswer }) {
-  const q = questions[currentQ];
-  const [selected, setSelected] = useState(null);
-  const handleSelect = (value) => {
-    setSelected(value);
-    setTimeout(() => onAnswer(q.id, value), 300);
-  };
-  return (
-    <div style={{ maxWidth: 520, width: "100%", margin: "0 auto", padding: "60px 24px 40px" }}>
-      <div style={{ marginBottom: 48 }}>
-        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 10 }}>
-          <span style={{ fontSize: 11, color: S.gold, fontFamily: "sans-serif", letterSpacing: 2, textTransform: "uppercase" }}>Question {currentQ + 1} of {questions.length}</span>
-          <span style={{ fontSize: 11, color: S.textFaint, fontFamily: "sans-serif" }}>{Math.round((currentQ / questions.length) * 100)}% complete</span>
-        </div>
-        <div style={{ height: 2, background: "#1e2d3a", borderRadius: 2 }}>
-          <div style={{ height: "100%", borderRadius: 2, background: "linear-gradient(90deg, #c8a97e, #e8d5b7)", width: `${(currentQ / questions.length) * 100}%`, transition: "width 0.4s ease" }} />
-        </div>
-      </div>
-      <h2 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "clamp(22px, 4vw, 30px)", fontWeight: 400, lineHeight: 1.3, color: S.goldLight, marginBottom: 40, letterSpacing: -0.5 }}>{q.question}</h2>
-      <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-        {q.options.map((opt) => (
-          <button key={opt.value} onClick={() => handleSelect(opt.value)} style={{ background: selected === opt.value ? "rgba(200,169,126,0.15)" : "rgba(255,255,255,0.03)", border: `1px solid ${selected === opt.value ? "rgba(200,169,126,0.6)" : "rgba(200,169,126,0.2)"}`, borderRadius: 12, padding: "20px 24px", textAlign: "left", color: selected === opt.value ? S.goldLight : S.textDim, fontSize: 15, cursor: "pointer", fontFamily: "Georgia, serif", lineHeight: 1.4, transition: "all 0.2s" }}>
-            {opt.label}
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-// ─── FREE GUIDE SCREEN ────────────────────────────────────────────────────────
-function FreeGuideScreen({ answers, onUnlock }) {
-  const [expanded, setExpanded] = useState(null);
-  const situation = answers.situation || "parent_declining";
-  const guide = firstWeekGuide[situation] || firstWeekGuide.parent_declining;
-
-  const situationLabel = {
-    parent_declining: "Parent Declining",
-    terminal_diagnosis: "Terminal Diagnosis",
-    hospice_referral: "Hospice Referral",
-    in_hospice: "In Hospice",
-  }[situation];
-
-  return (
-    <div style={{ maxWidth: 560, width: "100%", margin: "0 auto", padding: "50px 24px 120px" }}>
-
-      {/* Header */}
-      <div style={{ marginBottom: 8 }}>
-        <span style={{ background: "rgba(200,169,126,0.15)", border: "1px solid rgba(200,169,126,0.3)", borderRadius: 20, padding: "4px 14px", fontSize: 11, color: S.gold, fontFamily: "sans-serif", letterSpacing: 2, textTransform: "uppercase" }}>
-          {situationLabel}
-        </span>
-      </div>
-      <h2 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 32, fontWeight: 300, color: S.goldLight, marginBottom: 8, letterSpacing: -0.5, marginTop: 16 }}>
-        Your First Week Guide
-      </h2>
-      <p style={{ fontSize: 14, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.6, marginBottom: 32 }}>
-        This guide is built specifically for your situation. Read each step, expand for full detail, and take it one day at a time.
-      </p>
-
-      {/* Free Steps */}
-      <div style={{ display: "flex", flexDirection: "column", gap: 16, marginBottom: 40 }}>
-        {guide.map((step, i) => (
-          <div key={i} onClick={() => setExpanded(expanded === i ? null : i)} style={{ background: expanded === i ? "rgba(200,169,126,0.08)" : "rgba(255,255,255,0.03)", border: `1px solid ${expanded === i ? "rgba(200,169,126,0.35)" : "rgba(255,255,255,0.08)"}`, borderRadius: 16, padding: "22px 22px", cursor: "pointer", transition: "all 0.3s" }}>
-            <div style={{ display: "flex", gap: 16, alignItems: "flex-start" }}>
-              <span style={{ fontSize: 24, flexShrink: 0 }}>{step.icon}</span>
-              <div style={{ flex: 1 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-                  <span style={{ fontSize: 11, color: S.gold, fontFamily: "sans-serif", letterSpacing: 2, textTransform: "uppercase" }}>{step.day}</span>
-                  <span style={{ color: S.textFaint, fontSize: 18 }}>{expanded === i ? "−" : "+"}</span>
-                </div>
-                <h3 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 20, fontWeight: 400, color: S.goldLight, lineHeight: 1.3 }}>{step.title}</h3>
-                {expanded === i && (
-                  <div style={{ marginTop: 16 }}>
-                    <p style={{ fontSize: 14, color: S.textDim, lineHeight: 1.8, fontFamily: "sans-serif", marginBottom: 20 }}>{step.detail}</p>
-                    <div style={{ background: "rgba(200,169,126,0.08)", border: "1px solid rgba(200,169,126,0.2)", borderRadius: 10, padding: "16px 18px" }}>
-                      <p style={{ fontSize: 11, color: S.gold, fontFamily: "sans-serif", letterSpacing: 2, textTransform: "uppercase", marginBottom: 8 }}>→ Your Action</p>
-                      <p style={{ fontSize: 14, color: S.text, lineHeight: 1.7, fontFamily: "sans-serif" }}>{step.action}</p>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        ))}
-
-        {/* 4th Universal Step — Document Teaser */}
-        <div onClick={() => setExpanded(expanded === 99 ? null : 99)} style={{ background: expanded === 99 ? "rgba(200,169,126,0.08)" : "rgba(255,255,255,0.03)", border: `1px solid ${expanded === 99 ? "rgba(200,169,126,0.35)" : "rgba(255,255,255,0.08)"}`, borderRadius: 16, padding: "22px 22px", cursor: "pointer", transition: "all 0.3s" }}>
-          <div style={{ display: "flex", gap: 16, alignItems: "flex-start" }}>
-            <span style={{ fontSize: 24, flexShrink: 0 }}>{documentTeaserStep.icon}</span>
-            <div style={{ flex: 1 }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-                <span style={{ fontSize: 11, color: S.gold, fontFamily: "sans-serif", letterSpacing: 2, textTransform: "uppercase" }}>{documentTeaserStep.day}</span>
-                <span style={{ color: S.textFaint, fontSize: 18 }}>{expanded === 99 ? "−" : "+"}</span>
-              </div>
-              <h3 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 20, fontWeight: 400, color: S.goldLight, lineHeight: 1.3 }}>{documentTeaserStep.title}</h3>
-              {expanded === 99 && (
-                <div style={{ marginTop: 16 }}>
-                  <p style={{ fontSize: 14, color: S.textDim, lineHeight: 1.8, fontFamily: "sans-serif", marginBottom: 20 }}>{documentTeaserStep.detail}</p>
-
-                  {/* Document List */}
-                  <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 20 }}>
-                    {documentTeaserStep.teaser.map((doc, i) => (
-                      <div key={i} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 10, padding: "14px 16px", display: "flex", gap: 12, alignItems: "flex-start" }}>
-                        <span style={{ color: S.gold, fontSize: 14, marginTop: 2, flexShrink: 0 }}>✦</span>
-                        <div>
-                          <p style={{ fontSize: 14, color: S.goldLight, fontFamily: "Cormorant Garamond, serif", marginBottom: 3 }}>{doc.name}</p>
-                          <p style={{ fontSize: 12, color: S.textFaint, fontFamily: "sans-serif", lineHeight: 1.5 }}>{doc.desc}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Action */}
-                  <div style={{ background: "rgba(200,169,126,0.08)", border: "1px solid rgba(200,169,126,0.2)", borderRadius: 10, padding: "16px 18px", marginBottom: 16 }}>
-                    <p style={{ fontSize: 11, color: S.gold, fontFamily: "sans-serif", letterSpacing: 2, textTransform: "uppercase", marginBottom: 8 }}>→ Your Action</p>
-                    <p style={{ fontSize: 14, color: S.text, lineHeight: 1.7, fontFamily: "sans-serif" }}>{documentTeaserStep.action}</p>
-                  </div>
-
-                  {/* Locked teaser */}
-                  <div style={{ background: "rgba(200,169,126,0.04)", border: "1px dashed rgba(200,169,126,0.25)", borderRadius: 10, padding: "14px 16px", display: "flex", gap: 10, alignItems: "flex-start" }}>
-                    <span style={{ fontSize: 16, flexShrink: 0 }}>🔒</span>
-                    <p style={{ fontSize: 12, color: S.textFaint, fontFamily: "sans-serif", lineHeight: 1.6, fontStyle: "italic" }}>{documentTeaserStep.locked}</p>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Transition to paywall */}
-      <div style={{ textAlign: "center", marginBottom: 32 }}>
-        <div style={{ width: 1, height: 48, background: "linear-gradient(to bottom, rgba(200,169,126,0.3), transparent)", margin: "0 auto 24px" }} />
-        <p style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 22, fontStyle: "italic", color: S.textDim, marginBottom: 8 }}>
-          "You've taken the first step."
-        </p>
-        <p style={{ fontSize: 13, color: S.textFaint, fontFamily: "sans-serif" }}>
-          Most families walk this journey for 3 to 12 months.<br />LifeGuide walks with you every step of the way.
-        </p>
-      </div>
-
-      {/* Locked Features Preview */}
-      <div style={{ marginBottom: 32 }}>
-        <p style={{ fontSize: 11, color: S.gold, fontFamily: "sans-serif", letterSpacing: 3, textTransform: "uppercase", marginBottom: 20, textAlign: "center" }}>
-          What's waiting for you inside
-        </p>
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          {lockedFeatures.map((f, i) => (
-            <div key={i} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 12, padding: "18px 20px", display: "flex", gap: 16, alignItems: "flex-start", opacity: 0.75 }}>
-              <span style={{ fontSize: 22, flexShrink: 0 }}>{f.icon}</span>
-              <div>
-                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-                  <span style={{ fontSize: 15, color: S.goldLight, fontFamily: "Cormorant Garamond, serif" }}>{f.title}</span>
-                  <span style={{ fontSize: 10, color: S.textFaint, fontFamily: "sans-serif" }}>🔒</span>
-                </div>
-                <p style={{ fontSize: 12, color: S.textFaint, lineHeight: 1.6, fontFamily: "sans-serif" }}>{f.desc}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Paywall */}
-      <div style={{ background: "rgba(200,169,126,0.06)", border: "1px solid rgba(200,169,126,0.25)", borderRadius: 20, padding: "36px 28px", textAlign: "center", position: "relative", overflow: "hidden" }}>
-        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: "linear-gradient(90deg, transparent, #c8a97e, transparent)" }} />
-
-        <p style={{ fontSize: 11, letterSpacing: 3, textTransform: "uppercase", color: S.gold, fontFamily: "sans-serif", marginBottom: 16 }}>Unlock Full LifeGuide</p>
-        <h3 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 28, fontWeight: 300, color: S.goldLight, marginBottom: 12, lineHeight: 1.2 }}>
-          For less than a therapy copay,<br />you don't have to walk this alone.
-        </h3>
-        <p style={{ fontSize: 13, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.7, marginBottom: 28 }}>
-          Most families are in this journey for 3 to 12 months. LifeGuide is with you every step — doctor prep, documents, family coordination, and everything that comes after.
-        </p>
-
-        {/* Pricing Tiers */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 20 }}>
-
-          {/* Monthly — at top */}
-          <button onClick={() => window.open(STRIPE_MONTHLY, "_blank")} style={{ background: "transparent", color: S.textDim, border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, padding: "16px 24px", fontSize: 14, cursor: "pointer", fontFamily: "sans-serif", width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <div style={{ textAlign: "left" }}>
-              <div>Monthly</div>
-              <div style={{ fontSize: 12, color: S.textFaint, marginTop: 2 }}>Cancel anytime</div>
-            </div>
-            <div style={{ fontSize: 18, fontWeight: 600 }}>$20/mo</div>
-          </button>
-
-          {/* 6 Month — highlighted as best */}
-          <div style={{ position: "relative" }}>
-            <div style={{ position: "absolute", top: -10, left: "50%", transform: "translateX(-50%)", background: S.gold, color: S.dark, fontSize: 10, fontWeight: 700, fontFamily: "sans-serif", letterSpacing: 1, padding: "3px 14px", borderRadius: 20, textTransform: "uppercase", whiteSpace: "nowrap" }}>Most Popular</div>
-            <button onClick={() => window.open(STRIPE_6MONTH, "_blank")} style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", color: S.dark, border: "none", borderRadius: 12, padding: "20px 24px", fontSize: 15, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif", width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", boxShadow: "0 8px 24px rgba(200,169,126,0.3)" }}>
-              <div style={{ textAlign: "left" }}>
-                <div style={{ fontSize: 16 }}>6 Months Access</div>
-                <div style={{ fontSize: 12, fontWeight: 400, opacity: 0.8, marginTop: 2 }}>Best for most families · Save $23</div>
-              </div>
-              <div style={{ textAlign: "right" }}>
-                <div style={{ fontSize: 22, fontWeight: 700 }}>$97</div>
-                <div style={{ fontSize: 11, fontWeight: 400, opacity: 0.8 }}>one time</div>
-              </div>
-            </button>
-          </div>
-
-          {/* Annual */}
-          <button onClick={() => window.open(STRIPE_ANNUAL, "_blank")} style={{ background: "rgba(200,169,126,0.1)", color: S.goldLight, border: "1px solid rgba(200,169,126,0.35)", borderRadius: 12, padding: "18px 24px", fontSize: 15, fontWeight: 600, cursor: "pointer", fontFamily: "sans-serif", width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <div style={{ textAlign: "left" }}>
-              <div>Annual Access</div>
-              <div style={{ fontSize: 12, color: S.gold, marginTop: 2 }}>Best value · Save $73</div>
-            </div>
-            <div style={{ textAlign: "right" }}>
-              <div style={{ fontSize: 20, fontWeight: 700 }}>$167</div>
-              <div style={{ fontSize: 11, color: S.textFaint }}>one time</div>
-            </div>
-          </button>
-        </div>
-
-        <p style={{ fontSize: 11, color: S.textFaint, fontFamily: "sans-serif", lineHeight: 1.6 }}>
-          Secure payment via Stripe · Instant access · No medical data collected
-        </p>
-      </div>
-
-      <button onClick={() => {}} style={{ background: "none", border: "none", color: S.textFaint, fontSize: 12, cursor: "pointer", fontFamily: "sans-serif", display: "block", margin: "24px auto 0", textDecoration: "underline" }}>
-        Start over
-      </button>
-    </div>
-  );
-}
-
-// ─── MAIN APP ─────────────────────────────────────────────────────────────────
-export default function App() {
-  const [screen, setScreen] = useState("disclaimer");
-  const [currentQ, setCurrentQ] = useState(0);
-  const [answers, setAnswers] = useState({});
-  const [modal, setModal] = useState(null);
-
-  const handleAnswer = (questionId, value) => {
-    const newAnswers = { ...answers, [questionId]: value };
-    setAnswers(newAnswers);
-    if (currentQ < questions.length - 1) {
-      setCurrentQ(currentQ + 1);
-    } else {
-      setScreen("guide");
-    }
-  };
-
-  const handleReset = () => {
-    setScreen("disclaimer");
-    setCurrentQ(0);
-    setAnswers({});
-  };
-
-  return (
-    <div style={{ minHeight: "100vh", background: `linear-gradient(135deg, ${S.dark} 0%, #1a2a3a 50%, ${S.dark} 100%)`, color: S.text, display: "flex", flexDirection: "column", alignItems: "center", paddingBottom: 80 }}>
-
-      {modal && (
-        <Modal title={modal === "terms" ? "Terms of Service" : "Privacy Policy"} content={modal === "terms" ? TERMS : PRIVACY} onClose={() => setModal(null)} />
-      )}
-
-      {screen === "disclaimer" && <DisclaimerScreen onFamily={() => setScreen("welcome")} onNurse={() => setScreen("nurse")} onModal={setModal} />}
-      {screen === "nurse" && <NurseScreen onBack={() => setScreen("disclaimer")} />}
-      {screen === "welcome" && <WelcomeScreen onStart={() => setScreen("quiz")} />}
-      {screen === "quiz" && <QuizScreen currentQ={currentQ} onAnswer={handleAnswer} />}
-      {screen === "guide" && <FreeGuideScreen answers={answers} onUnlock={() => window.open(STRIPE_6MONTH, "_blank")} />}
-
-      <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, borderTop: "1px solid rgba(255,255,255,0.04)", background: "rgba(10,21,32,0.97)", backdropFilter: "blur(10px)", padding: "10px 24px", textAlign: "center", zIndex: 50 }}>
-        <p style={{ fontSize: 10, color: "#2a2622", letterSpacing: 1, marginBottom: 3, fontFamily: "sans-serif" }}>NOT MEDICAL ADVICE · FOR INFORMATIONAL PURPOSES ONLY</p>
-        <p style={{ fontSize: 10, color: "#2a2622", fontFamily: "sans-serif" }}>
-          <span onClick={() => setModal("terms")} style={{ cursor: "pointer", textDecoration: "underline", color: "#3a3830" }}>Terms</span>
-          {" · "}
-          <span onClick={() => setModal("privacy")} style={{ cursor: "pointer", textDecoration: "underline", color: "#3a3830" }}>Privacy</span>
-          {" · "}
-          © 2026 LifeGuide
-        </p>
-      </div>
-    </div>
-  );
-}
+</body>
+</html>
