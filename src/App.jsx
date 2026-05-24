@@ -444,10 +444,10 @@ function EmailScreen({ onContinue }) {
       <div style={{ width: 1, height: 48, background: "linear-gradient(to bottom, transparent, #c8a97e, transparent)", margin: "0 auto 32px" }} />
       <p style={{ fontSize: 11, letterSpacing: 4, textTransform: "uppercase", color: S.gold, marginBottom: 16, fontFamily: "sans-serif" }}>Almost there</p>
       <h2 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 34, fontWeight: 300, color: S.goldLight, marginBottom: 12, lineHeight: 1.2, letterSpacing: -0.5 }}>
-        Where should we send<br />your First Week Guide?
+        Save your guide<br />before you continue
       </h2>
       <p style={{ fontSize: 14, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.6, marginBottom: 36 }}>
-        Enter your email and we'll send you a copy of your personalized guide — so you always have it when you need it.
+        Your First Week Guide is personalized to your situation. Enter your email and we'll save it for you — so you always have it when you need it, even if you close this tab.
       </p>
       <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 16 }}>
         <input type="email" value={email} onChange={e => { setEmail(e.target.value); setError(false); }} placeholder="Your email address"
@@ -455,12 +455,12 @@ function EmailScreen({ onContinue }) {
           onKeyDown={e => e.key === "Enter" && handleSubmit()}
         />
         <button onClick={handleSubmit} disabled={loading} style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", color: S.dark, border: "none", borderRadius: 10, padding: "18px", fontSize: 15, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif", boxShadow: "0 8px 24px rgba(200,169,126,0.25)", opacity: loading ? 0.7 : 1 }}>
-          {loading ? "Saving..." : "Build My Guide →"}
+          {loading ? "Saving..." : "Save My Guide →"}
         </button>
       </div>
       {error && <p style={{ fontSize: 13, color: "rgba(255,100,100,0.8)", fontFamily: "sans-serif", marginBottom: 12 }}>Please enter a valid email address.</p>}
       <button onClick={() => onContinue("")} style={{ background: "none", border: "none", color: S.textFaint, fontSize: 12, cursor: "pointer", fontFamily: "sans-serif", textDecoration: "underline", marginTop: 8 }}>
-        Skip for now
+        Continue without saving
       </button>
       <p style={{ fontSize: 11, color: S.textFaint, marginTop: 20, fontFamily: "sans-serif", lineHeight: 1.6 }}>
         No spam. No credit card. We'll only send you things that help.
@@ -501,7 +501,7 @@ function QuizScreen({ currentQ, onAnswer }) {
 }
 
 // ─── FREE GUIDE SCREEN ────────────────────────────────────────────────────────
-function FreeGuideScreen({ answers, onUnlock }) {
+function FreeGuideScreen({ answers, onUnlock, onReset }) {
   const [expanded, setExpanded] = useState(null);
   const situation = answers.situation || "parent_declining";
   const guide = firstWeekGuide[situation] || firstWeekGuide.parent_declining;
@@ -689,7 +689,21 @@ function FreeGuideScreen({ answers, onUnlock }) {
         </p>
       </div>
 
-      <button onClick={() => {}} style={{ background: "none", border: "none", color: S.textFaint, fontSize: 12, cursor: "pointer", fontFamily: "sans-serif", display: "block", margin: "24px auto 0", textDecoration: "underline" }}>
+      {/* Upgrade path for existing monthly subscribers */}
+      <div style={{ textAlign: "center", marginTop: 20, padding: "16px", background: "rgba(255,255,255,0.02)", borderRadius: 10, border: "1px solid rgba(255,255,255,0.06)" }}>
+        <p style={{ fontSize: 12, color: S.textFaint, fontFamily: "sans-serif", marginBottom: 6 }}>Already on the monthly plan?</p>
+        <span onClick={() => window.open(STRIPE_6MONTH, "_blank")} style={{ fontSize: 13, color: S.gold, cursor: "pointer", textDecoration: "underline", fontFamily: "sans-serif" }}>
+          Upgrade to 6 months and save $23 →
+        </span>
+      </div>
+
+      {/* Support */}
+      <p style={{ fontSize: 11, color: S.textFaint, fontFamily: "sans-serif", textAlign: "center", marginTop: 16 }}>
+        Need help?{" "}
+        <a href="mailto:lorenz@thelifeguide.app" style={{ color: S.gold, textDecoration: "underline" }}>lorenz@thelifeguide.app</a>
+      </p>
+
+      <button onClick={onReset} style={{ background: "none", border: "none", color: S.textFaint, fontSize: 12, cursor: "pointer", fontFamily: "sans-serif", display: "block", margin: "16px auto 0", textDecoration: "underline" }}>
         Start over
       </button>
     </div>
@@ -731,7 +745,7 @@ export default function App() {
       {screen === "welcome" && <WelcomeScreen onStart={() => setScreen("email")} />}
       {screen === "email" && <EmailScreen onContinue={(email) => setScreen("quiz")} />}
       {screen === "quiz" && <QuizScreen currentQ={currentQ} onAnswer={handleAnswer} />}
-      {screen === "guide" && <FreeGuideScreen answers={answers} onUnlock={() => window.open(STRIPE_6MONTH, "_blank")} />}
+      {screen === "guide" && <FreeGuideScreen answers={answers} onUnlock={() => window.open(STRIPE_6MONTH, "_blank")} onReset={handleReset} />}
 
       <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, borderTop: "1px solid rgba(255,255,255,0.04)", background: "rgba(10,21,32,0.97)", backdropFilter: "blur(10px)", padding: "10px 24px", textAlign: "center", zIndex: 50 }}>
         <p style={{ fontSize: 10, color: "#2a2622", letterSpacing: 1, marginBottom: 3, fontFamily: "sans-serif" }}>NOT MEDICAL ADVICE · FOR INFORMATIONAL PURPOSES ONLY</p>
