@@ -245,47 +245,30 @@ function Modal({ title, content, onClose }) {
   );
 }
 
-// ─── DISCLAIMER ───────────────────────────────────────────────────────────────
-function DisclaimerScreen({ onAccept, onModal }) {
+// ─── DISCLAIMER + ENTRY COMBINED ─────────────────────────────────────────────
+function DisclaimerScreen({ onFamily, onNurse, onModal }) {
   return (
-    <div style={{ maxWidth: 480, width: "100%", textAlign: "center", margin: "0 auto", padding: "80px 24px 40px" }}>
-      <div style={{ width: 64, height: 64, borderRadius: "50%", background: "linear-gradient(135deg, #c8a97e, #e8d5b7)", margin: "0 auto 28px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28, boxShadow: "0 0 40px rgba(200,169,126,0.3)" }}>🕊️</div>
-      <h1 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 40, fontWeight: 300, color: S.goldLight, marginBottom: 6, letterSpacing: -1 }}>LifeGuide</h1>
-      <p style={{ fontSize: 11, letterSpacing: 4, textTransform: "uppercase", color: S.gold, marginBottom: 36, fontFamily: "sans-serif" }}>Family Care Navigator</p>
-      <div style={{ background: "rgba(200,169,126,0.06)", border: "1px solid rgba(200,169,126,0.2)", borderRadius: 14, padding: 24, marginBottom: 28, textAlign: "left" }}>
-        <p style={{ fontSize: 11, letterSpacing: 2, textTransform: "uppercase", color: S.gold, fontFamily: "sans-serif", marginBottom: 12 }}>⚠ Important Notice</p>
-        <p style={{ fontSize: 13, color: S.textDim, lineHeight: 1.7, fontFamily: "sans-serif" }}>{DISCLAIMER}</p>
+    <div style={{ maxWidth: 520, width: "100%", margin: "0 auto", padding: "60px 24px 40px", textAlign: "center" }}>
+
+      {/* Logo */}
+      <div style={{ width: 64, height: 64, borderRadius: "50%", background: "linear-gradient(135deg, #c8a97e, #e8d5b7)", margin: "0 auto 20px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28, boxShadow: "0 0 40px rgba(200,169,126,0.3)" }}>🕊️</div>
+      <h1 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 40, fontWeight: 300, color: S.goldLight, marginBottom: 4, letterSpacing: -1 }}>LifeGuide</h1>
+      <p style={{ fontSize: 11, letterSpacing: 4, textTransform: "uppercase", color: S.gold, marginBottom: 28, fontFamily: "sans-serif" }}>Family Care Navigator</p>
+
+      {/* Disclaimer */}
+      <div style={{ background: "rgba(200,169,126,0.06)", border: "1px solid rgba(200,169,126,0.2)", borderRadius: 14, padding: "18px 20px", marginBottom: 28, textAlign: "left" }}>
+        <p style={{ fontSize: 11, letterSpacing: 2, textTransform: "uppercase", color: S.gold, fontFamily: "sans-serif", marginBottom: 8 }}>⚠ Important Notice</p>
+        <p style={{ fontSize: 12, color: S.textDim, lineHeight: 1.7, fontFamily: "sans-serif" }}>{DISCLAIMER}</p>
       </div>
-      <p style={{ fontSize: 13, color: S.textFaint, fontFamily: "sans-serif", marginBottom: 28, lineHeight: 1.6 }}>
-        By continuing you agree to our{" "}
-        <span onClick={() => onModal("terms")} style={{ color: S.gold, cursor: "pointer", textDecoration: "underline" }}>Terms of Service</span>
-        {" "}and{" "}
-        <span onClick={() => onModal("privacy")} style={{ color: S.gold, cursor: "pointer", textDecoration: "underline" }}>Privacy Policy</span>.
-      </p>
-      <button onClick={onAccept} style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", color: S.dark, border: "none", borderRadius: 8, padding: "18px 48px", fontSize: 16, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif", letterSpacing: 1, boxShadow: "0 8px 32px rgba(200,169,126,0.25)", width: "100%" }}>
-        I Understand — Begin My Guide
-      </button>
-      <p style={{ fontSize: 11, color: S.textFaint, marginTop: 16, fontFamily: "sans-serif" }}>LifeGuide does not collect medical information</p>
-    </div>
-  );
-}
 
-// ─── ENTRY SCREEN ────────────────────────────────────────────────────────────
-function EntryScreen({ onFamily, onNurse }) {
-  return (
-    <div style={{ maxWidth: 520, width: "100%", margin: "0 auto", padding: "80px 24px 40px", textAlign: "center" }}>
-      <div style={{ width: 1, height: 48, background: "linear-gradient(to bottom, transparent, #c8a97e, transparent)", margin: "0 auto 32px" }} />
-      <p style={{ fontSize: 11, letterSpacing: 4, textTransform: "uppercase", color: S.gold, marginBottom: 20, fontFamily: "sans-serif" }}>Welcome to LifeGuide</p>
-      <h2 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 32, fontWeight: 300, color: S.goldLight, marginBottom: 12, letterSpacing: -0.5 }}>Who are you here for?</h2>
-      <p style={{ fontSize: 14, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.6, marginBottom: 48 }}>
-        LifeGuide is built for families navigating end-of-life care — and the professionals who support them.
-      </p>
+      {/* Who are you */}
+      <p style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 22, color: S.goldLight, marginBottom: 20 }}>Who are you here for?</p>
 
-      {/* Family — Primary large card */}
+      {/* Family — Primary */}
       <div onClick={onFamily} style={{
         background: "linear-gradient(135deg, rgba(200,169,126,0.15), rgba(200,169,126,0.05))",
         border: "1px solid rgba(200,169,126,0.4)",
-        borderRadius: 20, padding: "36px 28px", marginBottom: 16,
+        borderRadius: 16, padding: "28px 24px", marginBottom: 12,
         cursor: "pointer", transition: "all 0.3s",
         boxShadow: "0 8px 40px rgba(200,169,126,0.15)",
         position: "relative", overflow: "hidden"
@@ -294,37 +277,44 @@ function EntryScreen({ onFamily, onNurse }) {
         onMouseOut={e => e.currentTarget.style.boxShadow = "0 8px 40px rgba(200,169,126,0.15)"}
       >
         <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: "linear-gradient(90deg, transparent, #c8a97e, transparent)" }} />
-        <div style={{ fontSize: 40, marginBottom: 16 }}>🕊️</div>
-        <h3 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 28, fontWeight: 400, color: S.goldLight, marginBottom: 10, lineHeight: 1.2 }}>
-          I'm a family member<br />or caregiver
+        <div style={{ fontSize: 32, marginBottom: 10 }}>🕊️</div>
+        <h3 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 24, fontWeight: 400, color: S.goldLight, marginBottom: 8, lineHeight: 1.2 }}>
+          I'm a family member or caregiver
         </h3>
-        <p style={{ fontSize: 14, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.6, marginBottom: 24 }}>
-          Someone I love is declining and I need guidance, clarity, and a roadmap through this.
+        <p style={{ fontSize: 13, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.6, marginBottom: 20 }}>
+          Someone I love is declining and I need guidance, clarity, and a roadmap.
         </p>
-        <div style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", borderRadius: 10, padding: "16px 24px", display: "inline-block" }}>
-          <span style={{ color: S.dark, fontSize: 14, fontWeight: 700, fontFamily: "sans-serif", letterSpacing: 1 }}>Get My Free First Week Guide →</span>
+        <div style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", borderRadius: 8, padding: "14px 24px", display: "inline-block" }}>
+          <span style={{ color: S.dark, fontSize: 14, fontWeight: 700, fontFamily: "sans-serif" }}>Get My Free First Week Guide →</span>
         </div>
-        <p style={{ fontSize: 11, color: S.textFaint, marginTop: 12, fontFamily: "sans-serif" }}>Free to start · No credit card</p>
+        <p style={{ fontSize: 11, color: S.textFaint, marginTop: 10, fontFamily: "sans-serif" }}>Free to start · No credit card</p>
       </div>
 
-      {/* Nurse — Secondary smaller card */}
+      {/* Nurse — Secondary */}
       <div onClick={onNurse} style={{
         background: "rgba(255,255,255,0.02)",
         border: "1px solid rgba(255,255,255,0.1)",
-        borderRadius: 14, padding: "20px 24px",
+        borderRadius: 12, padding: "16px 20px", marginBottom: 20,
         cursor: "pointer", transition: "all 0.3s",
-        display: "flex", alignItems: "center", gap: 16, textAlign: "left"
+        display: "flex", alignItems: "center", gap: 14, textAlign: "left"
       }}
         onMouseOver={e => { e.currentTarget.style.background = "rgba(255,255,255,0.04)"; e.currentTarget.style.borderColor = "rgba(200,169,126,0.2)"; }}
         onMouseOut={e => { e.currentTarget.style.background = "rgba(255,255,255,0.02)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)"; }}
       >
-        <div style={{ fontSize: 28, flexShrink: 0 }}>⚕️</div>
+        <div style={{ fontSize: 24, flexShrink: 0 }}>⚕️</div>
         <div style={{ flex: 1 }}>
-          <p style={{ fontSize: 15, color: S.textDim, fontFamily: "Cormorant Garamond, serif", marginBottom: 4 }}>I'm a hospice or healthcare professional</p>
+          <p style={{ fontSize: 15, color: S.textDim, fontFamily: "Cormorant Garamond, serif", marginBottom: 2 }}>I'm a hospice or healthcare professional</p>
           <p style={{ fontSize: 12, color: S.textFaint, fontFamily: "sans-serif" }}>Learn about LifeGuide Pro — built for care teams</p>
         </div>
         <span style={{ color: S.textFaint, fontSize: 18, flexShrink: 0 }}>→</span>
       </div>
+
+      <p style={{ fontSize: 11, color: S.textFaint, fontFamily: "sans-serif", lineHeight: 1.6 }}>
+        By continuing you agree to our{" "}
+        <span onClick={() => onModal("terms")} style={{ color: S.gold, cursor: "pointer", textDecoration: "underline" }}>Terms</span>
+        {" "}and{" "}
+        <span onClick={() => onModal("privacy")} style={{ color: S.gold, cursor: "pointer", textDecoration: "underline" }}>Privacy Policy</span>.
+      </p>
     </div>
   );
 }
@@ -689,9 +679,8 @@ export default function App() {
         <Modal title={modal === "terms" ? "Terms of Service" : "Privacy Policy"} content={modal === "terms" ? TERMS : PRIVACY} onClose={() => setModal(null)} />
       )}
 
-      {screen === "disclaimer" && <DisclaimerScreen onAccept={() => setScreen("entry")} onModal={setModal} />}
-      {screen === "entry" && <EntryScreen onFamily={() => setScreen("welcome")} onNurse={() => setScreen("nurse")} />}
-      {screen === "nurse" && <NurseScreen onBack={() => setScreen("entry")} />}
+      {screen === "disclaimer" && <DisclaimerScreen onFamily={() => setScreen("welcome")} onNurse={() => setScreen("nurse")} onModal={setModal} />}
+      {screen === "nurse" && <NurseScreen onBack={() => setScreen("disclaimer")} />}
       {screen === "welcome" && <WelcomeScreen onStart={() => setScreen("quiz")} />}
       {screen === "quiz" && <QuizScreen currentQ={currentQ} onAnswer={handleAnswer} />}
       {screen === "guide" && <FreeGuideScreen answers={answers} onUnlock={() => window.open(STRIPE_6MONTH, "_blank")} />}
