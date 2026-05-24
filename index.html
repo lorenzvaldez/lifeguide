@@ -612,7 +612,13 @@
 <!-- NAV -->
 <nav>
   <a href="#" class="nav-logo">LifeGuide</a>
-  <a href="#waitlist" class="nav-cta">Join Waitlist</a>
+  <div style="display: flex; gap: 16px; align-items: center;">
+    <a href="#lifeguidepro" class="nav-cta" style="border-color: rgba(200,169,126,0.6); display: flex; align-items: center; gap: 8px;">
+      <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--gold); display: inline-block; animation: pulse 2s infinite;"></span>
+      LifeGuide Pro — For Nurses
+    </a>
+    <a href="#waitlist" class="nav-cta">Join Waitlist</a>
+  </div>
 </nav>
 
 <!-- HERO -->
@@ -778,31 +784,69 @@
 </div>
 
 <!-- PRICING -->
-<section>
+
+
+<!-- CTA -->
+<!-- LIFEGUIDE PRO COMING SOON -->
+<section id="lifeguidepro" style="background: var(--dark);">
   <div class="section-inner">
-    <div class="reveal" style="text-align: center;">
-      <span class="section-label">Simple Pricing</span>
-      <h2 class="section-title">One family. One price.<br><em>Everything included.</em></h2>
+    <div class="reveal" style="text-align: center; max-width: 700px; margin: 0 auto;">
+      <div style="display: inline-flex; align-items: center; gap: 10px; background: rgba(200,169,126,0.08); border: 1px solid rgba(200,169,126,0.2); border-radius: 20px; padding: 8px 20px; margin-bottom: 32px;">
+        <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--gold); display: inline-block; animation: pulse 2s infinite;"></span>
+        <span style="font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); font-family: sans-serif;">Coming Soon</span>
+      </div>
+      <h2 class="section-title">Introducing<br><em>LifeGuide Pro</em></h2>
+      <p class="section-body" style="margin: 0 auto 48px; text-align: center;">
+        Built for the professionals who show up every day for families in crisis.
+        Hospice nurses, social workers, chaplains, and care teams —
+        LifeGuide Pro gives you the tools to support every family you serve.
+      </p>
     </div>
-    <div class="pricing-card reveal">
-      <span class="pricing-label">Monthly Membership</span>
-      <div class="pricing-amount">$20</div>
-      <p class="pricing-period">per month · cancel anytime</p>
-      <ul class="pricing-features">
-        <li class="pricing-feature"><span class="pricing-check">✦</span> Personalized care navigator</li>
-        <li class="pricing-feature"><span class="pricing-check">✦</span> Full document checklist with plain-language guides</li>
-        <li class="pricing-feature"><span class="pricing-check">✦</span> Doctor visit question generator</li>
-        <li class="pricing-feature"><span class="pricing-check">✦</span> Family coordination tools</li>
-        <li class="pricing-feature"><span class="pricing-check">✦</span> Grief & transition resources</li>
-        <li class="pricing-feature"><span class="pricing-check">✦</span> Private, secure, no medical data collected</li>
-      </ul>
-      <button class="pricing-btn">Join the Waitlist — Launching Soon</button>
-      <p class="pricing-note">Early members lock in this price forever</p>
+
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 56px;" class="reveal">
+      <div style="padding: 32px 28px; background: rgba(200,169,126,0.04); border: 1px solid rgba(200,169,126,0.12); border-radius: 8px; text-align: center; position: relative; overflow: hidden;">
+        <div style="position: absolute; top: 16px; right: 16px; background: rgba(200,169,126,0.1); border: 1px solid rgba(200,169,126,0.2); border-radius: 10px; padding: 3px 10px; font-size: 9px; letter-spacing: 2px; color: var(--gold); font-family: sans-serif; text-transform: uppercase;">Pro</div>
+        <div style="font-size: 32px; margin-bottom: 16px;">📤</div>
+        <div style="font-family: 'Cormorant Garamond', serif; font-size: 18px; color: var(--gold-light); margin-bottom: 10px;">Family Onboarding</div>
+        <p style="font-size: 13px; color: var(--text-dim); line-height: 1.6;">Send a personalized LifeGuide link to every new family on day one. No more paper packets.</p>
+      </div>
+      <div style="padding: 32px 28px; background: rgba(200,169,126,0.04); border: 1px solid rgba(200,169,126,0.12); border-radius: 8px; text-align: center; position: relative; overflow: hidden;">
+        <div style="position: absolute; top: 16px; right: 16px; background: rgba(200,169,126,0.1); border: 1px solid rgba(200,169,126,0.2); border-radius: 10px; padding: 3px 10px; font-size: 9px; letter-spacing: 2px; color: var(--gold); font-family: sans-serif; text-transform: uppercase;">Pro</div>
+        <div style="font-size: 32px; margin-bottom: 16px;">📊</div>
+        <div style="font-family: 'Cormorant Garamond', serif; font-size: 18px; color: var(--gold-light); margin-bottom: 10px;">Family Dashboard</div>
+        <p style="font-size: 13px; color: var(--text-dim); line-height: 1.6;">See where each family is in their journey. Know what they need before they call you.</p>
+      </div>
+      <div style="padding: 32px 28px; background: rgba(200,169,126,0.04); border: 1px solid rgba(200,169,126,0.12); border-radius: 8px; text-align: center; position: relative; overflow: hidden;">
+        <div style="position: absolute; top: 16px; right: 16px; background: rgba(200,169,126,0.1); border: 1px solid rgba(200,169,126,0.2); border-radius: 10px; padding: 3px 10px; font-size: 9px; letter-spacing: 2px; color: var(--gold); font-family: sans-serif; text-transform: uppercase;">Pro</div>
+        <div style="font-size: 32px; margin-bottom: 16px;">💬</div>
+        <div style="font-family: 'Cormorant Garamond', serif; font-size: 18px; color: var(--gold-light); margin-bottom: 10px;">Direct Messaging</div>
+        <p style="font-size: 13px; color: var(--text-dim); line-height: 1.6;">Share resources, notes, and updates directly into the family's guide. Everything in one place.</p>
+      </div>
+    </div>
+
+    <div class="reveal" style="max-width: 520px; margin: 0 auto; background: rgba(200,169,126,0.05); border: 1px solid rgba(200,169,126,0.2); border-radius: 12px; padding: 40px; text-align: center;">
+      <p style="font-family: 'Cormorant Garamond', serif; font-size: 22px; color: var(--gold-light); margin-bottom: 8px; font-style: italic;">Are you a hospice professional?</p>
+      <p style="font-size: 14px; color: var(--text-dim); margin-bottom: 28px; line-height: 1.6;">Join the LifeGuide Pro waitlist. Early access members help shape the product and lock in founding pricing.</p>
+      <div style="display: flex; gap: 0;">
+        <input type="email" id="pro-email" placeholder="Your work email" style="flex: 1; background: rgba(255,255,255,0.04); border: 1px solid rgba(200,169,126,0.2); border-right: none; color: var(--text); padding: 16px 20px; font-family: 'Jost', sans-serif; font-size: 14px; outline: none; border-radius: 2px 0 0 2px;">
+        <button onclick="joinWaitlist('pro-email', 'pro-success')" style="background: linear-gradient(135deg, var(--gold), #a8895e); border: none; color: var(--dark); padding: 16px 24px; font-family: 'Jost', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; border-radius: 0 2px 2px 0; white-space: nowrap;">Join Pro List</button>
+      </div>
+      <p class="success-msg" id="pro-success">You're on the Pro list. We'll be in touch. 🕊️</p>
+      <p style="font-size: 11px; color: var(--text-faint); margin-top: 12px;">No commitment · We'll reach out when Pro launches</p>
     </div>
   </div>
 </section>
 
-<!-- CTA -->
+<style>
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+@media (max-width: 768px) {
+  .pro-grid { grid-template-columns: 1fr !important; }
+}
+</style>
+
 <section class="cta-section">
   <div class="section-inner" style="text-align: center;">
     <div class="reveal">
