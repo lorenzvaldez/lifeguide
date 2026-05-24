@@ -270,7 +270,143 @@ function DisclaimerScreen({ onAccept, onModal }) {
   );
 }
 
-// ─── WELCOME ──────────────────────────────────────────────────────────────────
+// ─── ENTRY SCREEN ────────────────────────────────────────────────────────────
+function EntryScreen({ onFamily, onNurse }) {
+  return (
+    <div style={{ maxWidth: 520, width: "100%", margin: "0 auto", padding: "80px 24px 40px", textAlign: "center" }}>
+      <div style={{ width: 1, height: 48, background: "linear-gradient(to bottom, transparent, #c8a97e, transparent)", margin: "0 auto 32px" }} />
+      <p style={{ fontSize: 11, letterSpacing: 4, textTransform: "uppercase", color: S.gold, marginBottom: 20, fontFamily: "sans-serif" }}>Welcome to LifeGuide</p>
+      <h2 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 32, fontWeight: 300, color: S.goldLight, marginBottom: 12, letterSpacing: -0.5 }}>Who are you here for?</h2>
+      <p style={{ fontSize: 14, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.6, marginBottom: 48 }}>
+        LifeGuide is built for families navigating end-of-life care — and the professionals who support them.
+      </p>
+
+      {/* Family — Primary large card */}
+      <div onClick={onFamily} style={{
+        background: "linear-gradient(135deg, rgba(200,169,126,0.15), rgba(200,169,126,0.05))",
+        border: "1px solid rgba(200,169,126,0.4)",
+        borderRadius: 20, padding: "36px 28px", marginBottom: 16,
+        cursor: "pointer", transition: "all 0.3s",
+        boxShadow: "0 8px 40px rgba(200,169,126,0.15)",
+        position: "relative", overflow: "hidden"
+      }}
+        onMouseOver={e => e.currentTarget.style.boxShadow = "0 12px 48px rgba(200,169,126,0.25)"}
+        onMouseOut={e => e.currentTarget.style.boxShadow = "0 8px 40px rgba(200,169,126,0.15)"}
+      >
+        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: "linear-gradient(90deg, transparent, #c8a97e, transparent)" }} />
+        <div style={{ fontSize: 40, marginBottom: 16 }}>🕊️</div>
+        <h3 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 28, fontWeight: 400, color: S.goldLight, marginBottom: 10, lineHeight: 1.2 }}>
+          I'm a family member<br />or caregiver
+        </h3>
+        <p style={{ fontSize: 14, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.6, marginBottom: 24 }}>
+          Someone I love is declining and I need guidance, clarity, and a roadmap through this.
+        </p>
+        <div style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", borderRadius: 10, padding: "16px 24px", display: "inline-block" }}>
+          <span style={{ color: S.dark, fontSize: 14, fontWeight: 700, fontFamily: "sans-serif", letterSpacing: 1 }}>Get My Free First Week Guide →</span>
+        </div>
+        <p style={{ fontSize: 11, color: S.textFaint, marginTop: 12, fontFamily: "sans-serif" }}>Free to start · No credit card</p>
+      </div>
+
+      {/* Nurse — Secondary smaller card */}
+      <div onClick={onNurse} style={{
+        background: "rgba(255,255,255,0.02)",
+        border: "1px solid rgba(255,255,255,0.1)",
+        borderRadius: 14, padding: "20px 24px",
+        cursor: "pointer", transition: "all 0.3s",
+        display: "flex", alignItems: "center", gap: 16, textAlign: "left"
+      }}
+        onMouseOver={e => { e.currentTarget.style.background = "rgba(255,255,255,0.04)"; e.currentTarget.style.borderColor = "rgba(200,169,126,0.2)"; }}
+        onMouseOut={e => { e.currentTarget.style.background = "rgba(255,255,255,0.02)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)"; }}
+      >
+        <div style={{ fontSize: 28, flexShrink: 0 }}>⚕️</div>
+        <div style={{ flex: 1 }}>
+          <p style={{ fontSize: 15, color: S.textDim, fontFamily: "Cormorant Garamond, serif", marginBottom: 4 }}>I'm a hospice or healthcare professional</p>
+          <p style={{ fontSize: 12, color: S.textFaint, fontFamily: "sans-serif" }}>Learn about LifeGuide Pro — built for care teams</p>
+        </div>
+        <span style={{ color: S.textFaint, fontSize: 18, flexShrink: 0 }}>→</span>
+      </div>
+    </div>
+  );
+}
+
+// ─── NURSE PRO SCREEN ─────────────────────────────────────────────────────────
+function NurseScreen({ onBack }) {
+  const [submitted, setSubmitted] = useState(false);
+  const [email, setEmail] = useState("");
+
+  const handleSubmit = async () => {
+    if (!email || !email.includes("@")) return;
+    try {
+      await fetch("/api/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, tag: "lifeguide-pro-nurse" }),
+      });
+      setSubmitted(true);
+    } catch (e) {
+      setSubmitted(true);
+    }
+  };
+
+  return (
+    <div style={{ maxWidth: 520, width: "100%", margin: "0 auto", padding: "60px 24px 120px" }}>
+      <button onClick={onBack} style={{ background: "none", border: "none", color: S.textFaint, fontSize: 13, cursor: "pointer", fontFamily: "sans-serif", marginBottom: 32, display: "flex", alignItems: "center", gap: 8 }}>
+        ← Back
+      </button>
+
+      <div style={{ textAlign: "center", marginBottom: 40 }}>
+        <div style={{ fontSize: 48, marginBottom: 16 }}>⚕️</div>
+        <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(200,169,126,0.08)", border: "1px solid rgba(200,169,126,0.2)", borderRadius: 20, padding: "6px 16px", marginBottom: 20 }}>
+          <span style={{ width: 6, height: 6, borderRadius: "50%", background: S.gold, display: "inline-block", animation: "pulse 2s infinite" }} />
+          <span style={{ fontSize: 11, color: S.gold, fontFamily: "sans-serif", letterSpacing: 2, textTransform: "uppercase" }}>Coming Soon</span>
+        </div>
+        <h2 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 34, fontWeight: 300, color: S.goldLight, marginBottom: 12, lineHeight: 1.2 }}>LifeGuide Pro</h2>
+        <p style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 18, fontStyle: "italic", color: S.textDim, marginBottom: 24 }}>For hospice nurses, social workers, and care teams</p>
+        <p style={{ fontSize: 14, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.7, marginBottom: 40 }}>
+          You show up every day for families in the hardest moments of their lives. LifeGuide Pro gives you the tools to support every family you serve — from onboarding to the final days.
+        </p>
+      </div>
+
+      {/* Pro Features */}
+      <div style={{ display: "flex", flexDirection: "column", gap: 14, marginBottom: 40 }}>
+        {[
+          { icon: "📤", title: "Family Onboarding", desc: "Send a personalized LifeGuide link to every new family on day one. No more paper packets." },
+          { icon: "📊", title: "Family Dashboard", desc: "See where each family is in their journey. Know what they need before they call you." },
+          { icon: "💬", title: "Direct Messaging", desc: "Share resources and notes directly into the family's guide. Everything in one place." },
+          { icon: "📋", title: "Custom Resource Library", desc: "Build your own resource library for your patients. Tailored to your organization." },
+        ].map((f, i) => (
+          <div key={i} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 12, padding: "18px 20px", display: "flex", gap: 14, alignItems: "flex-start" }}>
+            <span style={{ fontSize: 22, flexShrink: 0 }}>{f.icon}</span>
+            <div>
+              <p style={{ fontSize: 15, color: S.goldLight, fontFamily: "Cormorant Garamond, serif", marginBottom: 4 }}>{f.title}</p>
+              <p style={{ fontSize: 12, color: S.textFaint, fontFamily: "sans-serif", lineHeight: 1.6 }}>{f.desc}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Pro Waitlist */}
+      <div style={{ background: "rgba(200,169,126,0.06)", border: "1px solid rgba(200,169,126,0.2)", borderRadius: 16, padding: "28px 24px", textAlign: "center" }}>
+        {submitted ? (
+          <div>
+            <p style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 22, color: S.goldLight, marginBottom: 8 }}>You're on the list. 🕊️</p>
+            <p style={{ fontSize: 13, color: S.textDim, fontFamily: "sans-serif" }}>We'll reach out when LifeGuide Pro launches. Thank you for what you do.</p>
+          </div>
+        ) : (
+          <div>
+            <p style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 20, color: S.goldLight, marginBottom: 8 }}>Join the LifeGuide Pro waitlist</p>
+            <p style={{ fontSize: 13, color: S.textDim, fontFamily: "sans-serif", marginBottom: 20 }}>Early access members help shape the product and lock in founding pricing.</p>
+            <div style={{ display: "flex", gap: 0, marginBottom: 12 }}>
+              <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Your work email" style={{ flex: 1, background: "rgba(255,255,255,0.04)", border: "1px solid rgba(200,169,126,0.2)", borderRight: "none", color: S.text, padding: "14px 18px", fontFamily: "sans-serif", fontSize: 14, outline: "none", borderRadius: "8px 0 0 8px" }} />
+              <button onClick={handleSubmit} style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", border: "none", color: S.dark, padding: "14px 20px", fontFamily: "sans-serif", fontSize: 13, fontWeight: 700, cursor: "pointer", borderRadius: "0 8px 8px 0", whiteSpace: "nowrap" }}>Join Pro List</button>
+            </div>
+            <p style={{ fontSize: 11, color: S.textFaint, fontFamily: "sans-serif" }}>No commitment · We'll reach out when Pro launches</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
 function WelcomeScreen({ onStart }) {
   return (
     <div style={{ maxWidth: 520, width: "100%", textAlign: "center", margin: "0 auto", padding: "80px 24px 40px" }}>
@@ -553,7 +689,9 @@ export default function App() {
         <Modal title={modal === "terms" ? "Terms of Service" : "Privacy Policy"} content={modal === "terms" ? TERMS : PRIVACY} onClose={() => setModal(null)} />
       )}
 
-      {screen === "disclaimer" && <DisclaimerScreen onAccept={() => setScreen("welcome")} onModal={setModal} />}
+      {screen === "disclaimer" && <DisclaimerScreen onAccept={() => setScreen("entry")} onModal={setModal} />}
+      {screen === "entry" && <EntryScreen onFamily={() => setScreen("welcome")} onNurse={() => setScreen("nurse")} />}
+      {screen === "nurse" && <NurseScreen onBack={() => setScreen("entry")} />}
       {screen === "welcome" && <WelcomeScreen onStart={() => setScreen("quiz")} />}
       {screen === "quiz" && <QuizScreen currentQ={currentQ} onAnswer={handleAnswer} />}
       {screen === "guide" && <FreeGuideScreen answers={answers} onUnlock={() => window.open(STRIPE_6MONTH, "_blank")} />}
