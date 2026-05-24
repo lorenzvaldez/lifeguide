@@ -897,20 +897,34 @@
   reveals.forEach(el => observer.observe(el));
 
   // Waitlist form
-  function joinWaitlist(inputId, successId) {
-    const email = document.getElementById(inputId).value;
+  async function joinWaitlist(inputId, successId, tag = 'waitlist') {
+    const emailEl = document.getElementById(inputId);
+    const email = emailEl.value;
     if (!email || !email.includes('@')) {
-      document.getElementById(inputId).style.borderColor = 'rgba(255,100,100,0.5)';
+      emailEl.style.borderColor = 'rgba(255,100,100,0.5)';
       return;
     }
-    document.getElementById(inputId).value = '';
-    document.getElementById(inputId).style.display = 'none';
-    const btn = document.getElementById(inputId).nextElementSibling;
-    if (btn) btn.style.display = 'none';
-    document.getElementById(successId).style.display = 'block';
+    const btn = emailEl.nextElementSibling;
+    if (btn) btn.textContent = 'Joining...';
 
-    // TODO: Connect to Mailchimp or your email capture here
-    console.log('Waitlist signup:', email);
+    try {
+      const res = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, tag }),
+      });
+
+      if (res.ok) {
+        emailEl.value = '';
+        emailEl.style.display = 'none';
+        if (btn) btn.style.display = 'none';
+        document.getElementById(successId).style.display = 'block';
+      } else {
+        if (btn) btn.textContent = 'Try Again';
+      }
+    } catch (err) {
+      if (btn) btn.textContent = 'Try Again';
+    }
   }
 </script>
 
