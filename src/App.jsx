@@ -281,7 +281,6 @@ function DisclaimerScreen({ onFamily, onNurse, onModal }) {
         <div style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", borderRadius: 8, padding: "14px 24px", display: "inline-block" }}>
           <span style={{ color: S.dark, fontSize: 14, fontWeight: 700, fontFamily: "sans-serif" }}>Show Me What To Do →</span>
         </div>
-        <p style={{ fontSize: 11, color: S.textFaint, marginTop: 10, fontFamily: "sans-serif" }}>No credit card required</p>
       </div>
 
       {/* Nurse — Secondary */}
