@@ -281,7 +281,7 @@ function DisclaimerScreen({ onFamily, onNurse, onModal }) {
         <div style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", borderRadius: 8, padding: "14px 24px", display: "inline-block" }}>
           <span style={{ color: S.dark, fontSize: 14, fontWeight: 700, fontFamily: "sans-serif" }}>Show Me What To Do →</span>
         </div>
-        <p style={{ fontSize: 11, color: S.textFaint, marginTop: 10, fontFamily: "sans-serif" }}>Free to start · No credit card</p>
+        <p style={{ fontSize: 11, color: S.textFaint, marginTop: 10, fontFamily: "sans-serif" }}>No credit card required</p>
       </div>
 
       {/* Nurse — Secondary */}
@@ -413,9 +413,9 @@ function WelcomeScreen({ onStart }) {
         Start with your free First Week Guide — built specifically for your situation.
       </p>
       <button onClick={onStart} style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", color: S.dark, border: "none", borderRadius: 8, padding: "20px 56px", fontSize: 16, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif", letterSpacing: 1, boxShadow: "0 8px 32px rgba(200,169,126,0.3)" }}>
-        Get My Free First Week Guide →
+        Start My Free Guide →
       </button>
-      <p style={{ fontSize: 12, color: S.textFaint, marginTop: 20, fontFamily: "sans-serif" }}>Takes 2 minutes · Free · No credit card</p>
+      <p style={{ fontSize: 12, color: S.textFaint, marginTop: 20, fontFamily: "sans-serif" }}>No credit card required</p>
     </div>
   );
 }
