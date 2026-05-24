@@ -419,7 +419,57 @@ function WelcomeScreen({ onStart }) {
   );
 }
 
-// ─── QUIZ ─────────────────────────────────────────────────────────────────────
+// ─── EMAIL CAPTURE SCREEN ─────────────────────────────────────────────────────
+function EmailScreen({ onContinue }) {
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+
+  const handleSubmit = async () => {
+    if (!email || !email.includes("@")) { setError(true); return; }
+    setLoading(true);
+    try {
+      await fetch("/api/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, tag: "lifeguide-family" }),
+      });
+    } catch (e) {}
+    setLoading(false);
+    onContinue(email);
+  };
+
+  return (
+    <div style={{ maxWidth: 480, width: "100%", textAlign: "center", margin: "0 auto", padding: "80px 24px 40px" }}>
+      <div style={{ width: 1, height: 48, background: "linear-gradient(to bottom, transparent, #c8a97e, transparent)", margin: "0 auto 32px" }} />
+      <p style={{ fontSize: 11, letterSpacing: 4, textTransform: "uppercase", color: S.gold, marginBottom: 16, fontFamily: "sans-serif" }}>Almost there</p>
+      <h2 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 34, fontWeight: 300, color: S.goldLight, marginBottom: 12, lineHeight: 1.2, letterSpacing: -0.5 }}>
+        Where should we send<br />your First Week Guide?
+      </h2>
+      <p style={{ fontSize: 14, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.6, marginBottom: 36 }}>
+        Enter your email and we'll send you a copy of your personalized guide — so you always have it when you need it.
+      </p>
+      <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 16 }}>
+        <input type="email" value={email} onChange={e => { setEmail(e.target.value); setError(false); }} placeholder="Your email address"
+          style={{ background: "rgba(255,255,255,0.04)", border: `1px solid ${error ? "rgba(255,100,100,0.5)" : "rgba(200,169,126,0.3)"}`, color: S.text, padding: "18px 24px", fontFamily: "sans-serif", fontSize: 15, outline: "none", borderRadius: 10, width: "100%", textAlign: "center" }}
+          onKeyDown={e => e.key === "Enter" && handleSubmit()}
+        />
+        <button onClick={handleSubmit} disabled={loading} style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", color: S.dark, border: "none", borderRadius: 10, padding: "18px", fontSize: 15, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif", boxShadow: "0 8px 24px rgba(200,169,126,0.25)", opacity: loading ? 0.7 : 1 }}>
+          {loading ? "Saving..." : "Build My Guide →"}
+        </button>
+      </div>
+      {error && <p style={{ fontSize: 13, color: "rgba(255,100,100,0.8)", fontFamily: "sans-serif", marginBottom: 12 }}>Please enter a valid email address.</p>}
+      <button onClick={() => onContinue("")} style={{ background: "none", border: "none", color: S.textFaint, fontSize: 12, cursor: "pointer", fontFamily: "sans-serif", textDecoration: "underline", marginTop: 8 }}>
+        Skip for now
+      </button>
+      <p style={{ fontSize: 11, color: S.textFaint, marginTop: 20, fontFamily: "sans-serif", lineHeight: 1.6 }}>
+        No spam. No credit card. We'll only send you things that help.
+      </p>
+    </div>
+  );
+}
+
+// ─── QUIZ SCREEN ──────────────────────────────────────────────────────────────
 function QuizScreen({ currentQ, onAnswer }) {
   const q = questions[currentQ];
   const [selected, setSelected] = useState(null);
@@ -678,7 +728,8 @@ export default function App() {
 
       {screen === "disclaimer" && <DisclaimerScreen onFamily={() => setScreen("welcome")} onNurse={() => setScreen("nurse")} onModal={setModal} />}
       {screen === "nurse" && <NurseScreen onBack={() => setScreen("disclaimer")} />}
-      {screen === "welcome" && <WelcomeScreen onStart={() => setScreen("quiz")} />}
+      {screen === "welcome" && <WelcomeScreen onStart={() => setScreen("email")} />}
+      {screen === "email" && <EmailScreen onContinue={(email) => setScreen("quiz")} />}
       {screen === "quiz" && <QuizScreen currentQ={currentQ} onAnswer={handleAnswer} />}
       {screen === "guide" && <FreeGuideScreen answers={answers} onUnlock={() => window.open(STRIPE_6MONTH, "_blank")} />}
 
