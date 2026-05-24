@@ -2,7 +2,9 @@ import { useState } from "react";
 
 // ─── CONSTANTS ───────────────────────────────────────────────────────────────
 
-const STRIPE_LINK = "https://buy.stripe.com/lifeguide"; // Replace with real Stripe link
+const STRIPE_MONTHLY = "https://buy.stripe.com/28E7sN9VhdMZ7z62gh8IU05";
+const STRIPE_6MONTH = "https://buy.stripe.com/28EcN71oL4cpf1y8EF8IU07";
+const STRIPE_ANNUAL = "https://buy.stripe.com/fZucN77N95gt4mU6wx8IU08";
 
 const DISCLAIMER = "LifeGuide is an informational resource and family navigation tool. It does not provide medical advice, diagnosis, or treatment recommendations. All information provided is for general educational purposes only. Always consult your physician, hospice team, or qualified healthcare provider regarding any medical decisions. Use of LifeGuide does not create a patient-provider relationship.";
 
@@ -463,10 +465,10 @@ function NavigatorScreen({ answers, checklist, onToggle, onUpgrade, onReset }) {
           Everything your family needs
         </h3>
         <p style={{ fontSize: 13, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.6, marginBottom: 24 }}>
-          Unlock doctor prep question generator, full document checklist, family coordination tools, grief & transition guide, and more.
+          Unlock doctor prep, document checklist, family coordination, grief guide, and more.
         </p>
 
-        <div style={{ display: "flex", justifyContent: "center", gap: 16, marginBottom: 24, flexWrap: "wrap" }}>
+        <div style={{ display: "flex", justifyContent: "center", gap: 12, marginBottom: 28, flexWrap: "wrap" }}>
           {["Doctor Visit Prep", "Document Checklist", "Family Coordination", "Grief Guide"].map(f => (
             <span key={f} style={{
               background: "rgba(200,169,126,0.1)", border: `1px solid rgba(200,169,126,0.2)`,
@@ -476,17 +478,55 @@ function NavigatorScreen({ answers, checklist, onToggle, onUpgrade, onReset }) {
           ))}
         </div>
 
-        <button onClick={onUpgrade} style={{
-          background: "linear-gradient(135deg, #c8a97e, #a8895e)",
-          color: S.dark, border: "none", borderRadius: 8,
-          padding: "18px 40px", fontSize: 15, fontWeight: 700,
-          cursor: "pointer", fontFamily: "sans-serif", letterSpacing: 0.5,
-          boxShadow: "0 8px 24px rgba(200,169,126,0.25)", width: "100%"
-        }}>
-          Unlock Full LifeGuide — $20/mo
-        </button>
-        <p style={{ fontSize: 11, color: S.textFaint, marginTop: 12, fontFamily: "sans-serif" }}>
-          Cancel anytime · Secure payment via Stripe · Instant access
+        {/* 3 Pricing Tiers */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 16 }}>
+
+          {/* Monthly */}
+          <button onClick={() => window.open(STRIPE_MONTHLY, "_blank")} style={{
+            background: "linear-gradient(135deg, #c8a97e, #a8895e)",
+            color: S.dark, border: "none", borderRadius: 10,
+            padding: "18px 24px", fontSize: 15, fontWeight: 700,
+            cursor: "pointer", fontFamily: "sans-serif",
+            boxShadow: "0 8px 24px rgba(200,169,126,0.25)",
+            display: "flex", justifyContent: "space-between", alignItems: "center"
+          }}>
+            <span>Monthly</span>
+            <span style={{ fontSize: 18, fontWeight: 700 }}>$20/mo</span>
+          </button>
+
+          {/* 6 Month */}
+          <button onClick={() => window.open(STRIPE_6MONTH, "_blank")} style={{
+            background: "rgba(200,169,126,0.12)",
+            color: S.goldLight, border: `1px solid rgba(200,169,126,0.4)`,
+            borderRadius: 10, padding: "18px 24px", fontSize: 15, fontWeight: 600,
+            cursor: "pointer", fontFamily: "sans-serif",
+            display: "flex", justifyContent: "space-between", alignItems: "center"
+          }}>
+            <div style={{ textAlign: "left" }}>
+              <div>6 Months</div>
+              <div style={{ fontSize: 11, color: S.gold, marginTop: 2 }}>Save $23</div>
+            </div>
+            <span style={{ fontSize: 18, fontWeight: 700 }}>$97</span>
+          </button>
+
+          {/* Annual */}
+          <button onClick={() => window.open(STRIPE_ANNUAL, "_blank")} style={{
+            background: "rgba(200,169,126,0.12)",
+            color: S.goldLight, border: `1px solid rgba(200,169,126,0.4)`,
+            borderRadius: 10, padding: "18px 24px", fontSize: 15, fontWeight: 600,
+            cursor: "pointer", fontFamily: "sans-serif",
+            display: "flex", justifyContent: "space-between", alignItems: "center"
+          }}>
+            <div style={{ textAlign: "left" }}>
+              <div>Annual</div>
+              <div style={{ fontSize: 11, color: S.gold, marginTop: 2 }}>Best value — Save $73</div>
+            </div>
+            <span style={{ fontSize: 18, fontWeight: 700 }}>$167</span>
+          </button>
+        </div>
+
+        <p style={{ fontSize: 11, color: S.textFaint, marginTop: 8, fontFamily: "sans-serif" }}>
+          Secure payment via Stripe · Instant access · Cancel anytime
         </p>
       </div>
 
