@@ -149,9 +149,9 @@ const S = {
   gold: "#c8a97e",
   goldLight: "#e8d5b7",
   goldDim: "rgba(200,169,126,0.15)",
-  text: "#d4ccc4",
-  textDim: "#7a7268",
-  textFaint: "#3a3530",
+  text: "#ffffff",
+  textDim: "#c0b8b0",
+  textFaint: "#8a8278",
 };
 
 // ─── MODAL ────────────────────────────────────────────────────────────────────
