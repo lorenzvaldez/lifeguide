@@ -1,9 +1,9 @@
 import { useState } from "react";
 
 // ─── STRIPE LINKS ─────────────────────────────────────────────────────────────
-const STRIPE_MONTHLY = "https://buy.stripe.com/28E7sN9VhdMZ7z62gh8IU05";
-const STRIPE_6MONTH = "https://buy.stripe.com/28EcN71oL4cpf1y8EF8IU07";
-const STRIPE_ANNUAL = "https://buy.stripe.com/fZucN77N95gt4mU6wx8IU08";
+const STRIPE_MONTHLY = "https://buy.stripe.com/bJedRagpY67wbUwdVqgw000";
+const STRIPE_6MONTH = "https://buy.stripe.com/5kQ00k3DcdzYaQsbNigw001";
+const STRIPE_ANNUAL = "https://buy.stripe.com/9B65kE4Hg7bA1fSdVqgw002";
 
 // ─── LEGAL ───────────────────────────────────────────────────────────────────
 const DISCLAIMER = "LifeGuide is an informational resource and family navigation tool. It does not provide medical advice, diagnosis, or treatment recommendations. All information provided is for general educational purposes only. Always consult your physician, hospice team, or qualified healthcare provider regarding any medical decisions. Use of LifeGuide does not create a patient-provider relationship.";
@@ -94,6 +94,22 @@ const questions = [
 ];
 
 // ─── FREE FIRST WEEK GUIDE CONTENT ───────────────────────────────────────────
+
+const documentTeaserStep = {
+  day: "Essential",
+  title: "The 5 documents every family needs — and most don't have.",
+  detail: "Regardless of where you are in this journey, these 5 legal and medical documents are non-negotiable. Missing even one of them can cause enormous stress, family conflict, and expense at the worst possible time. Here's what they are:",
+  action: "Start with Power of Attorney — it must be signed while your loved one still has legal capacity. Do not wait on this one.",
+  icon: "📋",
+  teaser: [
+    { name: "Power of Attorney (POA)", desc: "Authorizes someone to make financial decisions on their behalf." },
+    { name: "Healthcare Proxy / Medical POA", desc: "Names who makes medical decisions if they cannot speak for themselves." },
+    { name: "Living Will / Advance Directive", desc: "Documents their wishes — resuscitation, ventilators, feeding tubes." },
+    { name: "POLST / DNR Form", desc: "A medical order signed by a doctor. Critical for hospice situations." },
+    { name: "Medicare & Insurance Info", desc: "All cards, numbers, and policy documents organized in one place." },
+  ],
+  locked: "The full Document Vault shows you exactly how to get each one in your state, what order to complete them, and what to watch out for."
+};
 const firstWeekGuide = {
   parent_declining: [
     {
@@ -258,7 +274,7 @@ function DisclaimerScreen({ onAccept, onModal }) {
 function WelcomeScreen({ onStart }) {
   return (
     <div style={{ maxWidth: 520, width: "100%", textAlign: "center", margin: "0 auto", padding: "80px 24px 40px" }}>
-      <div style={{ width: 1, height: 80, background: "linear-gradient(to bottom, transparent, #c8a97e, transparent)", margin: "0 auto 48px" }} />
+      <div style={{ width: 1, height: 48, background: "linear-gradient(to bottom, transparent, #c8a97e, transparent)", margin: "0 auto 32px" }} />
       <p style={{ fontSize: 11, letterSpacing: 4, textTransform: "uppercase", color: S.gold, marginBottom: 28, fontFamily: "sans-serif" }}>Family Care Navigator</p>
       <h1 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "clamp(44px, 10vw, 80px)", fontWeight: 300, lineHeight: 1.0, color: S.goldLight, marginBottom: 16, letterSpacing: -1 }}>
         When someone you love<br />is <em style={{ fontStyle: "italic", color: S.gold }}>declining</em>
@@ -365,6 +381,50 @@ function FreeGuideScreen({ answers, onUnlock }) {
             </div>
           </div>
         ))}
+
+        {/* 4th Universal Step — Document Teaser */}
+        <div onClick={() => setExpanded(expanded === 99 ? null : 99)} style={{ background: expanded === 99 ? "rgba(200,169,126,0.08)" : "rgba(255,255,255,0.03)", border: `1px solid ${expanded === 99 ? "rgba(200,169,126,0.35)" : "rgba(255,255,255,0.08)"}`, borderRadius: 16, padding: "22px 22px", cursor: "pointer", transition: "all 0.3s" }}>
+          <div style={{ display: "flex", gap: 16, alignItems: "flex-start" }}>
+            <span style={{ fontSize: 24, flexShrink: 0 }}>{documentTeaserStep.icon}</span>
+            <div style={{ flex: 1 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                <span style={{ fontSize: 11, color: S.gold, fontFamily: "sans-serif", letterSpacing: 2, textTransform: "uppercase" }}>{documentTeaserStep.day}</span>
+                <span style={{ color: S.textFaint, fontSize: 18 }}>{expanded === 99 ? "−" : "+"}</span>
+              </div>
+              <h3 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 20, fontWeight: 400, color: S.goldLight, lineHeight: 1.3 }}>{documentTeaserStep.title}</h3>
+              {expanded === 99 && (
+                <div style={{ marginTop: 16 }}>
+                  <p style={{ fontSize: 14, color: S.textDim, lineHeight: 1.8, fontFamily: "sans-serif", marginBottom: 20 }}>{documentTeaserStep.detail}</p>
+
+                  {/* Document List */}
+                  <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 20 }}>
+                    {documentTeaserStep.teaser.map((doc, i) => (
+                      <div key={i} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 10, padding: "14px 16px", display: "flex", gap: 12, alignItems: "flex-start" }}>
+                        <span style={{ color: S.gold, fontSize: 14, marginTop: 2, flexShrink: 0 }}>✦</span>
+                        <div>
+                          <p style={{ fontSize: 14, color: S.goldLight, fontFamily: "Cormorant Garamond, serif", marginBottom: 3 }}>{doc.name}</p>
+                          <p style={{ fontSize: 12, color: S.textFaint, fontFamily: "sans-serif", lineHeight: 1.5 }}>{doc.desc}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Action */}
+                  <div style={{ background: "rgba(200,169,126,0.08)", border: "1px solid rgba(200,169,126,0.2)", borderRadius: 10, padding: "16px 18px", marginBottom: 16 }}>
+                    <p style={{ fontSize: 11, color: S.gold, fontFamily: "sans-serif", letterSpacing: 2, textTransform: "uppercase", marginBottom: 8 }}>→ Your Action</p>
+                    <p style={{ fontSize: 14, color: S.text, lineHeight: 1.7, fontFamily: "sans-serif" }}>{documentTeaserStep.action}</p>
+                  </div>
+
+                  {/* Locked teaser */}
+                  <div style={{ background: "rgba(200,169,126,0.04)", border: "1px dashed rgba(200,169,126,0.25)", borderRadius: 10, padding: "14px 16px", display: "flex", gap: 10, alignItems: "flex-start" }}>
+                    <span style={{ fontSize: 16, flexShrink: 0 }}>🔒</span>
+                    <p style={{ fontSize: 12, color: S.textFaint, fontFamily: "sans-serif", lineHeight: 1.6, fontStyle: "italic" }}>{documentTeaserStep.locked}</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Transition to paywall */}
@@ -414,6 +474,15 @@ function FreeGuideScreen({ answers, onUnlock }) {
         {/* Pricing Tiers */}
         <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 20 }}>
 
+          {/* Monthly — at top */}
+          <button onClick={() => window.open(STRIPE_MONTHLY, "_blank")} style={{ background: "transparent", color: S.textDim, border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, padding: "16px 24px", fontSize: 14, cursor: "pointer", fontFamily: "sans-serif", width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div style={{ textAlign: "left" }}>
+              <div>Monthly</div>
+              <div style={{ fontSize: 12, color: S.textFaint, marginTop: 2 }}>Cancel anytime</div>
+            </div>
+            <div style={{ fontSize: 18, fontWeight: 600 }}>$20/mo</div>
+          </button>
+
           {/* 6 Month — highlighted as best */}
           <div style={{ position: "relative" }}>
             <div style={{ position: "absolute", top: -10, left: "50%", transform: "translateX(-50%)", background: S.gold, color: S.dark, fontSize: 10, fontWeight: 700, fontFamily: "sans-serif", letterSpacing: 1, padding: "3px 14px", borderRadius: 20, textTransform: "uppercase", whiteSpace: "nowrap" }}>Most Popular</div>
@@ -439,15 +508,6 @@ function FreeGuideScreen({ answers, onUnlock }) {
               <div style={{ fontSize: 20, fontWeight: 700 }}>$167</div>
               <div style={{ fontSize: 11, color: S.textFaint }}>one time</div>
             </div>
-          </button>
-
-          {/* Monthly */}
-          <button onClick={() => window.open(STRIPE_MONTHLY, "_blank")} style={{ background: "transparent", color: S.textDim, border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, padding: "16px 24px", fontSize: 14, cursor: "pointer", fontFamily: "sans-serif", width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <div style={{ textAlign: "left" }}>
-              <div>Monthly</div>
-              <div style={{ fontSize: 12, color: S.textFaint, marginTop: 2 }}>Cancel anytime</div>
-            </div>
-            <div style={{ fontSize: 18, fontWeight: 600 }}>$20/mo</div>
           </button>
         </div>
 
