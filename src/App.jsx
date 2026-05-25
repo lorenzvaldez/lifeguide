@@ -251,7 +251,7 @@ function DisclaimerScreen({ onFamily, onNurse, onModal }) {
     <div style={{ maxWidth: 520, width: "100%", margin: "0 auto", padding: "60px 24px 40px", textAlign: "center" }}>
 
       {/* Logo */}
-      <div style={{ width: 64, height: 64, borderRadius: "50%", background: "linear-gradient(135deg, #c8a97e, #e8d5b7)", margin: "0 auto 20px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28, boxShadow: "0 0 40px rgba(200,169,126,0.3)" }}>🕊️</div>
+      <img src="/logo.png" alt="LifeGuide" style={{ width: 80, height: 80, margin: "0 auto 20px", display: "block", objectFit: "contain" }} />
       <h1 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 40, fontWeight: 300, color: S.goldLight, marginBottom: 4, letterSpacing: -1 }}>LifeGuide</h1>
       <p style={{ fontSize: 11, letterSpacing: 4, textTransform: "uppercase", color: S.gold, marginBottom: 28, fontFamily: "sans-serif" }}>Family Care Navigator</p>
 
@@ -397,7 +397,7 @@ function NurseScreen({ onBack }) {
 function WelcomeScreen({ onStart }) {
   return (
     <div style={{ maxWidth: 520, width: "100%", textAlign: "center", margin: "0 auto", padding: "80px 24px 40px" }}>
-      <div style={{ width: 1, height: 48, background: "linear-gradient(to bottom, transparent, #c8a97e, transparent)", margin: "0 auto 32px" }} />
+      <img src="/logo.png" alt="LifeGuide" style={{ width: 80, height: 80, margin: "0 auto 32px", display: "block", objectFit: "contain" }} />
       <p style={{ fontSize: 11, letterSpacing: 4, textTransform: "uppercase", color: S.gold, marginBottom: 28, fontFamily: "sans-serif" }}>Family Care Navigator</p>
       <h1 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "clamp(44px, 10vw, 80px)", fontWeight: 300, lineHeight: 1.0, color: S.goldLight, marginBottom: 16, letterSpacing: -1 }}>
         When someone you love<br />is <em style={{ fontStyle: "italic", color: S.gold }}>declining</em>
