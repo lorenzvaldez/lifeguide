@@ -420,7 +420,7 @@ function WelcomeScreen({ onStart }) {
 }
 
 // ─── EMAIL CAPTURE SCREEN ─────────────────────────────────────────────────────
-function EmailScreen({ onContinue }) {
+function EmailScreen({ onContinue, situation }) {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
@@ -432,7 +432,7 @@ function EmailScreen({ onContinue }) {
       await fetch("/api/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, tag: "lifeguide-family" }),
+        body: JSON.stringify({ email, tag: "lifeguide-family", situation: situation }),
       });
     } catch (e) {}
     setLoading(false);
@@ -723,7 +723,7 @@ export default function App() {
     if (currentQ < questions.length - 1) {
       setCurrentQ(currentQ + 1);
     } else {
-      setScreen("guide");
+      setScreen("email");
     }
   };
 
@@ -742,9 +742,9 @@ export default function App() {
 
       {screen === "disclaimer" && <DisclaimerScreen onFamily={() => setScreen("welcome")} onNurse={() => setScreen("nurse")} onModal={setModal} />}
       {screen === "nurse" && <NurseScreen onBack={() => setScreen("disclaimer")} />}
-      {screen === "welcome" && <WelcomeScreen onStart={() => setScreen("email")} />}
-      {screen === "email" && <EmailScreen onContinue={(email) => setScreen("quiz")} />}
+      {screen === "welcome" && <WelcomeScreen onStart={() => setScreen("quiz")} />}
       {screen === "quiz" && <QuizScreen currentQ={currentQ} onAnswer={handleAnswer} />}
+      {screen === "email" && <EmailScreen onContinue={(email) => setScreen("guide")} situation={answers.situation} />}
       {screen === "guide" && <FreeGuideScreen answers={answers} onUnlock={() => window.open(STRIPE_6MONTH, "_blank")} onReset={handleReset} />}
 
       <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, borderTop: "1px solid rgba(255,255,255,0.04)", background: "rgba(10,21,32,0.97)", backdropFilter: "blur(10px)", padding: "10px 24px", textAlign: "center", zIndex: 50 }}>
