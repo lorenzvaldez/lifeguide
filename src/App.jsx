@@ -282,7 +282,7 @@ function LandingScreen({ onStart, onNurse }) {
       </nav>
 
       {/* HERO */}
-      <section style={{ minHeight: "100vh", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center", padding: "120px 24px 80px", position: "relative", overflow: "hidden" }}>
+      <section style={{ minHeight: "100vh", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center", padding: "120px 24px 80px", position: "relative", overflow: "hidden", zIndex: 1 }}>
         <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 60% 50% at 50% 60%, rgba(200,169,126,0.06) 0%, transparent 70%)" }} />
 
         <img src="/logo.png" alt="LifeGuide" style={{ width: 90, height: 90, objectFit: "contain", marginBottom: 32 }} />
@@ -301,10 +301,10 @@ function LandingScreen({ onStart, onNurse }) {
           LifeGuide walks your family through the most difficult journey of their lives — step by step, document by document, question by question.
         </p>
 
-        <button onClick={onStart} style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", color: "#0a1520", border: "none", borderRadius: 8, padding: "20px 56px", fontSize: 16, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif", letterSpacing: 1, boxShadow: "0 8px 32px rgba(200,169,126,0.3)", marginBottom: 16 }}>
+        <button onClick={onStart} style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", color: "#0a1520", border: "none", borderRadius: 8, padding: "20px 56px", fontSize: 16, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif", letterSpacing: 1, boxShadow: "0 8px 32px rgba(200,169,126,0.3)", marginBottom: 16, position: "relative", zIndex: 200 }}>
           Start My Free Guide →
         </button>
-        <p style={{ fontSize: 12, color: "#3a3530" }}>No credit card required</p>
+        <p style={{ fontSize: 12, color: "#3a3530", position: "relative", zIndex: 200 }}>No credit card required</p>
 
         {/* Waitlist */}
         <div style={{ marginTop: 48, maxWidth: 480, width: "100%" }}>
