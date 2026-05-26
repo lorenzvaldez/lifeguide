@@ -278,9 +278,6 @@ function LandingScreen({ onStart, onNurse }) {
           <button onClick={onNurse} style={{ background: "transparent", border: "1px solid rgba(200,169,126,0.3)", color: "#c8a97e", padding: "8px 16px", fontFamily: "sans-serif", fontSize: 11, letterSpacing: 2, textTransform: "uppercase", cursor: "pointer", borderRadius: 2 }}>
             For Nurses
           </button>
-          <button onClick={onStart} style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", border: "none", color: "#0a1520", padding: "8px 20px", fontFamily: "sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: 2, textTransform: "uppercase", cursor: "pointer", borderRadius: 2 }}>
-            Start Free
-          </button>
         </div>
       </nav>
 
@@ -943,7 +940,7 @@ export default function App() {
         <Modal title={modal === "terms" ? "Terms of Service" : "Privacy Policy"} content={modal === "terms" ? TERMS : PRIVACY} onClose={() => setModal(null)} />
       )}
 
-      {screen === "disclaimer" && <DisclaimerScreen onFamily={() => setScreen("welcome")} onNurse={() => setScreen("nurse")} onModal={setModal} />}
+      {screen === "disclaimer" && <DisclaimerScreen onFamily={() => setScreen("quiz")} onNurse={() => setScreen("nurse")} onModal={setModal} />}
       {screen === "nurse" && <NurseScreen onBack={() => setScreen("landing")} />}
       {screen === "welcome" && <WelcomeScreen onStart={() => setScreen("quiz")} />}
       {screen === "quiz" && <QuizScreen currentQ={currentQ} onAnswer={handleAnswer} />}
