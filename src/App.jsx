@@ -932,14 +932,17 @@ export default function App() {
     setAnswers({});
   };
 
+  if (screen === "landing") {
+    return <LandingScreen onStart={() => setScreen("disclaimer")} onNurse={() => setScreen("nurse")} />;
+  }
+
   return (
-    <div style={{ minHeight: "100vh", background: screen === "landing" ? "transparent" : `linear-gradient(135deg, ${S.dark} 0%, #1a2a3a 50%, ${S.dark} 100%)`, color: S.text, display: screen === "landing" ? "block" : "flex", flexDirection: "column", alignItems: screen === "landing" ? "unset" : "center", paddingBottom: screen === "landing" ? 0 : 80 }}>
+    <div style={{ minHeight: "100vh", background: `linear-gradient(135deg, ${S.dark} 0%, #1a2a3a 50%, ${S.dark} 100%)`, color: S.text, display: "flex", flexDirection: "column", alignItems: "center", paddingBottom: 80 }}>
 
       {modal && (
         <Modal title={modal === "terms" ? "Terms of Service" : "Privacy Policy"} content={modal === "terms" ? TERMS : PRIVACY} onClose={() => setModal(null)} />
       )}
 
-      {screen === "landing" && <LandingScreen onStart={() => setScreen("disclaimer")} onNurse={() => setScreen("nurse")} />}
       {screen === "disclaimer" && <DisclaimerScreen onFamily={() => setScreen("welcome")} onNurse={() => setScreen("nurse")} onModal={setModal} />}
       {screen === "nurse" && <NurseScreen onBack={() => setScreen("landing")} />}
       {screen === "welcome" && <WelcomeScreen onStart={() => setScreen("quiz")} />}
