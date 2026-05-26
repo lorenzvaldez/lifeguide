@@ -245,6 +245,205 @@ function Modal({ title, content, onClose }) {
   );
 }
 
+// ─── LANDING PAGE SCREEN ──────────────────────────────────────────────────────
+function LandingScreen({ onStart, onNurse }) {
+  const [email, setEmail] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleWaitlist = async () => {
+    if (!email || !email.includes("@")) return;
+    setLoading(true);
+    try {
+      await fetch("/api/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, tag: "landing-waitlist" }),
+      });
+    } catch (e) {}
+    setLoading(false);
+    setSubmitted(true);
+  };
+
+  return (
+    <div style={{ minHeight: "100vh", background: `linear-gradient(135deg, #0a1520 0%, #1a2a3a 50%, #0a1520 100%)`, color: "#ffffff", fontFamily: "sans-serif" }}>
+
+      {/* NAV */}
+      <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 100, padding: "20px 32px", display: "flex", justifyContent: "space-between", alignItems: "center", background: "linear-gradient(to bottom, rgba(10,21,32,0.95), transparent)" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <img src="/logo.png" alt="LifeGuide" style={{ width: 36, height: 36, objectFit: "contain" }} />
+          <span style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 20, fontWeight: 400, color: "#e8d5b7", letterSpacing: 1 }}>LifeGuide</span>
+        </div>
+        <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+          <button onClick={onNurse} style={{ background: "transparent", border: "1px solid rgba(200,169,126,0.3)", color: "#c8a97e", padding: "8px 16px", fontFamily: "sans-serif", fontSize: 11, letterSpacing: 2, textTransform: "uppercase", cursor: "pointer", borderRadius: 2 }}>
+            For Nurses
+          </button>
+          <button onClick={onStart} style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", border: "none", color: "#0a1520", padding: "8px 20px", fontFamily: "sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: 2, textTransform: "uppercase", cursor: "pointer", borderRadius: 2 }}>
+            Start Free
+          </button>
+        </div>
+      </nav>
+
+      {/* HERO */}
+      <section style={{ minHeight: "100vh", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center", padding: "120px 24px 80px", position: "relative", overflow: "hidden" }}>
+        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 60% 50% at 50% 60%, rgba(200,169,126,0.06) 0%, transparent 70%)" }} />
+
+        <img src="/logo.png" alt="LifeGuide" style={{ width: 90, height: 90, objectFit: "contain", marginBottom: 32 }} />
+
+        <p style={{ fontSize: 11, letterSpacing: 4, textTransform: "uppercase", color: "#c8a97e", marginBottom: 24 }}>Family Care Navigator</p>
+
+        <h1 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "clamp(48px, 10vw, 88px)", fontWeight: 300, lineHeight: 1.0, color: "#e8d5b7", marginBottom: 16, letterSpacing: -1 }}>
+          When someone you love<br />is <em style={{ fontStyle: "italic", color: "#c8a97e" }}>declining</em>
+        </h1>
+
+        <p style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "clamp(18px, 3vw, 26px)", fontWeight: 300, color: "#7a7268", marginBottom: 24, fontStyle: "italic", lineHeight: 1.6, maxWidth: 600 }}>
+          You shouldn't have to figure it out alone.
+        </p>
+
+        <p style={{ fontSize: 15, lineHeight: 1.8, color: "#7a7268", marginBottom: 48, maxWidth: 520 }}>
+          LifeGuide walks your family through the most difficult journey of their lives — step by step, document by document, question by question.
+        </p>
+
+        <button onClick={onStart} style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", color: "#0a1520", border: "none", borderRadius: 8, padding: "20px 56px", fontSize: 16, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif", letterSpacing: 1, boxShadow: "0 8px 32px rgba(200,169,126,0.3)", marginBottom: 16 }}>
+          Start My Free Guide →
+        </button>
+        <p style={{ fontSize: 12, color: "#3a3530" }}>Free to start · No credit card required</p>
+
+        {/* Waitlist */}
+        <div style={{ marginTop: 48, maxWidth: 480, width: "100%" }}>
+          <p style={{ fontSize: 13, color: "#5a5650", marginBottom: 16 }}>Or join the waitlist for updates</p>
+          {submitted ? (
+            <p style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 18, color: "#c8a97e" }}>You're on the list. We'll be in touch. 🕊️</p>
+          ) : (
+            <div style={{ display: "flex" }}>
+              <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Your email address" style={{ flex: 1, background: "rgba(255,255,255,0.04)", border: "1px solid rgba(200,169,126,0.2)", borderRight: "none", color: "#ffffff", padding: "16px 20px", fontFamily: "sans-serif", fontSize: 14, outline: "none", borderRadius: "4px 0 0 4px" }} />
+              <button onClick={handleWaitlist} disabled={loading} style={{ background: "rgba(200,169,126,0.15)", border: "1px solid rgba(200,169,126,0.3)", color: "#c8a97e", padding: "16px 24px", fontFamily: "sans-serif", fontSize: 12, fontWeight: 600, letterSpacing: 1, cursor: "pointer", borderRadius: "0 4px 4px 0", whiteSpace: "nowrap" }}>
+                {loading ? "..." : "Join Waitlist"}
+              </button>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* PROBLEM SECTION */}
+      <section style={{ background: "#111e2b", padding: "80px 24px" }}>
+        <div style={{ maxWidth: 900, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48, alignItems: "center" }}>
+          <div>
+            <span style={{ fontSize: 10, letterSpacing: 4, textTransform: "uppercase", color: "#c8a97e", marginBottom: 16, display: "block" }}>The Problem</span>
+            <h2 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "clamp(32px, 5vw, 48px)", fontWeight: 300, color: "#e8d5b7", marginBottom: 20, lineHeight: 1.15 }}>
+              Families are left<br /><em style={{ color: "#c8a97e", fontStyle: "italic" }}>completely lost.</em>
+            </h2>
+            <p style={{ fontSize: 15, lineHeight: 1.9, color: "#7a7268", marginBottom: 16 }}>When a loved one starts declining, nobody hands you a roadmap. You're Googling at 2am, missing critical paperwork, asking the wrong questions at doctor visits, and trying to hold your family together — all while grieving.</p>
+            <p style={{ fontSize: 15, color: "#5a5650", fontStyle: "italic" }}>Until now.</p>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            {[
+              { icon: "😰", text: '"I don\'t even know what questions to ask the doctor."' },
+              { icon: "📋", text: '"We never got the power of attorney signed in time."' },
+              { icon: "👨‍👩‍👧‍👦", text: '"My siblings are fighting and nobody knows who\'s in charge."' },
+              { icon: "🌙", text: '"I was up until 3am reading Medicare websites that made no sense."' },
+            ].map((item, i) => (
+              <div key={i} style={{ display: "flex", gap: 14, alignItems: "flex-start", padding: 18, background: "rgba(0,0,0,0.2)", border: "1px solid rgba(255,255,255,0.04)", borderRadius: 8 }}>
+                <span style={{ fontSize: 18, flexShrink: 0 }}>{item.icon}</span>
+                <p style={{ fontSize: 14, color: "#7a7268", lineHeight: 1.6 }}>{item.text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* HOW IT WORKS */}
+      <section style={{ padding: "80px 24px" }}>
+        <div style={{ maxWidth: 900, margin: "0 auto", textAlign: "center" }}>
+          <span style={{ fontSize: 10, letterSpacing: 4, textTransform: "uppercase", color: "#c8a97e", marginBottom: 16, display: "block" }}>How It Works</span>
+          <h2 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "clamp(32px, 5vw, 48px)", fontWeight: 300, color: "#e8d5b7", marginBottom: 56, lineHeight: 1.15 }}>
+            Your personal roadmap,<br /><em style={{ color: "#c8a97e", fontStyle: "italic" }}>built in minutes.</em>
+          </h2>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 28 }}>
+            {[
+              { num: "01", title: "Tell us your situation", desc: "Answer 4 simple questions about where you are — who needs care, what stage you're in, and what you need most right now." },
+              { num: "02", title: "Get your roadmap", desc: "LifeGuide builds a personalized step-by-step guide — exactly what to do this week, next week, and beyond. Nothing generic." },
+              { num: "03", title: "Walk through it together", desc: "Prep for doctor visits, organize your family, access expert resources — all in one calm, private place." },
+            ].map((step, i) => (
+              <div key={i} style={{ padding: "32px 24px", background: "#0f1a25", border: "1px solid rgba(200,169,126,0.1)", borderRadius: 8, textAlign: "left" }}>
+                <div style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 56, fontWeight: 300, color: "rgba(200,169,126,0.1)", lineHeight: 1, marginBottom: 16 }}>{step.num}</div>
+                <h3 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 20, color: "#e8d5b7", marginBottom: 10, fontWeight: 400 }}>{step.title}</h3>
+                <p style={{ fontSize: 13, color: "#7a7268", lineHeight: 1.7 }}>{step.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FEATURES */}
+      <section style={{ background: "#111e2b", padding: "80px 24px" }}>
+        <div style={{ maxWidth: 900, margin: "0 auto" }}>
+          <div style={{ textAlign: "center", marginBottom: 48 }}>
+            <span style={{ fontSize: 10, letterSpacing: 4, textTransform: "uppercase", color: "#c8a97e", marginBottom: 16, display: "block" }}>What's Inside</span>
+            <h2 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "clamp(32px, 5vw, 48px)", fontWeight: 300, color: "#e8d5b7", lineHeight: 1.15 }}>
+              Everything your family<br /><em style={{ color: "#c8a97e", fontStyle: "italic" }}>actually needs.</em>
+            </h2>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 20 }}>
+            {[
+              { icon: "🗺️", title: "Personalized Navigator", desc: "A custom roadmap based on your exact situation. Step-by-step, prioritized, and updated as things change." },
+              { icon: "📋", title: "Document Checklist", desc: "Power of attorney, living will, DNR, Medicare — explained in plain language with links to get them done." },
+              { icon: "🏥", title: "Doctor Visit Prep", desc: "Walk into every appointment with the right questions. Generated based on your loved one's condition and stage." },
+              { icon: "👨‍👩‍👧", title: "Family Coordination", desc: "Assign roles, share updates, and reduce the chaos of group texts. Everyone stays on the same page." },
+              { icon: "💙", title: "Grief & Transition Guide", desc: "What to expect emotionally. What happens after. Bereavement resources and a gentle path forward." },
+              { icon: "🔒", title: "Private & Secure", desc: "We never collect medical information. Your family's journey stays completely private. Always." },
+            ].map((f, i) => (
+              <div key={i} style={{ padding: 28, border: "1px solid rgba(200,169,126,0.08)", borderRadius: 8, background: "rgba(0,0,0,0.15)" }}>
+                <div style={{ fontSize: 28, marginBottom: 12 }}>{f.icon}</div>
+                <h3 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 18, color: "#e8d5b7", marginBottom: 8, fontWeight: 400 }}>{f.title}</h3>
+                <p style={{ fontSize: 13, color: "#7a7268", lineHeight: 1.7 }}>{f.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* LIFEGUIDE PRO */}
+      <section style={{ padding: "80px 24px" }}>
+        <div style={{ maxWidth: 700, margin: "0 auto", textAlign: "center" }}>
+          <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(200,169,126,0.08)", border: "1px solid rgba(200,169,126,0.2)", borderRadius: 20, padding: "6px 16px", marginBottom: 24 }}>
+            <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#c8a97e", display: "inline-block" }} />
+            <span style={{ fontSize: 11, color: "#c8a97e", letterSpacing: 2, textTransform: "uppercase" }}>Coming Soon</span>
+          </div>
+          <h2 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "clamp(28px, 5vw, 42px)", fontWeight: 300, color: "#e8d5b7", marginBottom: 16, lineHeight: 1.2 }}>
+            Introducing <em style={{ color: "#c8a97e", fontStyle: "italic" }}>LifeGuide Pro</em>
+          </h2>
+          <p style={{ fontSize: 15, color: "#7a7268", lineHeight: 1.7, marginBottom: 32 }}>
+            Built for hospice nurses, social workers, and care teams. Give every family you serve a personalized roadmap on day one.
+          </p>
+          <button onClick={onNurse} style={{ background: "transparent", border: "1px solid rgba(200,169,126,0.4)", color: "#c8a97e", padding: "14px 32px", fontFamily: "sans-serif", fontSize: 12, fontWeight: 600, letterSpacing: 2, textTransform: "uppercase", cursor: "pointer", borderRadius: 4 }}>
+            Learn About LifeGuide Pro →
+          </button>
+        </div>
+      </section>
+
+      {/* DISCLAIMER */}
+      <div style={{ background: "rgba(200,169,126,0.04)", borderTop: "1px solid rgba(200,169,126,0.1)", borderBottom: "1px solid rgba(200,169,126,0.1)", padding: "16px 24px", textAlign: "center" }}>
+        <p style={{ fontSize: 11, color: "#3a3530", maxWidth: 700, margin: "0 auto", lineHeight: 1.6 }}>
+          <strong style={{ color: "#5a5650" }}>Important:</strong> LifeGuide is an informational and organizational tool only. It does not provide medical advice, diagnosis, or treatment recommendations. Always consult your physician or healthcare provider.
+        </p>
+      </div>
+
+      {/* FOOTER */}
+      <footer style={{ padding: "40px 24px", textAlign: "center", borderTop: "1px solid rgba(255,255,255,0.04)" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, marginBottom: 12 }}>
+          <img src="/logo.png" alt="LifeGuide" style={{ width: 28, height: 28, objectFit: "contain" }} />
+          <span style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 20, color: "#c8a97e", fontWeight: 300 }}>LifeGuide</span>
+        </div>
+        <p style={{ fontSize: 11, color: "#3a3530", marginBottom: 12, letterSpacing: 1, textTransform: "uppercase" }}>Family Care Navigator</p>
+        <p style={{ fontSize: 10, color: "#2a2622", lineHeight: 1.6 }}>
+          NOT MEDICAL ADVICE · © 2026 LifeGuide · <a href="mailto:lorenz@thelifeguide.app" style={{ color: "#3a3830", textDecoration: "none" }}>lorenz@thelifeguide.app</a>
+        </p>
+      </footer>
+    </div>
+  );
+}
+
 // ─── DISCLAIMER + ENTRY COMBINED ─────────────────────────────────────────────
 function DisclaimerScreen({ onFamily, onNurse, onModal }) {
   return (
@@ -712,7 +911,7 @@ function FreeGuideScreen({ answers, onUnlock, onReset }) {
 
 // ─── MAIN APP ─────────────────────────────────────────────────────────────────
 export default function App() {
-  const [screen, setScreen] = useState("disclaimer");
+  const [screen, setScreen] = useState("landing");
   const [currentQ, setCurrentQ] = useState(0);
   const [answers, setAnswers] = useState({});
   const [modal, setModal] = useState(null);
@@ -728,7 +927,7 @@ export default function App() {
   };
 
   const handleReset = () => {
-    setScreen("disclaimer");
+    setScreen("landing");
     setCurrentQ(0);
     setAnswers({});
   };
@@ -740,13 +939,15 @@ export default function App() {
         <Modal title={modal === "terms" ? "Terms of Service" : "Privacy Policy"} content={modal === "terms" ? TERMS : PRIVACY} onClose={() => setModal(null)} />
       )}
 
+      {screen === "landing" && <LandingScreen onStart={() => setScreen("disclaimer")} onNurse={() => setScreen("nurse")} />}
       {screen === "disclaimer" && <DisclaimerScreen onFamily={() => setScreen("welcome")} onNurse={() => setScreen("nurse")} onModal={setModal} />}
-      {screen === "nurse" && <NurseScreen onBack={() => setScreen("disclaimer")} />}
+      {screen === "nurse" && <NurseScreen onBack={() => setScreen("landing")} />}
       {screen === "welcome" && <WelcomeScreen onStart={() => setScreen("quiz")} />}
       {screen === "quiz" && <QuizScreen currentQ={currentQ} onAnswer={handleAnswer} />}
       {screen === "email" && <EmailScreen onContinue={(email) => setScreen("guide")} situation={answers.situation} />}
       {screen === "guide" && <FreeGuideScreen answers={answers} onUnlock={() => window.open(STRIPE_6MONTH, "_blank")} onReset={handleReset} />}
 
+      {screen !== "landing" && (
       <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, borderTop: "1px solid rgba(255,255,255,0.04)", background: "rgba(10,21,32,0.97)", backdropFilter: "blur(10px)", padding: "10px 24px", textAlign: "center", zIndex: 50 }}>
         <p style={{ fontSize: 10, color: "#2a2622", letterSpacing: 1, marginBottom: 3, fontFamily: "sans-serif" }}>NOT MEDICAL ADVICE · FOR INFORMATIONAL PURPOSES ONLY</p>
         <p style={{ fontSize: 10, color: "#2a2622", fontFamily: "sans-serif" }}>
@@ -757,6 +958,7 @@ export default function App() {
           © 2026 LifeGuide
         </p>
       </div>
+      )}
     </div>
   );
 }
