@@ -307,7 +307,7 @@ function LandingScreen({ onStart, onNurse }) {
         <button onClick={onStart} style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", color: "#0a1520", border: "none", borderRadius: 8, padding: "20px 56px", fontSize: 16, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif", letterSpacing: 1, boxShadow: "0 8px 32px rgba(200,169,126,0.3)", marginBottom: 16 }}>
           Start My Free Guide →
         </button>
-        <p style={{ fontSize: 12, color: "#3a3530" }}>Free to start · No credit card required</p>
+        <p style={{ fontSize: 12, color: "#3a3530" }}>No credit card required</p>
 
         {/* Waitlist */}
         <div style={{ marginTop: 48, maxWidth: 480, width: "100%" }}>
@@ -933,7 +933,7 @@ export default function App() {
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: `linear-gradient(135deg, ${S.dark} 0%, #1a2a3a 50%, ${S.dark} 100%)`, color: S.text, display: "flex", flexDirection: "column", alignItems: "center", paddingBottom: 80 }}>
+    <div style={{ minHeight: "100vh", background: screen === "landing" ? "transparent" : `linear-gradient(135deg, ${S.dark} 0%, #1a2a3a 50%, ${S.dark} 100%)`, color: S.text, display: screen === "landing" ? "block" : "flex", flexDirection: "column", alignItems: screen === "landing" ? "unset" : "center", paddingBottom: screen === "landing" ? 0 : 80 }}>
 
       {modal && (
         <Modal title={modal === "terms" ? "Terms of Service" : "Privacy Policy"} content={modal === "terms" ? TERMS : PRIVACY} onClose={() => setModal(null)} />
