@@ -269,12 +269,12 @@ function LandingScreen({ onStart, onNurse }) {
     <div style={{ minHeight: "100vh", background: `linear-gradient(135deg, #0a1520 0%, #1a2a3a 50%, #0a1520 100%)`, color: "#ffffff", fontFamily: "sans-serif" }}>
 
       {/* NAV */}
-      <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 100, padding: "20px 32px", display: "flex", justifyContent: "space-between", alignItems: "center", background: "linear-gradient(to bottom, rgba(10,21,32,0.95), transparent)" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+      <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 100, padding: "20px 32px", display: "flex", justifyContent: "space-between", alignItems: "center", background: "linear-gradient(to bottom, rgba(10,21,32,0.95), transparent)", pointerEvents: "none" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, pointerEvents: "auto" }}>
           <img src="/logo.png" alt="LifeGuide" style={{ width: 36, height: 36, objectFit: "contain" }} />
           <span style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 20, fontWeight: 400, color: "#e8d5b7", letterSpacing: 1 }}>LifeGuide</span>
         </div>
-        <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+        <div style={{ display: "flex", gap: 12, alignItems: "center", pointerEvents: "auto" }}>
           <button onClick={onNurse} style={{ background: "transparent", border: "1px solid rgba(200,169,126,0.3)", color: "#c8a97e", padding: "8px 16px", fontFamily: "sans-serif", fontSize: 11, letterSpacing: 2, textTransform: "uppercase", cursor: "pointer", borderRadius: 2 }}>
             For Nurses
           </button>
