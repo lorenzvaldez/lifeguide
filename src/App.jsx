@@ -250,7 +250,7 @@ function LoginScreen({ email: initialEmail, onVerified, onBack, directLogin }) {
             onKeyDown={e => e.key === "Enter" && setStep("send")}
           />
           <button onClick={() => { if (!inputEmail.includes("@")) { setError("Please enter a valid email."); return; } setStep("send"); }} style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", color: S.dark, border: "none", borderRadius: 10, padding: "18px 48px", fontSize: 15, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif", width: "100%" }}>
-            Continue →
+            Continue ->
           </button>
           {error && <p style={{ fontSize: 13, color: "rgba(255,100,100,0.8)", fontFamily: "sans-serif", marginTop: 12 }}>{error}</p>}
           <button onClick={onBack} style={{ background: "none", border: "none", color: S.textFaint, fontSize: 12, cursor: "pointer", fontFamily: "sans-serif", marginTop: 20, textDecoration: "underline" }}>← Back</button>
@@ -265,7 +265,7 @@ function LoginScreen({ email: initialEmail, onVerified, onBack, directLogin }) {
             We'll send a 6-digit code to <strong style={{ color: S.goldLight }}>{email}</strong>. No password needed — ever.
           </p>
           <button onClick={sendCode} disabled={loading} style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", color: S.dark, border: "none", borderRadius: 10, padding: "18px 48px", fontSize: 15, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif", width: "100%", opacity: loading ? 0.7 : 1 }}>
-            {loading ? "Sending..." : "Send My Code →"}
+            {loading ? "Sending..." : "Send My Code ->"}
           </button>
           {error && <p style={{ fontSize: 13, color: "rgba(255,100,100,0.8)", fontFamily: "sans-serif", marginTop: 12 }}>{error}</p>}
           <button onClick={onBack} style={{ background: "none", border: "none", color: S.textFaint, fontSize: 12, cursor: "pointer", fontFamily: "sans-serif", marginTop: 20, textDecoration: "underline" }}>← Back</button>
@@ -290,7 +290,7 @@ function LoginScreen({ email: initialEmail, onVerified, onBack, directLogin }) {
             onKeyDown={e => e.key === "Enter" && verifyCode()}
           />
           <button onClick={verifyCode} disabled={loading} style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", color: S.dark, border: "none", borderRadius: 10, padding: "18px", fontSize: 15, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif", width: "100%", opacity: loading ? 0.7 : 1 }}>
-            {loading ? "Verifying..." : "Access My Guide →"}
+            {loading ? "Verifying..." : "Access My Guide ->"}
           </button>
           {error && <p style={{ fontSize: 13, color: "rgba(255,100,100,0.8)", fontFamily: "sans-serif", marginTop: 12 }}>{error}</p>}
           <button onClick={() => { setStep("send"); setCode(""); setError(""); }} style={{ background: "none", border: "none", color: S.textFaint, fontSize: 12, cursor: "pointer", fontFamily: "sans-serif", marginTop: 20, textDecoration: "underline" }}>Resend code</button>
@@ -332,7 +332,7 @@ function PaidGuideScreen({ user, answers, onReset }) {
               <p style={{ fontSize: 16, color: S.goldLight, fontFamily: "Cormorant Garamond, serif", marginBottom: 4 }}>{f.title}</p>
               <p style={{ fontSize: 12, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.6 }}>{f.desc}</p>
               <button style={{ marginTop: 10, background: "rgba(200,169,126,0.15)", border: "1px solid rgba(200,169,126,0.3)", borderRadius: 6, color: S.gold, padding: "8px 16px", fontSize: 12, cursor: "pointer", fontFamily: "sans-serif" }}>
-                Open →
+                Open ->
               </button>
             </div>
           </div>
@@ -386,7 +386,7 @@ function LandingScreen({ onStart, onNurse, onLogin }) {
         <p style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "clamp(18px, 3vw, 26px)", fontWeight: 300, color: "#7a7268", marginBottom: 24, fontStyle: "italic", lineHeight: 1.6, maxWidth: 600 }}>You shouldn't have to figure it out alone.</p>
         <p style={{ fontSize: 15, lineHeight: 1.8, color: "#7a7268", marginBottom: 48, maxWidth: 520 }}>LifeGuide walks your family through the most difficult journey of their lives — step by step, document by document, question by question.</p>
         <button onClick={onStart} style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", color: "#0a1520", border: "none", borderRadius: 8, padding: "20px 56px", fontSize: 16, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif", letterSpacing: 1, boxShadow: "0 8px 32px rgba(200,169,126,0.3)", marginBottom: 16, position: "relative", zIndex: 200 }}>
-          Start My Free Guide →
+          Start My Free Guide ->
         </button>
         <p style={{ fontSize: 12, color: "#3a3530", position: "relative", zIndex: 200 }}>No credit card required</p>
         <div style={{ marginTop: 48, maxWidth: 480, width: "100%" }}>
@@ -481,7 +481,7 @@ function LandingScreen({ onStart, onNurse, onLogin }) {
           </div>
           <h2 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "clamp(28px, 5vw, 42px)", fontWeight: 300, color: "#e8d5b7", marginBottom: 16, lineHeight: 1.2 }}>Introducing <em style={{ color: "#c8a97e", fontStyle: "italic" }}>LifeGuide Pro</em></h2>
           <p style={{ fontSize: 15, color: "#7a7268", lineHeight: 1.7, marginBottom: 32 }}>Built for hospice nurses, social workers, and care teams. Give every family you serve a personalized roadmap on day one.</p>
-          <button onClick={onNurse} style={{ background: "transparent", border: "1px solid rgba(200,169,126,0.4)", color: "#c8a97e", padding: "14px 32px", fontFamily: "sans-serif", fontSize: 12, fontWeight: 600, letterSpacing: 2, textTransform: "uppercase", cursor: "pointer", borderRadius: 4 }}>Learn About LifeGuide Pro →</button>
+          <button onClick={onNurse} style={{ background: "transparent", border: "1px solid rgba(200,169,126,0.4)", color: "#c8a97e", padding: "14px 32px", fontFamily: "sans-serif", fontSize: 12, fontWeight: 600, letterSpacing: 2, textTransform: "uppercase", cursor: "pointer", borderRadius: 4 }}>Learn About LifeGuide Pro -></button>
         </div>
       </section>
 
@@ -517,7 +517,7 @@ function DisclaimerScreen({ onFamily, onNurse, onModal }) {
         <h3 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 24, fontWeight: 400, color: S.goldLight, marginBottom: 8, lineHeight: 1.2 }}>Family member or caregiver</h3>
         <p style={{ fontSize: 13, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.6, marginBottom: 20 }}>Someone I love is declining and I need guidance, clarity, and a roadmap.</p>
         <div style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", borderRadius: 8, padding: "14px 24px", display: "inline-block" }}>
-          <span style={{ color: S.dark, fontSize: 14, fontWeight: 700, fontFamily: "sans-serif" }}>Show Me What To Do →</span>
+          <span style={{ color: S.dark, fontSize: 14, fontWeight: 700, fontFamily: "sans-serif" }}>Show Me What To Do -></span>
         </div>
       </div>
       <div onClick={onNurse} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, padding: "16px 20px", marginBottom: 20, cursor: "pointer", display: "flex", alignItems: "center", gap: 14, textAlign: "left" }}>
@@ -526,7 +526,7 @@ function DisclaimerScreen({ onFamily, onNurse, onModal }) {
           <p style={{ fontSize: 15, color: S.textDim, fontFamily: "Cormorant Garamond, serif", marginBottom: 2 }}>Hospice or healthcare professional</p>
           <p style={{ fontSize: 12, color: S.textFaint, fontFamily: "sans-serif" }}>Learn about LifeGuide Pro — built for care teams</p>
         </div>
-        <span style={{ color: S.textFaint, fontSize: 18, flexShrink: 0 }}>→</span>
+        <span style={{ color: S.textFaint, fontSize: 18, flexShrink: 0 }}>-></span>
       </div>
       <div style={{ background: "rgba(200,169,126,0.04)", border: "1px solid rgba(200,169,126,0.15)", borderRadius: 12, padding: "16px 18px", marginBottom: 20, textAlign: "left" }}>
         <p style={{ fontSize: 10, letterSpacing: 2, textTransform: "uppercase", color: S.gold, fontFamily: "sans-serif", marginBottom: 8 }}>⚠ Important Notice</p>
@@ -629,7 +629,7 @@ function EmailScreen({ onContinue, situation }) {
           onKeyDown={e => e.key === "Enter" && handleSubmit()}
         />
         <button onClick={handleSubmit} disabled={loading} style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", color: S.dark, border: "none", borderRadius: 10, padding: "18px", fontSize: 15, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif", boxShadow: "0 8px 24px rgba(200,169,126,0.25)", opacity: loading ? 0.7 : 1 }}>
-          {loading ? "Saving..." : "Save My Guide →"}
+          {loading ? "Saving..." : "Save My Guide ->"}
         </button>
       </div>
       {error && <p style={{ fontSize: 13, color: "rgba(255,100,100,0.8)", fontFamily: "sans-serif", marginBottom: 12 }}>Please enter a valid email address.</p>}
@@ -697,7 +697,7 @@ function FreeGuideScreen({ answers, onUnlock, onReset, userEmail }) {
                   <div style={{ marginTop: 16 }}>
                     <p style={{ fontSize: 14, color: S.textDim, lineHeight: 1.8, fontFamily: "sans-serif", marginBottom: 20 }}>{step.detail}</p>
                     <div style={{ background: "rgba(200,169,126,0.08)", border: "1px solid rgba(200,169,126,0.2)", borderRadius: 10, padding: "16px 18px" }}>
-                      <p style={{ fontSize: 11, color: S.gold, fontFamily: "sans-serif", letterSpacing: 2, textTransform: "uppercase", marginBottom: 8 }}>→ Your Action</p>
+                      <p style={{ fontSize: 11, color: S.gold, fontFamily: "sans-serif", letterSpacing: 2, textTransform: "uppercase", marginBottom: 8 }}>-> Your Action</p>
                       <p style={{ fontSize: 14, color: S.text, lineHeight: 1.7, fontFamily: "sans-serif" }}>{step.action}</p>
                     </div>
                   </div>
@@ -732,7 +732,7 @@ function FreeGuideScreen({ answers, onUnlock, onReset, userEmail }) {
                     ))}
                   </div>
                   <div style={{ background: "rgba(200,169,126,0.08)", border: "1px solid rgba(200,169,126,0.2)", borderRadius: 10, padding: "16px 18px", marginBottom: 16 }}>
-                    <p style={{ fontSize: 11, color: S.gold, fontFamily: "sans-serif", letterSpacing: 2, textTransform: "uppercase", marginBottom: 8 }}>→ Your Action</p>
+                    <p style={{ fontSize: 11, color: S.gold, fontFamily: "sans-serif", letterSpacing: 2, textTransform: "uppercase", marginBottom: 8 }}>-> Your Action</p>
                     <p style={{ fontSize: 14, color: S.text, lineHeight: 1.7, fontFamily: "sans-serif" }}>{documentTeaserStep.action}</p>
                   </div>
                   <div style={{ background: "rgba(200,169,126,0.04)", border: "1px dashed rgba(200,169,126,0.25)", borderRadius: 10, padding: "14px 16px", display: "flex", gap: 10, alignItems: "flex-start" }}>
@@ -798,7 +798,7 @@ function FreeGuideScreen({ answers, onUnlock, onReset, userEmail }) {
 
       {/* Already paid? Login link */}
       <div style={{ textAlign: "center", marginTop: 20, padding: "16px", background: "rgba(255,255,255,0.02)", borderRadius: 10, border: "1px solid rgba(255,255,255,0.06)" }}>
-        <p style={{ fontSize: 12, color: S.textFaint, fontFamily: "sans-serif", marginBottom: 6 }}>Already purchased? <span onClick={onUnlock} style={{ color: S.gold, cursor: "pointer", textDecoration: "underline" }}>Log in to access your guide →</span></p>
+        <p style={{ fontSize: 12, color: S.textFaint, fontFamily: "sans-serif", marginBottom: 6 }}>Already purchased? <span onClick={onUnlock} style={{ color: S.gold, cursor: "pointer", textDecoration: "underline" }}>Log in to access your guide -></span></p>
       </div>
 
       <p style={{ fontSize: 11, color: S.textFaint, fontFamily: "sans-serif", textAlign: "center", marginTop: 16 }}>Need help? <a href="mailto:lorenz@thelifeguide.app" style={{ color: S.gold, textDecoration: "underline" }}>lorenz@thelifeguide.app</a></p>
