@@ -273,6 +273,7 @@ function LoginScreen({ email: initialEmail, onVerified, onBack, directLogin }) {
       ) : step === "verify" ? (
         <>
           <p style={{ fontSize: 11, letterSpacing: 4, textTransform: "uppercase", color: S.gold, marginBottom: 16, fontFamily: "sans-serif" }}>Check Your Email</p>
+
           <h2 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 30, fontWeight: 300, color: S.goldLight, marginBottom: 12, lineHeight: 1.2 }}>
             Enter your 6-digit code
           </h2>
@@ -295,7 +296,7 @@ function LoginScreen({ email: initialEmail, onVerified, onBack, directLogin }) {
           {error && <p style={{ fontSize: 13, color: "rgba(255,100,100,0.8)", fontFamily: "sans-serif", marginTop: 12 }}>{error}</p>}
           <button onClick={() => { setStep("send"); setCode(""); setError(""); }} style={{ background: "none", border: "none", color: S.textFaint, fontSize: 12, cursor: "pointer", fontFamily: "sans-serif", marginTop: 20, textDecoration: "underline" }}>Resend code</button>
         </>
-      )}
+      ) : null}
     </div>
   );
 }
