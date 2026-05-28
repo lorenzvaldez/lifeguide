@@ -32,7 +32,7 @@ export default async function handler(req, res) {
 
   // Send email
   await resend.emails.send({
-    from: 'LifeGuide <lorenz@thelifeguide.app>',
+    from: 'LifeGuide <onboarding@resend.com>',
     to: email,
     subject: 'Your LifeGuide login code',
     html: `
