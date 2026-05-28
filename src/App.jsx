@@ -174,12 +174,16 @@ function Modal({ title, content, onClose }) {
 }
 
 // ─── LOGIN SCREEN (NEW) ───────────────────────────────────────────────────────
-function LoginScreen({ email, onVerified, onBack }) {
-  const [step, setStep] = useState("send"); // send | verify
+function LoginScreen({ email: initialEmail, onVerified, onBack, directLogin }) {
+  const [step, setStep] = useState(directLogin ? "enter_email" : "send"); // enter_email | send | verify
+  const [inputEmail, setInputEmail] = useState(initialEmail || "");
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [sent, setSent] = useState(false);
+
+  // use whichever email we have
+  const email = inputEmail;
 
   const sendCode = async () => {
     setLoading(true);
@@ -228,7 +232,30 @@ function LoginScreen({ email, onVerified, onBack }) {
     <div style={{ maxWidth: 440, width: "100%", margin: "0 auto", padding: "80px 24px 40px", textAlign: "center" }}>
       <img src="/logo.png" alt="LifeGuide" style={{ width: 60, height: 60, objectFit: "contain", margin: "0 auto 24px", display: "block" }} />
 
-      {step === "send" ? (
+      {step === "enter_email" ? (
+        <>
+          <p style={{ fontSize: 11, letterSpacing: 4, textTransform: "uppercase", color: S.gold, marginBottom: 16, fontFamily: "sans-serif" }}>Welcome Back</p>
+          <h2 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 30, fontWeight: 300, color: S.goldLight, marginBottom: 12, lineHeight: 1.2 }}>
+            Enter your email to log in
+          </h2>
+          <p style={{ fontSize: 14, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.6, marginBottom: 32 }}>
+            We'll send a 6-digit code to your inbox. No password needed.
+          </p>
+          <input
+            type="email"
+            value={inputEmail}
+            onChange={e => { setInputEmail(e.target.value); setError(""); }}
+            placeholder="Your email address"
+            style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(200,169,126,0.3)", color: S.text, padding: "18px 24px", fontFamily: "sans-serif", fontSize: 15, outline: "none", borderRadius: 10, width: "100%", textAlign: "center", marginBottom: 16 }}
+            onKeyDown={e => e.key === "Enter" && setStep("send")}
+          />
+          <button onClick={() => { if (!inputEmail.includes("@")) { setError("Please enter a valid email."); return; } setStep("send"); }} style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", color: S.dark, border: "none", borderRadius: 10, padding: "18px 48px", fontSize: 15, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif", width: "100%" }}>
+            Continue →
+          </button>
+          {error && <p style={{ fontSize: 13, color: "rgba(255,100,100,0.8)", fontFamily: "sans-serif", marginTop: 12 }}>{error}</p>}
+          <button onClick={onBack} style={{ background: "none", border: "none", color: S.textFaint, fontSize: 12, cursor: "pointer", fontFamily: "sans-serif", marginTop: 20, textDecoration: "underline" }}>← Back</button>
+        </>
+      ) : step === "send" ? (
         <>
           <p style={{ fontSize: 11, letterSpacing: 4, textTransform: "uppercase", color: S.gold, marginBottom: 16, fontFamily: "sans-serif" }}>Access Your Guide</p>
           <h2 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 30, fontWeight: 300, color: S.goldLight, marginBottom: 12, lineHeight: 1.2 }}>
@@ -243,7 +270,7 @@ function LoginScreen({ email, onVerified, onBack }) {
           {error && <p style={{ fontSize: 13, color: "rgba(255,100,100,0.8)", fontFamily: "sans-serif", marginTop: 12 }}>{error}</p>}
           <button onClick={onBack} style={{ background: "none", border: "none", color: S.textFaint, fontSize: 12, cursor: "pointer", fontFamily: "sans-serif", marginTop: 20, textDecoration: "underline" }}>← Back</button>
         </>
-      ) : (
+      ) : step === "verify" ? (
         <>
           <p style={{ fontSize: 11, letterSpacing: 4, textTransform: "uppercase", color: S.gold, marginBottom: 16, fontFamily: "sans-serif" }}>Check Your Email</p>
           <h2 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 30, fontWeight: 300, color: S.goldLight, marginBottom: 12, lineHeight: 1.2 }}>
@@ -321,7 +348,7 @@ function PaidGuideScreen({ user, answers, onReset }) {
 }
 
 // ─── LANDING PAGE SCREEN ──────────────────────────────────────────────────────
-function LandingScreen({ onStart, onNurse }) {
+function LandingScreen({ onStart, onNurse, onLogin }) {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -345,6 +372,7 @@ function LandingScreen({ onStart, onNurse }) {
         </div>
         <div style={{ display: "flex", gap: 12, alignItems: "center", pointerEvents: "auto" }}>
           <button onClick={onNurse} style={{ background: "transparent", border: "1px solid rgba(200,169,126,0.3)", color: "#c8a97e", padding: "8px 16px", fontFamily: "sans-serif", fontSize: 11, letterSpacing: 2, textTransform: "uppercase", cursor: "pointer", borderRadius: 2 }}>For Nurses</button>
+          <button onClick={onLogin} style={{ background: "rgba(200,169,126,0.1)", border: "1px solid rgba(200,169,126,0.3)", color: "#c8a97e", padding: "8px 16px", fontFamily: "sans-serif", fontSize: 11, letterSpacing: 2, textTransform: "uppercase", cursor: "pointer", borderRadius: 2 }}>Log In</button>
         </div>
       </nav>
 
@@ -821,7 +849,7 @@ export default function App() {
   };
 
   if (screen === "landing") {
-    return <LandingScreen onStart={() => setScreen("disclaimer")} onNurse={() => setScreen("nurse")} />;
+    return <LandingScreen onStart={() => setScreen("disclaimer")} onNurse={() => setScreen("nurse")} onLogin={() => setScreen("direct_login")} />;
   }
 
   return (
@@ -846,6 +874,15 @@ export default function App() {
           email={userEmail}
           onVerified={handleVerified}
           onBack={() => setScreen("guide")}
+          directLogin={false}
+        />
+      )}
+      {screen === "direct_login" && (
+        <LoginScreen
+          email=""
+          onVerified={handleVerified}
+          onBack={() => setScreen("landing")}
+          directLogin={true}
         />
       )}
       {screen === "paid" && (
