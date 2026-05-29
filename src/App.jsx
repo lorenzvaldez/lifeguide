@@ -1,5 +1,6 @@
 import { useState } from "react";
 import DoctorVisitPrep from "./DoctorVisitPrep";
+import DocumentVault from "./DocumentVault";
 
 // ─── STRIPE LINKS ─────────────────────────────────────────────────────────────
 const STRIPE_MONTHLY = "https://buy.stripe.com/bJedRagpY67wbUwdVqgw000";
@@ -335,6 +336,10 @@ function PaidGuideScreen({ user, answers, onReset, onFeature }) {
               <p style={{ fontSize: 12, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.6 }}>{f.desc}</p>
               {i === 0 ? (
                 <button onClick={() => onFeature("doctor")} style={{ marginTop: 10, background: "linear-gradient(135deg, #c8a97e, #a8895e)", border: "none", borderRadius: 6, color: S.dark, padding: "8px 16px", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif" }}>
+                  Open ->
+                </button>
+              ) : i === 1 ? (
+                <button onClick={() => onFeature("documents")} style={{ marginTop: 10, background: "linear-gradient(135deg, #c8a97e, #a8895e)", border: "none", borderRadius: 6, color: S.dark, padding: "8px 16px", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif" }}>
                   Open ->
                 </button>
               ) : (
@@ -904,6 +909,9 @@ export default function App() {
       )}
       {screen === "paid" && activeFeature === "doctor" && (
         <DoctorVisitPrep onBack={() => setActiveFeature(null)} />
+      )}
+      {screen === "paid" && activeFeature === "documents" && (
+        <DocumentVault onBack={() => setActiveFeature(null)} />
       )}
 
       {screen !== "landing" && (
