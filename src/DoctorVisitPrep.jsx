@@ -41,7 +41,7 @@ const needs = [
 ];
 
 export default function DoctorVisitPrep({ onBack }) {
-  const [step, setStep] = useState("intro"); // intro | questions | loading | results
+  const [step, setStep] = useState("intro");
   const [condition, setCondition] = useState("");
   const [stage, setStage] = useState("");
   const [need, setNeed] = useState("");
@@ -64,7 +64,7 @@ export default function DoctorVisitPrep({ onBack }) {
           messages: [
             {
               role: "user",
-              content: `You are a compassionate medical advocate helping a family member prepare for a doctor's appointment. Generate exactly 10 specific, practical questions they should ask their doctor.
+              content: `You are a compassionate medical advocate helping a family member prepare for a doctor appointment. Generate exactly 10 specific, practical questions they should ask their doctor.
 
 Patient situation:
 - Condition: ${condition}
@@ -111,12 +111,11 @@ Rules:
     setError("");
   };
 
-  // INTRO SCREEN
   if (step === "intro") {
     return (
       <div style={{ maxWidth: 560, width: "100%", margin: "0 auto", padding: "40px 24px 120px" }}>
         <button onClick={onBack} style={{ background: "none", border: "none", color: S.textFaint, fontSize: 13, cursor: "pointer", fontFamily: "sans-serif", marginBottom: 32, display: "flex", alignItems: "center", gap: 8 }}>
-          <- Back to Guide
+          Back to Guide
         </button>
 
         <div style={{ textAlign: "center", marginBottom: 40 }}>
@@ -126,10 +125,10 @@ Rules:
             Never leave a doctor's office wishing you'd asked something.
           </h2>
           <p style={{ fontSize: 14, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.7, marginBottom: 32 }}>
-            Answer 3 quick questions about your loved one's situation. We'll generate 10 personalized questions to bring to your next appointment — so you walk in prepared and walk out with real answers.
+            Answer 3 quick questions about your loved one's situation. We'll generate 10 personalized questions to bring to your next appointment.
           </p>
           <button onClick={() => setStep("questions")} style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", color: S.dark, border: "none", borderRadius: 10, padding: "18px 48px", fontSize: 15, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif", width: "100%" }}>
-            Generate My Questions ->
+            Generate My Questions
           </button>
         </div>
 
@@ -150,20 +149,18 @@ Rules:
     );
   }
 
-  // QUESTIONS SCREEN
   if (step === "questions") {
     const allSelected = condition && stage && need;
     return (
       <div style={{ maxWidth: 560, width: "100%", margin: "0 auto", padding: "40px 24px 120px" }}>
         <button onClick={() => setStep("intro")} style={{ background: "none", border: "none", color: S.textFaint, fontSize: 13, cursor: "pointer", fontFamily: "sans-serif", marginBottom: 32, display: "flex", alignItems: "center", gap: 8 }}>
-          <- Back
+          Back
         </button>
 
         <p style={{ fontSize: 11, letterSpacing: 4, textTransform: "uppercase", color: S.gold, marginBottom: 8, fontFamily: "sans-serif" }}>Step 1 of 3</p>
         <h2 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 28, fontWeight: 300, color: S.goldLight, marginBottom: 8 }}>Tell us about your loved one</h2>
         <p style={{ fontSize: 13, color: S.textFaint, fontFamily: "sans-serif", marginBottom: 32, lineHeight: 1.6 }}>The more specific you are, the better your questions will be.</p>
 
-        {/* Condition */}
         <div style={{ marginBottom: 28 }}>
           <p style={{ fontSize: 13, color: S.gold, fontFamily: "sans-serif", letterSpacing: 1, textTransform: "uppercase", marginBottom: 12 }}>Their primary condition</p>
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
@@ -175,7 +172,6 @@ Rules:
           </div>
         </div>
 
-        {/* Stage */}
         <div style={{ marginBottom: 28 }}>
           <p style={{ fontSize: 13, color: S.gold, fontFamily: "sans-serif", letterSpacing: 1, textTransform: "uppercase", marginBottom: 12 }}>Current stage</p>
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
@@ -187,7 +183,6 @@ Rules:
           </div>
         </div>
 
-        {/* Need */}
         <div style={{ marginBottom: 32 }}>
           <p style={{ fontSize: 13, color: S.gold, fontFamily: "sans-serif", letterSpacing: 1, textTransform: "uppercase", marginBottom: 12 }}>What do you most need from this appointment?</p>
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
@@ -202,17 +197,16 @@ Rules:
         {error && <p style={{ fontSize: 13, color: "rgba(255,100,100,0.8)", fontFamily: "sans-serif", marginBottom: 16 }}>{error}</p>}
 
         <button onClick={generate} disabled={!allSelected} style={{ background: allSelected ? "linear-gradient(135deg, #c8a97e, #a8895e)" : "rgba(255,255,255,0.05)", color: allSelected ? S.dark : S.textFaint, border: "none", borderRadius: 10, padding: "20px", fontSize: 15, fontWeight: 700, cursor: allSelected ? "pointer" : "not-allowed", fontFamily: "sans-serif", width: "100%", transition: "all 0.3s" }}>
-          {allSelected ? "Generate My 10 Questions ->" : "Select all 3 options above to continue"}
+          {allSelected ? "Generate My 10 Questions" : "Select all 3 options above to continue"}
         </button>
       </div>
     );
   }
 
-  // LOADING SCREEN
   if (step === "loading") {
     return (
       <div style={{ maxWidth: 560, width: "100%", margin: "0 auto", padding: "120px 24px", textAlign: "center" }}>
-        <div style={{ fontSize: 48, marginBottom: 24, animation: "pulse 2s infinite" }}>🏥</div>
+        <div style={{ fontSize: 48, marginBottom: 24 }}>🏥</div>
         <h2 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 28, fontWeight: 300, color: S.goldLight, marginBottom: 12 }}>
           Generating your questions...
         </h2>
@@ -221,20 +215,13 @@ Rules:
         </p>
         <div style={{ marginTop: 40, display: "flex", justifyContent: "center", gap: 8 }}>
           {[0, 1, 2].map(i => (
-            <div key={i} style={{ width: 8, height: 8, borderRadius: "50%", background: S.gold, opacity: 0.4, animation: `bounce 1.2s ${i * 0.2}s infinite` }} />
+            <div key={i} style={{ width: 8, height: 8, borderRadius: "50%", background: S.gold, opacity: 0.4 }} />
           ))}
         </div>
-        <style>{`
-          @keyframes bounce {
-            0%, 100% { transform: translateY(0); opacity: 0.4; }
-            50% { transform: translateY(-8px); opacity: 1; }
-          }
-        `}</style>
       </div>
     );
   }
 
-  // RESULTS SCREEN
   if (step === "results") {
     return (
       <div style={{ maxWidth: 560, width: "100%", margin: "0 auto", padding: "40px 24px 120px" }}>
@@ -244,16 +231,14 @@ Rules:
             10 questions for your next appointment
           </h2>
           <p style={{ fontSize: 13, color: S.textFaint, fontFamily: "sans-serif", lineHeight: 1.6 }}>
-            Based on: {condition} · {stage}
+            Based on: {condition}
           </p>
         </div>
 
-        {/* Copy button */}
         <button onClick={copyAll} style={{ background: copied ? "rgba(100,200,100,0.15)" : "rgba(200,169,126,0.1)", border: `1px solid ${copied ? "rgba(100,200,100,0.4)" : "rgba(200,169,126,0.3)"}`, borderRadius: 10, padding: "14px 24px", color: copied ? "#90d090" : S.gold, fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "sans-serif", width: "100%", marginBottom: 24, transition: "all 0.3s" }}>
           {copied ? "Copied to clipboard!" : "Copy all questions to clipboard"}
         </button>
 
-        {/* Questions list */}
         <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 32 }}>
           {questions.map((q, i) => (
             <div key={i} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(200,169,126,0.12)", borderRadius: 12, padding: "18px 20px", display: "flex", gap: 14, alignItems: "flex-start" }}>
@@ -263,13 +248,11 @@ Rules:
           ))}
         </div>
 
-        {/* Tip box */}
         <div style={{ background: "rgba(200,169,126,0.06)", border: "1px solid rgba(200,169,126,0.2)", borderRadius: 12, padding: "18px 20px", marginBottom: 24 }}>
           <p style={{ fontSize: 11, color: S.gold, letterSpacing: 2, textTransform: "uppercase", fontFamily: "sans-serif", marginBottom: 8 }}>Pro tip</p>
           <p style={{ fontSize: 13, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.7 }}>Print these or screenshot them before your appointment. Bring a notebook to write down the doctor's answers. Share this list with a family member who can't attend so they feel included.</p>
         </div>
 
-        {/* Actions */}
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           <button onClick={reset} style={{ background: "transparent", border: "1px solid rgba(200,169,126,0.3)", borderRadius: 10, padding: "16px", color: S.gold, fontSize: 14, cursor: "pointer", fontFamily: "sans-serif" }}>
             Generate new questions for a different appointment
@@ -281,4 +264,6 @@ Rules:
       </div>
     );
   }
+
+  return null;
 }
