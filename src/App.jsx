@@ -1,4 +1,5 @@
 import { useState } from "react";
+import DoctorVisitPrep from "./DoctorVisitPrep";
 
 // ─── STRIPE LINKS ─────────────────────────────────────────────────────────────
 const STRIPE_MONTHLY = "https://buy.stripe.com/bJedRagpY67wbUwdVqgw000";
@@ -302,7 +303,7 @@ function LoginScreen({ email: initialEmail, onVerified, onBack, directLogin }) {
 }
 
 // ─── PAID CONTENT SCREEN (NEW) ────────────────────────────────────────────────
-function PaidGuideScreen({ user, answers, onReset }) {
+function PaidGuideScreen({ user, answers, onReset, onFeature }) {
   const situation = answers.situation || "parent_declining";
   const situationLabel = {
     parent_declining: "Parent Declining",
@@ -332,9 +333,15 @@ function PaidGuideScreen({ user, answers, onReset }) {
             <div>
               <p style={{ fontSize: 16, color: S.goldLight, fontFamily: "Cormorant Garamond, serif", marginBottom: 4 }}>{f.title}</p>
               <p style={{ fontSize: 12, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.6 }}>{f.desc}</p>
-              <button style={{ marginTop: 10, background: "rgba(200,169,126,0.15)", border: "1px solid rgba(200,169,126,0.3)", borderRadius: 6, color: S.gold, padding: "8px 16px", fontSize: 12, cursor: "pointer", fontFamily: "sans-serif" }}>
-                Open ->
-              </button>
+              {i === 0 ? (
+                <button onClick={() => onFeature("doctor")} style={{ marginTop: 10, background: "linear-gradient(135deg, #c8a97e, #a8895e)", border: "none", borderRadius: 6, color: S.dark, padding: "8px 16px", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif" }}>
+                  Open ->
+                </button>
+              ) : (
+                <button style={{ marginTop: 10, background: "rgba(200,169,126,0.08)", border: "1px solid rgba(200,169,126,0.2)", borderRadius: 6, color: S.textFaint, padding: "8px 16px", fontSize: 12, cursor: "not-allowed", fontFamily: "sans-serif" }}>
+                  Coming Soon
+                </button>
+              )}
             </div>
           </div>
         ))}
@@ -816,6 +823,7 @@ export default function App() {
   const [modal, setModal] = useState(null);
   const [userEmail, setUserEmail] = useState("");
   const [loggedInUser, setLoggedInUser] = useState(null);
+  const [activeFeature, setActiveFeature] = useState(null);
 
   const handleAnswer = (questionId, value) => {
     const newAnswers = { ...answers, [questionId]: value };
@@ -886,12 +894,16 @@ export default function App() {
           directLogin={true}
         />
       )}
-      {screen === "paid" && (
+      {screen === "paid" && !activeFeature && (
         <PaidGuideScreen
           user={loggedInUser}
           answers={answers}
           onReset={handleReset}
+          onFeature={setActiveFeature}
         />
+      )}
+      {screen === "paid" && activeFeature === "doctor" && (
+        <DoctorVisitPrep onBack={() => setActiveFeature(null)} />
       )}
 
       {screen !== "landing" && (
