@@ -16,7 +16,7 @@ export default async function handler(req, res) {
         'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
+        model: 'claude-opus-4-5',
         max_tokens: 1000,
         messages: [
           {
@@ -42,12 +42,23 @@ Rules:
     });
 
     const data = await response.json();
+
+    if (!response.ok) {
+      console.error('Anthropic API error:', JSON.stringify(data));
+      return res.status(500).json({ error: 'API error', detail: data });
+    }
+
+    if (!data.content || !data.content[0] || !data.content[0].text) {
+      console.error('Unexpected API response:', JSON.stringify(data));
+      return res.status(500).json({ error: 'Unexpected response format' });
+    }
+
     const text = data.content[0].text.trim();
     const questions = JSON.parse(text);
 
     return res.status(200).json({ questions });
   } catch (e) {
     console.error('Doctor prep generation error:', e);
-    return res.status(500).json({ error: 'Failed to generate questions' });
+    return res.status(500).json({ error: e.message });
   }
 }
