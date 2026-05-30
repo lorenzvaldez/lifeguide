@@ -53,41 +53,15 @@ export default function DoctorVisitPrep({ onBack }) {
     setStep("loading");
     setError("");
     try {
-      const response = await fetch("https://api.anthropic.com/v1/messages", {
+      const response = await fetch("/api/generate-doctor-questions", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
-          max_tokens: 1000,
-          messages: [
-            {
-              role: "user",
-              content: `You are a compassionate medical advocate helping a family member prepare for a doctor appointment. Generate exactly 10 specific, practical questions they should ask their doctor.
-
-Patient situation:
-- Condition: ${condition}
-- Current stage: ${stage}
-- Primary need: ${need}
-
-Rules:
-- Questions must be specific to this exact situation, not generic
-- Questions should be things a non-medical person would actually need to ask
-- Focus on clarity, next steps, and quality of life
-- Do NOT include any preamble, explanation, or numbering
-- Return ONLY a JSON array of exactly 10 question strings
-- Example format: ["Question one?", "Question two?", ...]
-- No markdown, no backticks, just the raw JSON array`
-            }
-          ]
-        })
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ condition, stage, need }),
       });
 
       const data = await response.json();
-      const text = data.content[0].text.trim();
-      const parsed = JSON.parse(text);
-      setQuestions(parsed);
+      if (!response.ok || !data.questions) throw new Error("Failed");
+      setQuestions(data.questions);
       setStep("results");
     } catch (e) {
       setError("Something went wrong generating your questions. Please try again.");
