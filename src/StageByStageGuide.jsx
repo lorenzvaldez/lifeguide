@@ -215,7 +215,7 @@ export default function StageByStageGuide({ onBack, userSituation }) {
       {/* Stage detail */}
       {activeStage && (
         <div>
-          <button onClick={() => setActiveStage(null)} style={{ background: "none", border: "none", color: S.textFaint, fontSize: 13, cursor: "pointer", fontFamily: "sans-serif", marginBottom: 24, display: "flex", alignItems: "center", gap: 8 }}>
+          <button onClick={() => setActiveStage(null)} style={{ background: "rgba(200,169,126,0.1)", border: "1px solid rgba(200,169,126,0.3)", borderRadius: 8, color: S.gold, fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "sans-serif", marginBottom: 24, padding: "10px 18px", display: "flex", alignItems: "center", gap: 8 }}>
             All stages
           </button>
 
