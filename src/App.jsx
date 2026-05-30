@@ -1,6 +1,9 @@
 import { useState } from "react";
 import DoctorVisitPrep from "./DoctorVisitPrep";
 import DocumentVault from "./DocumentVault";
+import StageByStageGuide from "./StageByStageGuide";
+import FinalDaysGuide from "./FinalDaysGuide";
+import AfterGuide from "./AfterGuide";
 
 // ─── STRIPE LINKS ─────────────────────────────────────────────────────────────
 const STRIPE_MONTHLY = "https://buy.stripe.com/bJedRagpY67wbUwdVqgw000";
@@ -340,6 +343,18 @@ function PaidGuideScreen({ user, answers, onReset, onFeature }) {
                 </button>
               ) : i === 1 ? (
                 <button onClick={() => onFeature("documents")} style={{ marginTop: 10, background: "linear-gradient(135deg, #c8a97e, #a8895e)", border: "none", borderRadius: 6, color: S.dark, padding: "8px 16px", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif" }}>
+                  Open ->
+                </button>
+              ) : i === 2 ? (
+                <button onClick={() => onFeature("stages")} style={{ marginTop: 10, background: "linear-gradient(135deg, #c8a97e, #a8895e)", border: "none", borderRadius: 6, color: S.dark, padding: "8px 16px", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif" }}>
+                  Open ->
+                </button>
+              ) : i === 4 ? (
+                <button onClick={() => onFeature("finaldays")} style={{ marginTop: 10, background: "linear-gradient(135deg, #c8a97e, #a8895e)", border: "none", borderRadius: 6, color: S.dark, padding: "8px 16px", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif" }}>
+                  Open ->
+                </button>
+              ) : i === 5 ? (
+                <button onClick={() => onFeature("after")} style={{ marginTop: 10, background: "linear-gradient(135deg, #c8a97e, #a8895e)", border: "none", borderRadius: 6, color: S.dark, padding: "8px 16px", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif" }}>
                   Open ->
                 </button>
               ) : (
@@ -912,6 +927,15 @@ export default function App() {
       )}
       {screen === "paid" && activeFeature === "documents" && (
         <DocumentVault onBack={() => setActiveFeature(null)} />
+      )}
+      {screen === "paid" && activeFeature === "stages" && (
+        <StageByStageGuide onBack={() => setActiveFeature(null)} />
+      )}
+      {screen === "paid" && activeFeature === "finaldays" && (
+        <FinalDaysGuide onBack={() => setActiveFeature(null)} />
+      )}
+      {screen === "paid" && activeFeature === "after" && (
+        <AfterGuide onBack={() => setActiveFeature(null)} />
       )}
 
       {screen !== "landing" && (
