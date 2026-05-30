@@ -66,7 +66,7 @@ const documents = [
     why: "Unlike a Living Will, a POLST is a medical order that emergency responders are legally required to follow. If paramedics are called, they will follow the POLST on scene. A Living Will alone does not stop CPR from being performed.",
     when: "This is typically completed when someone enters hospice or when a terminal diagnosis is confirmed. Your loved one's doctor or hospice nurse will initiate this conversation.",
     howToGet: "Ask your loved one's primary doctor or hospice team to complete a POLST form. It must be signed by a physician. Once signed, post it somewhere visible in the home — many families put it on the refrigerator.",
-    link: "https://polst.org/patients-families/",
+    link: "https://polst.org/form/",
     linkText: "Learn more about POLST forms",
     warning: "The POLST is meant to be visible in an emergency. Post it on the refrigerator or inside the front door so paramedics can find it immediately.",
   },
