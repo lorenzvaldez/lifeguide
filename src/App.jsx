@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import DoctorVisitPrep from "./DoctorVisitPrep";
 import DocumentVault from "./DocumentVault";
 import StageByStageGuide from "./StageByStageGuide";
 import FinalDaysGuide from "./FinalDaysGuide";
 import AfterGuide from "./AfterGuide";
+import FamilyCoordination from "./FamilyCoordination";
 
 // ─── STRIPE LINKS ─────────────────────────────────────────────────────────────
 const STRIPE_MONTHLY = "https://buy.stripe.com/bJedRagpY67wbUwdVqgw000";
@@ -346,6 +347,10 @@ function PaidGuideScreen({ user, answers, onReset, onFeature }) {
                   Open ->
                 </button>
               ) : i === 2 ? (
+                <button onClick={() => onFeature("family")} style={{ marginTop: 10, background: "linear-gradient(135deg, #c8a97e, #a8895e)", border: "none", borderRadius: 6, color: S.dark, padding: "8px 16px", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif" }}>
+                  Open ->
+                </button>
+              ) : i === 3 ? (
                 <button onClick={() => onFeature("stages")} style={{ marginTop: 10, background: "linear-gradient(135deg, #c8a97e, #a8895e)", border: "none", borderRadius: 6, color: S.dark, padding: "8px 16px", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif" }}>
                   Open ->
                 </button>
@@ -845,6 +850,28 @@ export default function App() {
   const [loggedInUser, setLoggedInUser] = useState(null);
   const [activeFeature, setActiveFeature] = useState(null);
 
+  // Check for existing session on load and payment success
+  useEffect(() => {
+    // Check for payment success redirect from Stripe
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("payment") === "success") {
+      setScreen("payment_success");
+      window.history.replaceState({}, "", "/");
+      return;
+    }
+    // Check for existing session
+    try {
+      const saved = localStorage.getItem("lifeguide_user");
+      if (saved) {
+        const user = JSON.parse(saved);
+        if (user && user.email && user.is_paid) {
+          setLoggedInUser(user);
+          setScreen("paid");
+        }
+      }
+    } catch (e) {}
+  }, []);
+
   const handleAnswer = (questionId, value) => {
     const newAnswers = { ...answers, [questionId]: value };
     setAnswers(newAnswers);
@@ -863,6 +890,7 @@ export default function App() {
   const handleVerified = (user) => {
     setLoggedInUser(user);
     if (user.is_paid) {
+      try { localStorage.setItem("lifeguide_user", JSON.stringify(user)); } catch (e) {}
       setScreen("paid");
     } else {
       setScreen("guide");
@@ -875,6 +903,7 @@ export default function App() {
     setAnswers({});
     setUserEmail("");
     setLoggedInUser(null);
+    try { localStorage.removeItem("lifeguide_user"); } catch (e) {}
   };
 
   if (screen === "landing") {
@@ -906,7 +935,24 @@ export default function App() {
           directLogin={false}
         />
       )}
-      {screen === "direct_login" && (
+      {screen === "payment_success" && (
+        <div style={{ maxWidth: 480, width: "100%", margin: "0 auto", padding: "120px 24px", textAlign: "center" }}>
+          <div style={{ fontSize: 64, marginBottom: 24 }}>🕊️</div>
+          <p style={{ fontSize: 11, letterSpacing: 4, textTransform: "uppercase", color: S.gold, marginBottom: 16, fontFamily: "sans-serif" }}>Payment Confirmed</p>
+          <h2 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 34, fontWeight: 300, color: S.goldLight, marginBottom: 16, lineHeight: 1.2 }}>
+            You now have full access to LifeGuide.
+          </h2>
+          <p style={{ fontSize: 14, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.7, marginBottom: 32 }}>
+            Check your email for a welcome message with your login link. Use the button below to log in and access your complete guide right now.
+          </p>
+          <button onClick={() => setScreen("direct_login")} style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", color: S.dark, border: "none", borderRadius: 10, padding: "20px 48px", fontSize: 15, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif", width: "100%", marginBottom: 12 }}>
+            Log In to Access My Guide
+          </button>
+          <button onClick={() => setScreen("landing")} style={{ background: "none", border: "none", color: S.textFaint, fontSize: 12, cursor: "pointer", fontFamily: "sans-serif", textDecoration: "underline" }}>
+            Back to home
+          </button>
+        </div>
+      )}
         <LoginScreen
           email=""
           onVerified={handleVerified}
@@ -927,6 +973,9 @@ export default function App() {
       )}
       {screen === "paid" && activeFeature === "documents" && (
         <DocumentVault onBack={() => setActiveFeature(null)} />
+      )}
+      {screen === "paid" && activeFeature === "family" && (
+        <FamilyCoordination onBack={() => setActiveFeature(null)} />
       )}
       {screen === "paid" && activeFeature === "stages" && (
         <StageByStageGuide onBack={() => setActiveFeature(null)} />
