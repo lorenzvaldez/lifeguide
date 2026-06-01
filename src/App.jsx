@@ -830,8 +830,10 @@ function FreeGuideScreen({ answers, onUnlock, onReset, userEmail }) {
       </div>
 
       {/* Already paid? Login link */}
-      <div style={{ textAlign: "center", marginTop: 20, padding: "16px", background: "rgba(255,255,255,0.02)", borderRadius: 10, border: "1px solid rgba(255,255,255,0.06)" }}>
-        <p style={{ fontSize: 12, color: S.textFaint, fontFamily: "sans-serif", marginBottom: 6 }}>Already purchased? <span onClick={onUnlock} style={{ color: S.gold, cursor: "pointer", textDecoration: "underline" }}>Log in to access your guide -></span></p>
+      <div style={{ textAlign: "center", marginTop: 20, padding: "20px", background: "rgba(200,169,126,0.08)", borderRadius: 10, border: "1px solid rgba(200,169,126,0.25)" }}>
+        <p style={{ fontSize: 14, color: S.goldLight, fontFamily: "Cormorant Garamond, serif", marginBottom: 6, fontSize: 18 }}>Already a member?</p>
+        <p style={{ fontSize: 13, color: S.textDim, fontFamily: "sans-serif", marginBottom: 10 }}>Use the <strong style={{ color: S.gold }}>Log In</strong> button at the top of the page to access your guide.</p>
+        <span onClick={onUnlock} style={{ color: S.gold, cursor: "pointer", textDecoration: "underline", fontSize: 14, fontFamily: "sans-serif" }}>Or click here to log in now</span>
       </div>
 
       <p style={{ fontSize: 11, color: S.textFaint, fontFamily: "sans-serif", textAlign: "center", marginTop: 16 }}>Need help? <a href="mailto:lorenz@thelifeguide.app" style={{ color: S.gold, textDecoration: "underline" }}>lorenz@thelifeguide.app</a></p>
