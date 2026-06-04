@@ -77,6 +77,19 @@ export default async function handler(req, res) {
       plan
     });
 
+    // Generate magic login token
+    const magicToken = Math.random().toString(36).substring(2) + Date.now().toString(36);
+    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(); // 7 days
+    
+    await supabase.from('verification_codes').upsert({
+      email,
+      code: magicToken,
+      expires_at: expiresAt,
+      created_at: new Date().toISOString()
+    }, { onConflict: 'email' });
+
+    const magicLink = `https://www.thelifeguide.app?token=${magicToken}&email=${encodeURIComponent(email)}`;
+
     const { error: emailError } = await resend.emails.send({
       from: 'LifeGuide <lorenz@thelifeguide.app>',
       to: email,
@@ -110,7 +123,7 @@ export default async function handler(req, res) {
                       <table width="100%" cellpadding="0" cellspacing="0">
                         <tr>
                           <td align="center" style="padding-bottom: 32px;">
-                            <a href="https://thelifeguide.app?login=true&email=${encodeURIComponent(email)}" style="display: inline-block; background: linear-gradient(135deg, #c8a97e, #a8895e); color: #0a1520; text-decoration: none; padding: 16px 48px; border-radius: 8px; font-family: sans-serif; font-size: 15px; font-weight: 700; letter-spacing: 1px;">Access Your Guide →</a>
+                            <a href="${magicLink}" style="display: inline-block; background: linear-gradient(135deg, #c8a97e, #a8895e); color: #0a1520; text-decoration: none; padding: 16px 48px; border-radius: 8px; font-family: sans-serif; font-size: 15px; font-weight: 700; letter-spacing: 1px;">Access Your Guide →</a>
                           </td>
                         </tr>
                       </table>
