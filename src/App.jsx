@@ -965,8 +965,9 @@ export default function App() {
           </button>
         </div>
       )}
+      {screen === "direct_login" && (
         <LoginScreen
-          email=""
+          email={userEmail}
           onVerified={handleVerified}
           onBack={() => setScreen("landing")}
           directLogin={true}
