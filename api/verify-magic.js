@@ -14,17 +14,32 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Missing email or token' });
   }
 
-  // Look up the magic token in verification_codes table
-  const { data, error } = await supabase
+  // Look up the magic token — try without expiry check first
+  const { data: allCodes, error: listError } = await supabase
     .from('verification_codes')
     .select('*')
-    .eq('email', email)
-    .eq('code', token)
-    .gt('expires_at', new Date().toISOString())
-    .single();
+    .eq('email', email);
 
-  if (error || !data) {
+  console.log('All codes for email:', JSON.stringify(allCodes));
+  console.log('Looking for token:', token);
+
+  if (listError) {
+    console.error('List error:', listError);
+    return res.status(500).json({ error: 'Database error' });
+  }
+
+  // Find matching token
+  const match = allCodes?.find(row => row.code === token);
+
+  if (!match) {
+    console.error('No matching token found');
     return res.status(400).json({ error: 'Invalid or expired token' });
+  }
+
+  // Check expiry
+  if (new Date(match.expires_at) < new Date()) {
+    console.error('Token expired');
+    return res.status(400).json({ error: 'Token expired' });
   }
 
   // Delete the used token
@@ -35,13 +50,14 @@ export default async function handler(req, res) {
     .eq('code', token);
 
   // Get user record
-  const { data: user } = await supabase
+  const { data: user, error: userError } = await supabase
     .from('users')
     .select('*')
     .eq('email', email)
     .single();
 
-  if (!user) {
+  if (userError || !user) {
+    console.error('User not found:', userError);
     return res.status(400).json({ error: 'User not found' });
   }
 
