@@ -398,7 +398,7 @@ function LandingScreen({ onStart, onNurse, onLogin }) {
 
   return (
     <div style={{ minHeight: "100vh", background: `linear-gradient(135deg, #0a1520 0%, #1a2a3a 50%, #0a1520 100%)`, color: "#ffffff", fontFamily: "sans-serif" }}>
-      <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 100, padding: "20px 32px", display: "flex", justifyContent: "space-between", alignItems: "center", background: "linear-gradient(to bottom, rgba(10,21,32,0.95), transparent)", pointerEvents: "none" }}>
+      <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 100, padding: "16px 20px", display: "flex", justifyContent: "space-between", alignItems: "center", background: "linear-gradient(to bottom, rgba(10,21,32,0.95), transparent)", pointerEvents: "none" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, pointerEvents: "auto" }}>
           <img src="/logo.png" alt="LifeGuide" style={{ width: 36, height: 36, objectFit: "contain" }} />
           <span style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 20, fontWeight: 400, color: "#e8d5b7", letterSpacing: 1 }}>LifeGuide</span>
@@ -409,7 +409,7 @@ function LandingScreen({ onStart, onNurse, onLogin }) {
         </div>
       </nav>
 
-      <section style={{ minHeight: "100vh", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center", padding: "120px 24px 80px", position: "relative", overflow: "hidden", zIndex: 1 }}>
+      <section style={{ minHeight: "100vh", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center", padding: "100px 20px 60px", position: "relative", overflow: "hidden", zIndex: 1 }}>
         <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 60% 50% at 50% 60%, rgba(200,169,126,0.06) 0%, transparent 70%)" }} />
         <img src="/logo.png" alt="LifeGuide" style={{ width: 90, height: 90, objectFit: "contain", marginBottom: 32 }} />
         <p style={{ fontSize: 11, letterSpacing: 4, textTransform: "uppercase", color: "#c8a97e", marginBottom: 24 }}>Family Care Navigator</p>
@@ -437,8 +437,8 @@ function LandingScreen({ onStart, onNurse, onLogin }) {
         </div>
       </section>
 
-      <section style={{ background: "#111e2b", padding: "80px 24px" }}>
-        <div style={{ maxWidth: 900, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48, alignItems: "center" }}>
+      <section style={{ background: "#111e2b", padding: "60px 20px" }}>
+        <div style={{ maxWidth: 900, margin: "0 auto", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 32, alignItems: "center" }}>
           <div>
             <span style={{ fontSize: 10, letterSpacing: 4, textTransform: "uppercase", color: "#c8a97e", marginBottom: 16, display: "block" }}>The Problem</span>
             <h2 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "clamp(32px, 5vw, 48px)", fontWeight: 300, color: "#e8d5b7", marginBottom: 20, lineHeight: 1.15 }}>Families are left<br /><em style={{ color: "#c8a97e", fontStyle: "italic" }}>completely lost.</em></h2>
@@ -461,11 +461,11 @@ function LandingScreen({ onStart, onNurse, onLogin }) {
         </div>
       </section>
 
-      <section style={{ padding: "80px 24px" }}>
+      <section style={{ padding: "60px 20px" }}>
         <div style={{ maxWidth: 900, margin: "0 auto", textAlign: "center" }}>
           <span style={{ fontSize: 10, letterSpacing: 4, textTransform: "uppercase", color: "#c8a97e", marginBottom: 16, display: "block" }}>How It Works</span>
           <h2 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "clamp(32px, 5vw, 48px)", fontWeight: 300, color: "#e8d5b7", marginBottom: 56, lineHeight: 1.15 }}>Your personal roadmap,<br /><em style={{ color: "#c8a97e", fontStyle: "italic" }}>built in minutes.</em></h2>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 28 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 20 }}>
             {[
               { num: "01", title: "Tell us your situation", desc: "Answer 4 simple questions about where you are — who needs care, what stage you're in, and what you need most right now." },
               { num: "02", title: "Get your roadmap", desc: "LifeGuide builds a personalized step-by-step guide — exactly what to do this week, next week, and beyond. Nothing generic." },
@@ -481,13 +481,13 @@ function LandingScreen({ onStart, onNurse, onLogin }) {
         </div>
       </section>
 
-      <section style={{ background: "#111e2b", padding: "80px 24px" }}>
+      <section style={{ background: "#111e2b", padding: "60px 20px" }}>
         <div style={{ maxWidth: 900, margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: 48 }}>
             <span style={{ fontSize: 10, letterSpacing: 4, textTransform: "uppercase", color: "#c8a97e", marginBottom: 16, display: "block" }}>What's Inside</span>
             <h2 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "clamp(32px, 5vw, 48px)", fontWeight: 300, color: "#e8d5b7", lineHeight: 1.15 }}>Everything your family<br /><em style={{ color: "#c8a97e", fontStyle: "italic" }}>actually needs.</em></h2>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 20 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16 }}>
             {[
               { icon: "🗺️", title: "Personalized Navigator", desc: "A custom roadmap based on your exact situation. Step-by-step, prioritized, and updated as things change." },
               { icon: "📋", title: "Document Checklist", desc: "Power of attorney, living will, DNR, Medicare — explained in plain language with links to get them done." },
@@ -506,7 +506,7 @@ function LandingScreen({ onStart, onNurse, onLogin }) {
         </div>
       </section>
 
-      <section style={{ padding: "80px 24px" }}>
+      <section style={{ padding: "60px 20px" }}>
         <div style={{ maxWidth: 700, margin: "0 auto", textAlign: "center" }}>
           <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(200,169,126,0.08)", border: "1px solid rgba(200,169,126,0.2)", borderRadius: 20, padding: "6px 16px", marginBottom: 24 }}>
             <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#c8a97e", display: "inline-block" }} />
@@ -858,6 +858,16 @@ export default function App() {
     const params = new URLSearchParams(window.location.search);
     if (params.get("payment") === "success") {
       setScreen("payment_success");
+      window.history.replaceState({}, "", "/");
+      return;
+    }
+    // Check for login=true param from email link
+    if (params.get("login") === "true") {
+      const emailParam = params.get("email");
+      if (emailParam) {
+        setUserEmail(decodeURIComponent(emailParam));
+      }
+      setScreen("direct_login");
       window.history.replaceState({}, "", "/");
       return;
     }
