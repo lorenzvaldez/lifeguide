@@ -861,6 +861,33 @@ export default function App() {
       window.history.replaceState({}, "", "/");
       return;
     }
+    // Magic link auto-login from welcome email
+    if (params.get("token") && params.get("email")) {
+      const emailParam = decodeURIComponent(params.get("email"));
+      const token = params.get("token");
+      window.history.replaceState({}, "", "/");
+      fetch("/api/verify-magic", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: emailParam, token })
+      })
+        .then(r => r.json())
+        .then(data => {
+          if (data.user) {
+            setLoggedInUser(data.user);
+            try { localStorage.setItem("lifeguide_user", JSON.stringify(data.user)); } catch(e) {}
+            setScreen("paid");
+          } else {
+            setUserEmail(emailParam);
+            setScreen("direct_login");
+          }
+        })
+        .catch(() => {
+          setUserEmail(emailParam);
+          setScreen("direct_login");
+        });
+      return;
+    }
     // Check for login=true param from email link
     if (params.get("login") === "true") {
       const emailParam = params.get("email");
