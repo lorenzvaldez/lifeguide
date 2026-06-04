@@ -110,7 +110,7 @@ export default async function handler(req, res) {
                       <table width="100%" cellpadding="0" cellspacing="0">
                         <tr>
                           <td align="center" style="padding-bottom: 32px;">
-                            <a href="https://thelifeguide.app" style="display: inline-block; background: linear-gradient(135deg, #c8a97e, #a8895e); color: #0a1520; text-decoration: none; padding: 16px 48px; border-radius: 8px; font-family: sans-serif; font-size: 15px; font-weight: 700; letter-spacing: 1px;">Access Your Guide →</a>
+                            <a href="https://thelifeguide.app?login=true&email=${encodeURIComponent(email)}" style="display: inline-block; background: linear-gradient(135deg, #c8a97e, #a8895e); color: #0a1520; text-decoration: none; padding: 16px 48px; border-radius: 8px; font-family: sans-serif; font-size: 15px; font-weight: 700; letter-spacing: 1px;">Access Your Guide →</a>
                           </td>
                         </tr>
                       </table>
