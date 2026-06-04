@@ -32,7 +32,7 @@ Monthly subscriptions are billed at $20/month. 6-month access is $97 one time. A
 We collect only your email address and payment information processed securely via Stripe. We do not collect, store, or share any medical information about you or your loved ones.
 
 6. REFUND POLICY
-We want you to feel confident purchasing LifeGuide. If you are not satisfied within 7 days of your purchase, contact us at lorenz@thelifeguide.app and we will issue a full refund — no questions asked. Monthly subscriptions may be cancelled at any time and will not renew after the current billing period. One-time purchases (6-month and annual) are eligible for a full refund within 7 days of purchase only.
+We want you to feel confident purchasing LifeGuide. If you are not satisfied within 7 days of your purchase, contact us at support@thelifeguide.app and we will issue a full refund — no questions asked. Monthly subscriptions may be cancelled at any time and will not renew after the current billing period. One-time purchases (6-month and annual) are eligible for a full refund within 7 days of purchase only.
 
 7. CHANGES
 We reserve the right to update these terms at any time. Continued use of the app constitutes acceptance of updated terms.`;
@@ -56,7 +56,10 @@ HOW WE USE YOUR DATA
 
 WE DO NOT sell your data, share with advertisers, or store health information.
 
-CONTACT: lorenz@thelifeguide.app`;
+HIPAA NOTICE
+LifeGuide is NOT a covered entity under HIPAA. We do not collect, store, or transmit any Protected Health Information (PHI). We do not collect any information about the health condition of any individual. Our platform is an informational and organizational tool only.
+
+CONTACT: support@thelifeguide.app`;
 
 // ─── QUIZ ─────────────────────────────────────────────────────────────────────
 const questions = [
@@ -376,7 +379,7 @@ function PaidGuideScreen({ user, answers, onReset, onFeature }) {
       </div>
 
       <p style={{ fontSize: 11, color: S.textFaint, fontFamily: "sans-serif", textAlign: "center" }}>
-        Need help? <a href="mailto:lorenz@thelifeguide.app" style={{ color: S.gold, textDecoration: "underline" }}>lorenz@thelifeguide.app</a>
+        Need help? <a href="mailto:support@thelifeguide.app" style={{ color: S.gold, textDecoration: "underline" }}>support@thelifeguide.app</a>
       </p>
       <button onClick={onReset} style={{ background: "none", border: "none", color: S.textFaint, fontSize: 12, cursor: "pointer", fontFamily: "sans-serif", display: "block", margin: "16px auto 0", textDecoration: "underline" }}>Sign out</button>
     </div>
@@ -533,7 +536,7 @@ function LandingScreen({ onStart, onNurse, onLogin }) {
           <span style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 20, color: "#c8a97e", fontWeight: 300 }}>LifeGuide</span>
         </div>
         <p style={{ fontSize: 11, color: "#3a3530", marginBottom: 12, letterSpacing: 1, textTransform: "uppercase" }}>Family Care Navigator</p>
-        <p style={{ fontSize: 10, color: "#2a2622", lineHeight: 1.6 }}>NOT MEDICAL ADVICE · © 2026 LifeGuide · <a href="mailto:lorenz@thelifeguide.app" style={{ color: "#3a3830", textDecoration: "none" }}>lorenz@thelifeguide.app</a></p>
+        <p style={{ fontSize: 10, color: "#2a2622", lineHeight: 1.6 }}>NOT MEDICAL ADVICE · © 2026 LifeGuide · <a href="mailto:support@thelifeguide.app" style={{ color: "#3a3830", textDecoration: "none" }}>support@thelifeguide.app</a></p>
       </footer>
     </div>
   );
@@ -839,7 +842,7 @@ function FreeGuideScreen({ answers, onUnlock, onReset, userEmail }) {
         <span onClick={onUnlock} style={{ color: S.gold, cursor: "pointer", textDecoration: "underline", fontSize: 14, fontFamily: "sans-serif" }}>Or click here to log in now</span>
       </div>
 
-      <p style={{ fontSize: 11, color: S.textFaint, fontFamily: "sans-serif", textAlign: "center", marginTop: 16 }}>Need help? <a href="mailto:lorenz@thelifeguide.app" style={{ color: S.gold, textDecoration: "underline" }}>lorenz@thelifeguide.app</a></p>
+      <p style={{ fontSize: 11, color: S.textFaint, fontFamily: "sans-serif", textAlign: "center", marginTop: 16 }}>Need help? <a href="mailto:support@thelifeguide.app" style={{ color: S.gold, textDecoration: "underline" }}>support@thelifeguide.app</a></p>
       <button onClick={onReset} style={{ background: "none", border: "none", color: S.textFaint, fontSize: 12, cursor: "pointer", fontFamily: "sans-serif", display: "block", margin: "16px auto 0", textDecoration: "underline" }}>Start over</button>
     </div>
   );
