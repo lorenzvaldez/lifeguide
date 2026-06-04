@@ -31,7 +31,10 @@ Monthly subscriptions are billed at $20/month. 6-month access is $97 one time. A
 5. PRIVACY
 We collect only your email address and payment information processed securely via Stripe. We do not collect, store, or share any medical information about you or your loved ones.
 
-6. CHANGES
+6. REFUND POLICY
+We want you to feel confident purchasing LifeGuide. If you are not satisfied within 7 days of your purchase, contact us at lorenz@thelifeguide.app and we will issue a full refund — no questions asked. Monthly subscriptions may be cancelled at any time and will not renew after the current billing period. One-time purchases (6-month and annual) are eligible for a full refund within 7 days of purchase only.
+
+7. CHANGES
 We reserve the right to update these terms at any time. Continued use of the app constitutes acceptance of updated terms.`;
 
 const PRIVACY = `Last updated: May 2026
@@ -975,18 +978,26 @@ export default function App() {
         />
       )}
       {screen === "payment_success" && (
-        <div style={{ maxWidth: 480, width: "100%", margin: "0 auto", padding: "120px 24px", textAlign: "center" }}>
+        <div style={{ maxWidth: 480, width: "100%", margin: "0 auto", padding: "100px 24px 60px", textAlign: "center" }}>
           <div style={{ fontSize: 64, marginBottom: 24 }}>🕊️</div>
           <p style={{ fontSize: 11, letterSpacing: 4, textTransform: "uppercase", color: S.gold, marginBottom: 16, fontFamily: "sans-serif" }}>Payment Confirmed</p>
           <h2 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 34, fontWeight: 300, color: S.goldLight, marginBottom: 16, lineHeight: 1.2 }}>
             You now have full access to LifeGuide.
           </h2>
           <p style={{ fontSize: 14, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.7, marginBottom: 32 }}>
-            Check your email for a welcome message with your login link. Use the button below to log in and access your complete guide right now.
+            A welcome email with your magic login link is on its way. Or enter your email below to access your guide right now.
           </p>
-          <button onClick={() => setScreen("direct_login")} style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", color: S.dark, border: "none", borderRadius: 10, padding: "20px 48px", fontSize: 15, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif", width: "100%", marginBottom: 12 }}>
-            Log In to Access My Guide
+          <input
+            type="email"
+            placeholder="Enter your email to access now"
+            value={userEmail}
+            onChange={e => setUserEmail(e.target.value)}
+            style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(200,169,126,0.3)", color: S.text, padding: "18px 24px", fontFamily: "sans-serif", fontSize: 15, outline: "none", borderRadius: 10, width: "100%", textAlign: "center", marginBottom: 12, boxSizing: "border-box" }}
+          />
+          <button onClick={() => { if (userEmail) setScreen("direct_login"); }} style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", color: S.dark, border: "none", borderRadius: 10, padding: "20px 48px", fontSize: 15, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif", width: "100%", marginBottom: 12 }}>
+            Access My Guide Now →
           </button>
+          <p style={{ fontSize: 12, color: S.textFaint, fontFamily: "sans-serif", marginBottom: 16 }}>Or check your email for the magic login link — no password needed.</p>
           <button onClick={() => setScreen("landing")} style={{ background: "none", border: "none", color: S.textFaint, fontSize: 12, cursor: "pointer", fontFamily: "sans-serif", textDecoration: "underline" }}>
             Back to home
           </button>
