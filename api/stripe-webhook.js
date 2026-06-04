@@ -38,12 +38,10 @@ export default async function handler(req, res) {
   if (event.type === 'checkout.session.completed') {
     const sessionRaw = event.data.object;
 
-    // Expand the session to get customer details reliably
     const session = await stripe.checkout.sessions.retrieve(sessionRaw.id, {
       expand: ['customer', 'line_items']
     });
 
-    // Get email from multiple fallback sources
     let email = session.customer_email
       || session.customer_details?.email
       || (session.customer && session.customer.email)
@@ -54,18 +52,15 @@ export default async function handler(req, res) {
       return res.status(200).json({ received: true });
     }
 
-    // Determine plan from amount
     const amount = session.amount_total;
     let plan = 'monthly';
     if (amount === 9700) plan = '6months';
     if (amount === 16700) plan = 'annual';
 
-    // Get stripe customer id
     const stripeCustomerId = typeof session.customer === 'string'
       ? session.customer
       : session.customer?.id || null;
 
-    // Upsert user as paid
     const { error: upsertError } = await supabase.from('users').upsert({
       email,
       is_paid: true,
@@ -73,11 +68,8 @@ export default async function handler(req, res) {
       stripe_customer_id: stripeCustomerId
     }, { onConflict: 'email' });
 
-    if (upsertError) {
-      console.error('Supabase upsert error:', upsertError);
-    }
+    if (upsertError) console.error('Supabase upsert error:', upsertError);
 
-    // Log payment
     await supabase.from('payments').insert({
       user_email: email,
       stripe_payment_id: session.id,
@@ -85,32 +77,88 @@ export default async function handler(req, res) {
       plan
     });
 
-    // Send welcome email
     const { error: emailError } = await resend.emails.send({
       from: 'LifeGuide <lorenz@thelifeguide.app>',
       to: email,
-      subject: 'Welcome to LifeGuide — you\'re in',
+      subject: "Welcome to LifeGuide — you're in 🕊️",
       html: `
-        <div style="font-family: Georgia, serif; max-width: 500px; margin: 0 auto; padding: 40px 20px; background: #ffffff;">
-          <div style="text-align: center; margin-bottom: 32px;">
-            <img src="https://thelifeguide.app/logo.png" alt="LifeGuide" style="height: 48px;" />
-          </div>
-          <h2 style="color: #B8860B; font-family: Georgia, serif; font-weight: normal; font-size: 24px; margin-bottom: 16px;">You now have full access to LifeGuide.</h2>
-          <p style="color: #555; line-height: 1.8; margin-bottom: 24px;">Thank you for trusting us during one of the hardest seasons of life. Your full guide is ready — doctor visit prep, document vault, family coordination, stage-by-stage guidance, and everything after.</p>
-          <div style="text-align: center; margin: 32px 0;">
-            <a href="https://thelifeguide.app" style="display: inline-block; background: #B8860B; color: white; padding: 16px 40px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 15px; font-family: sans-serif;">Access Your Guide →</a>
-          </div>
-          <p style="color: #555; line-height: 1.8;">To log in, go to <a href="https://thelifeguide.app" style="color: #B8860B;">thelifeguide.app</a>, click Log In, and enter this email address. A verification code will be sent to you.</p>
-          <p style="color: #555; line-height: 1.8; margin-top: 24px;">If you have any questions, just reply to this email. We're here.</p>
-          <p style="color: #888; font-size: 13px; margin-top: 32px; border-top: 1px solid #eee; padding-top: 24px;">— Lorenz & the LifeGuide Team<br/>
-          <a href="https://thelifeguide.app" style="color: #B8860B;">thelifeguide.app</a> · <a href="mailto:lorenz@thelifeguide.app" style="color: #B8860B;">lorenz@thelifeguide.app</a></p>
-        </div>
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        </head>
+        <body style="margin: 0; padding: 0; background-color: #060e18;">
+          <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #060e18; padding: 40px 20px;">
+            <tr>
+              <td align="center">
+                <table width="100%" cellpadding="0" cellspacing="0" style="max-width: 520px; background-color: #0a1520; border: 1px solid rgba(200,169,126,0.2); border-radius: 16px; overflow: hidden;">
+                  
+                  <tr>
+                    <td style="background: linear-gradient(135deg, #0a1520 0%, #111e2b 100%); padding: 40px 40px 32px; text-align: center; border-bottom: 1px solid rgba(200,169,126,0.15);">
+                      <p style="margin: 0 0 16px; font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: #c8a97e; font-family: sans-serif;">Family Care Navigator</p>
+                      <h1 style="margin: 0; font-family: Georgia, serif; font-size: 32px; font-weight: 300; color: #e8d5b7; line-height: 1.2;">LifeGuide</h1>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td style="padding: 40px 40px 32px;">
+                      <p style="margin: 0 0 8px; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: #c8a97e; font-family: sans-serif;">✓ Full Access Unlocked</p>
+                      <h2 style="margin: 0 0 20px; font-family: Georgia, serif; font-size: 26px; font-weight: 300; color: #e8d5b7; line-height: 1.3;">You now have full access to LifeGuide.</h2>
+                      <p style="margin: 0 0 32px; font-size: 15px; line-height: 1.8; color: #a09890; font-family: sans-serif;">Thank you for trusting us during one of the hardest seasons of life. Your complete guide is ready — everything your family needs, all in one calm place.</p>
+                      
+                      <table width="100%" cellpadding="0" cellspacing="0">
+                        <tr>
+                          <td align="center" style="padding-bottom: 32px;">
+                            <a href="https://thelifeguide.app" style="display: inline-block; background: linear-gradient(135deg, #c8a97e, #a8895e); color: #0a1520; text-decoration: none; padding: 16px 48px; border-radius: 8px; font-family: sans-serif; font-size: 15px; font-weight: 700; letter-spacing: 1px;">Access Your Guide →</a>
+                          </td>
+                        </tr>
+                      </table>
+
+                      <table width="100%" cellpadding="0" cellspacing="0" style="border: 1px solid rgba(200,169,126,0.15); border-radius: 10px; overflow: hidden; margin-bottom: 32px;">
+                        <tr><td style="padding: 18px 24px; border-bottom: 1px solid rgba(200,169,126,0.1);"><p style="margin: 0; font-family: sans-serif; font-size: 13px;">🏥 &nbsp;<strong style="color: #e8d5b7;">Doctor Visit Prep AI</strong> <span style="color: #7a7268;">— 10 personalized questions for your next appointment</span></p></td></tr>
+                        <tr><td style="padding: 18px 24px; border-bottom: 1px solid rgba(200,169,126,0.1);"><p style="margin: 0; font-family: sans-serif; font-size: 13px;">📋 &nbsp;<strong style="color: #e8d5b7;">Document Vault</strong> <span style="color: #7a7268;">— POA, living will, POLST and more explained simply</span></p></td></tr>
+                        <tr><td style="padding: 18px 24px; border-bottom: 1px solid rgba(200,169,126,0.1);"><p style="margin: 0; font-family: sans-serif; font-size: 13px;">👨‍👩‍👧 &nbsp;<strong style="color: #e8d5b7;">Family Coordination Hub</strong> <span style="color: #7a7268;">— assign roles, share updates, stay organized</span></p></td></tr>
+                        <tr><td style="padding: 18px 24px; border-bottom: 1px solid rgba(200,169,126,0.1);"><p style="margin: 0; font-family: sans-serif; font-size: 13px;">📊 &nbsp;<strong style="color: #e8d5b7;">Stage by Stage Guide</strong> <span style="color: #7a7268;">— what to expect at every stage of decline</span></p></td></tr>
+                        <tr><td style="padding: 18px 24px; border-bottom: 1px solid rgba(200,169,126,0.1);"><p style="margin: 0; font-family: sans-serif; font-size: 13px;">🌙 &nbsp;<strong style="color: #e8d5b7;">The Final Days Guide</strong> <span style="color: #7a7268;">— what to expect, what to say, how to be present</span></p></td></tr>
+                        <tr><td style="padding: 18px 24px;"><p style="margin: 0; font-family: sans-serif; font-size: 13px;">🌅 &nbsp;<strong style="color: #e8d5b7;">After — The First 30 Days</strong> <span style="color: #7a7268;">— everything that needs to happen after loss</span></p></td></tr>
+                      </table>
+
+                      <table width="100%" cellpadding="0" cellspacing="0" style="background: rgba(200,169,126,0.06); border: 1px solid rgba(200,169,126,0.15); border-radius: 10px; margin-bottom: 32px;">
+                        <tr>
+                          <td style="padding: 20px 24px;">
+                            <p style="margin: 0 0 8px; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: #c8a97e; font-family: sans-serif;">How to Log In</p>
+                            <p style="margin: 0; font-size: 13px; color: #a09890; font-family: sans-serif; line-height: 1.7;">Go to <a href="https://thelifeguide.app" style="color: #c8a97e;">thelifeguide.app</a> → click <strong style="color: #e8d5b7;">Log In</strong> → enter this email → enter the 6-digit code sent to your inbox. No password needed.</p>
+                          </td>
+                        </tr>
+                      </table>
+
+                      <p style="margin: 0; font-size: 14px; color: #a09890; font-family: sans-serif; line-height: 1.7;">If you have any questions, just reply to this email. We're here for you. 🕊️</p>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td style="padding: 24px 40px; border-top: 1px solid rgba(200,169,126,0.15); text-align: center;">
+                      <p style="margin: 0 0 8px; font-size: 13px; color: #7a7268; font-family: sans-serif;">— Lorenz & the LifeGuide Team</p>
+                      <p style="margin: 0; font-size: 12px; font-family: sans-serif;">
+                        <a href="https://thelifeguide.app" style="color: #c8a97e; text-decoration: none;">thelifeguide.app</a>
+                        <span style="color: #3a3530;"> · </span>
+                        <a href="mailto:lorenz@thelifeguide.app" style="color: #c8a97e; text-decoration: none;">lorenz@thelifeguide.app</a>
+                      </p>
+                      <p style="margin: 16px 0 0; font-size: 11px; color: #3a3530; font-family: sans-serif;">LifeGuide — Bringing calm to the most chaotic moments of a family's life.</p>
+                    </td>
+                  </tr>
+
+                </table>
+              </td>
+            </tr>
+          </table>
+        </body>
+        </html>
       `
     });
 
-    if (emailError) {
-      console.error('Resend email error:', emailError);
-    }
+    if (emailError) console.error('Resend email error:', emailError);
   }
 
   return res.status(200).json({ received: true });
