@@ -81,12 +81,18 @@ export default async function handler(req, res) {
     const magicToken = Math.random().toString(36).substring(2) + Date.now().toString(36);
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(); // 7 days
     
-    await supabase.from('verification_codes').upsert({
+    // Delete any existing magic tokens for this email first
+    await supabase.from('verification_codes').delete().eq('email', email);
+    
+    // Insert fresh magic token
+    const { error: tokenError } = await supabase.from('verification_codes').insert({
       email,
       code: magicToken,
       expires_at: expiresAt,
       created_at: new Date().toISOString()
-    }, { onConflict: 'email' });
+    });
+    
+    if (tokenError) console.error('Token insert error:', tokenError);
 
     const magicLink = `https://www.thelifeguide.app?token=${magicToken}&email=${encodeURIComponent(email)}`;
 
