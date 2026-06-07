@@ -131,14 +131,10 @@ function buildEmailHTML(situation, email) {
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
 <body style="margin:0;padding:0;background:#0a1520;font-family:sans-serif;">
   <div style="max-width:560px;margin:0 auto;padding:40px 24px;">
-
-    <!-- Header -->
     <div style="text-align:center;margin-bottom:40px;">
       <h1 style="font-family:Georgia,serif;font-size:36px;font-weight:300;color:#e8d5b7;margin-bottom:4px;letter-spacing:-1px;">LifeGuide</h1>
       <p style="font-size:11px;letter-spacing:4px;text-transform:uppercase;color:#c8a97e;margin:0;">Family Care Navigator</p>
     </div>
-
-    <!-- Intro -->
     <div style="margin-bottom:32px;">
       <h2 style="font-family:Georgia,serif;font-size:26px;font-weight:300;color:#e8d5b7;margin-bottom:12px;">Your First Week Guide</h2>
       <p style="font-size:14px;color:#9a9288;line-height:1.7;margin:0;">
@@ -146,11 +142,7 @@ function buildEmailHTML(situation, email) {
         Read each step, take it one day at a time, and know that you don't have to figure this out alone.
       </p>
     </div>
-
-    <!-- Steps -->
     ${stepsHTML}
-
-    <!-- Documents -->
     <div style="background:#111e2b;border:1px solid rgba(200,169,126,0.2);border-radius:12px;padding:24px;margin-bottom:32px;">
       <p style="font-size:11px;color:#c8a97e;font-family:sans-serif;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">Essential</p>
       <h3 style="font-family:Georgia,serif;font-size:18px;color:#e8d5b7;margin-bottom:16px;font-weight:400;">The 5 documents every family needs</h3>
@@ -159,28 +151,22 @@ function buildEmailHTML(situation, email) {
         🔒 The full Document Vault inside LifeGuide shows you exactly how to get each one in your state.
       </p>
     </div>
-
-    <!-- CTA -->
     <div style="background:rgba(200,169,126,0.06);border:1px solid rgba(200,169,126,0.2);border-radius:12px;padding:28px;text-align:center;margin-bottom:32px;">
       <h3 style="font-family:Georgia,serif;font-size:22px;font-weight:300;color:#e8d5b7;margin-bottom:8px;">Unlock the full LifeGuide</h3>
       <p style="font-size:13px;color:#9a9288;line-height:1.6;margin-bottom:20px;">
-        Most families walk this journey for 3-12 months. For less than a therapy copay, you don't have to walk it alone.
+        Most families walk this journey for 3-6 months. For less than a therapy copay, you don't have to walk it alone.
       </p>
       <a href="https://buy.stripe.com/5kQ00k3DcdzYaQsbNigw001" style="display:inline-block;background:linear-gradient(135deg,#c8a97e,#a8895e);color:#0a1520;text-decoration:none;padding:16px 32px;border-radius:8px;font-weight:700;font-size:14px;font-family:sans-serif;">
         Get 6 Months Access — $97
       </a>
       <p style="font-size:11px;color:#5a5650;margin-top:12px;">Secure payment via Stripe · Instant access</p>
     </div>
-
-    <!-- Footer -->
     <div style="text-align:center;padding-top:24px;border-top:1px solid rgba(255,255,255,0.06);">
       <p style="font-size:12px;color:#3a3530;line-height:1.6;">
         LifeGuide — Family Care Navigator<br>
         thelifeguide.app · lorenz@thelifeguide.app
       </p>
-      <p style="font-size:10px;color:#2a2520;margin-top:8px;">
-        NOT MEDICAL ADVICE · FOR INFORMATIONAL PURPOSES ONLY
-      </p>
+      <p style="font-size:10px;color:#2a2520;margin-top:8px;">NOT MEDICAL ADVICE · FOR INFORMATIONAL PURPOSES ONLY</p>
     </div>
   </div>
 </body>
@@ -195,16 +181,41 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { email, tag, situation } = req.body;
+  const { email, tag, situation, ref } = req.body;
   if (!email) return res.status(400).json({ error: 'Email is required' });
 
   const MAILCHIMP_API_KEY = process.env.MAILCHIMP_API_KEY;
   const MAILCHIMP_AUDIENCE_ID = process.env.MAILCHIMP_AUDIENCE_ID;
   const MAILCHIMP_SERVER = process.env.MAILCHIMP_SERVER;
   const RESEND_API_KEY = process.env.RESEND_API_KEY;
+  const SUPABASE_URL = process.env.SUPABASE_URL;
+  const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 
-  // Save to Mailchimp
+  // ── Save ref to Supabase if present ─────────────────────────────────────────
+  if (ref && SUPABASE_URL && SUPABASE_SERVICE_KEY) {
+    try {
+      await fetch(`${SUPABASE_URL}/rest/v1/users`, {
+        method: 'POST',
+        headers: {
+          apikey: SUPABASE_SERVICE_KEY,
+          Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`,
+          'Content-Type': 'application/json',
+          Prefer: 'resolution=merge-duplicates',
+        },
+        body: JSON.stringify({
+          email,
+          ref,
+          created_at: new Date().toISOString(),
+        }),
+      });
+    } catch (e) {}
+  }
+
+  // ── Save to Mailchimp ────────────────────────────────────────────────────────
   try {
+    const mcTags = [tag || 'waitlist', situation || 'unknown'];
+    if (ref) mcTags.push(`ref-${ref}`);
+
     await fetch(`https://${MAILCHIMP_SERVER}.api.mailchimp.com/3.0/lists/${MAILCHIMP_AUDIENCE_ID}/members`, {
       method: 'POST',
       headers: {
@@ -214,12 +225,12 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         email_address: email,
         status: 'subscribed',
-        tags: [tag || 'waitlist', situation || 'unknown'],
+        tags: mcTags,
       }),
     });
   } catch (e) {}
 
-  // Send personalized guide email via Resend
+  // ── Send personalized guide email via Resend ─────────────────────────────────
   if (situation && RESEND_API_KEY) {
     try {
       await fetch('https://api.resend.com/emails', {
