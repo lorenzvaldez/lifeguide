@@ -631,7 +631,9 @@ function EmailScreen({ onContinue, situation }) {
     if (!email || !email.includes("@")) { setError(true); return; }
     setLoading(true);
     try {
-      await fetch("/api/subscribe", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, tag: "lifeguide-family", situation }) });
+      let ref = null;
+      try { ref = localStorage.getItem("lifeguide_ref"); } catch(e) {}
+      await fetch("/api/subscribe", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, tag: "lifeguide-family", situation, ref }) });
     } catch (e) {}
     setLoading(false);
     onContinue(email);
