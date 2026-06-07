@@ -9,7 +9,6 @@ import FamilyCoordination from "./FamilyCoordination";
 // ─── STRIPE LINKS ─────────────────────────────────────────────────────────────
 const STRIPE_MONTHLY = "https://buy.stripe.com/bJedRagpY67wbUwdVqgw000";
 const STRIPE_6MONTH = "https://buy.stripe.com/5kQ00k3DcdzYaQsbNigw001";
-const STRIPE_ANNUAL = "https://buy.stripe.com/9B65kE4Hg7bA1fSdVqgw002";
 
 // ─── LEGAL ───────────────────────────────────────────────────────────────────
 const DISCLAIMER = "LifeGuide is an informational resource and family navigation tool. It does not provide medical advice, diagnosis, or treatment recommendations. All information provided is for general educational purposes only. Always consult your physician, hospice team, or qualified healthcare provider regarding any medical decisions. Use of LifeGuide does not create a patient-provider relationship.";
@@ -26,13 +25,13 @@ LifeGuide does not diagnose conditions, recommend treatments, or predict medical
 LifeGuide, its founders, and partners are not liable for any decisions made based on information provided in this app. You use this app at your own discretion.
 
 4. SUBSCRIPTION & BILLING
-Monthly subscriptions are billed at $20/month. 6-month access is $97 one time. Annual access is $167 one time. You may cancel monthly subscriptions at any time.
+Monthly subscriptions are billed at $20/month. 6-month access is $97 one time. You may cancel monthly subscriptions at any time.
 
 5. PRIVACY
 We collect only your email address and payment information processed securely via Stripe. We do not collect, store, or share any medical information about you or your loved ones.
 
 6. REFUND POLICY
-We want you to feel confident purchasing LifeGuide. If you are not satisfied within 7 days of your purchase, contact us at support@thelifeguide.app and we will issue a full refund — no questions asked. Monthly subscriptions may be cancelled at any time and will not renew after the current billing period. One-time purchases (6-month and annual) are eligible for a full refund within 7 days of purchase only.
+We want you to feel confident purchasing LifeGuide. If you are not satisfied within 7 days of your purchase, contact us at support@thelifeguide.app and we will issue a full refund — no questions asked. Monthly subscriptions may be cancelled at any time and will not renew after the current billing period. The 6-month one-time purchase is eligible for a full refund within 7 days of purchase only.
 
 7. CHANGES
 We reserve the right to update these terms at any time. Continued use of the app constitutes acceptance of updated terms.`;
@@ -148,8 +147,8 @@ const firstWeekGuide = {
 // ─── LOCKED FEATURES ──────────────────────────────────────────────────────────
 const lockedFeatures = [
   { icon: "🏥", title: "Doctor Visit Prep AI", desc: "Answer 3 questions about your loved one's condition. Get 10 personalized questions to bring to your next appointment. Never leave a doctor's office wishing you'd asked something." },
-  { icon: "📋", title: "Document Vault", desc: "Power of attorney, living will, DNR, POLST, Medicare forms — every document explained in plain language with direct links to complete them in your state. Step by step." },
-  { icon: "👨‍👩‍👧", title: "Family Coordination Hub", desc: "Assign roles, share updates, keep everyone informed without the chaos of group texts. Who handles appointments. Who manages finances. Who is the medical point of contact." },
+  { icon: "📋", title: "Document Vault", desc: "Power of attorney, living will, DNR, POLST, Medicare forms — explained in plain language with direct links to complete them in your state. Step by step." },
+  { icon: "👨‍👩‍👧", title: "Family Coordination Hub", desc: "Assign roles, share updates, and reduce the chaos of group texts. Who handles appointments. Who manages finances. Who is the medical point of contact." },
   { icon: "📊", title: "Stage by Stage Guide", desc: "What to expect physically and emotionally at each stage of decline. No surprises. No being blindsided. Knowledge is the antidote to fear." },
   { icon: "🌙", title: "The Final Days Guide", desc: "What the last days actually look like. What is normal. What means call the nurse now. How to be present. What to say. Written by those who have been there." },
   { icon: "🌅", title: "After — The First 30 Days", desc: "Death certificate, funeral basics, notifying accounts, bereavement leave, grief resources. A calm guide for the logistical and emotional storm that follows." },
@@ -185,16 +184,15 @@ function Modal({ title, content, onClose }) {
   );
 }
 
-// ─── LOGIN SCREEN (NEW) ───────────────────────────────────────────────────────
+// ─── LOGIN SCREEN ─────────────────────────────────────────────────────────────
 function LoginScreen({ email: initialEmail, onVerified, onBack, directLogin }) {
-  const [step, setStep] = useState(directLogin ? "enter_email" : "send"); // enter_email | send | verify
+  const [step, setStep] = useState(directLogin ? "enter_email" : "send");
   const [inputEmail, setInputEmail] = useState(initialEmail || "");
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [sent, setSent] = useState(false);
 
-  // use whichever email we have
   const email = inputEmail;
 
   const sendCode = async () => {
@@ -247,12 +245,8 @@ function LoginScreen({ email: initialEmail, onVerified, onBack, directLogin }) {
       {step === "enter_email" ? (
         <>
           <p style={{ fontSize: 11, letterSpacing: 4, textTransform: "uppercase", color: S.gold, marginBottom: 16, fontFamily: "sans-serif" }}>Welcome Back</p>
-          <h2 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 30, fontWeight: 300, color: S.goldLight, marginBottom: 12, lineHeight: 1.2 }}>
-            Enter your email to log in
-          </h2>
-          <p style={{ fontSize: 14, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.6, marginBottom: 32 }}>
-            We'll send a 6-digit code to your inbox. No password needed.
-          </p>
+          <h2 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 30, fontWeight: 300, color: S.goldLight, marginBottom: 12, lineHeight: 1.2 }}>Enter your email to log in</h2>
+          <p style={{ fontSize: 14, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.6, marginBottom: 32 }}>We'll send a 6-digit code to your inbox. No password needed.</p>
           <input
             type="email"
             value={inputEmail}
@@ -270,9 +264,7 @@ function LoginScreen({ email: initialEmail, onVerified, onBack, directLogin }) {
       ) : step === "send" ? (
         <>
           <p style={{ fontSize: 11, letterSpacing: 4, textTransform: "uppercase", color: S.gold, marginBottom: 16, fontFamily: "sans-serif" }}>Access Your Guide</p>
-          <h2 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 30, fontWeight: 300, color: S.goldLight, marginBottom: 12, lineHeight: 1.2 }}>
-            We'll send you a login code
-          </h2>
+          <h2 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 30, fontWeight: 300, color: S.goldLight, marginBottom: 12, lineHeight: 1.2 }}>We'll send you a login code</h2>
           <p style={{ fontSize: 14, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.6, marginBottom: 32 }}>
             We'll send a 6-digit code to <strong style={{ color: S.goldLight }}>{email}</strong>. No password needed — ever.
           </p>
@@ -285,10 +277,7 @@ function LoginScreen({ email: initialEmail, onVerified, onBack, directLogin }) {
       ) : step === "verify" ? (
         <>
           <p style={{ fontSize: 11, letterSpacing: 4, textTransform: "uppercase", color: S.gold, marginBottom: 16, fontFamily: "sans-serif" }}>Check Your Email</p>
-
-          <h2 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 30, fontWeight: 300, color: S.goldLight, marginBottom: 12, lineHeight: 1.2 }}>
-            Enter your 6-digit code
-          </h2>
+          <h2 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 30, fontWeight: 300, color: S.goldLight, marginBottom: 12, lineHeight: 1.2 }}>Enter your 6-digit code</h2>
           <p style={{ fontSize: 14, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.6, marginBottom: 32 }}>
             Sent to <strong style={{ color: S.goldLight }}>{email}</strong>. Check your inbox — it expires in 15 minutes.
           </p>
@@ -313,7 +302,7 @@ function LoginScreen({ email: initialEmail, onVerified, onBack, directLogin }) {
   );
 }
 
-// ─── PAID CONTENT SCREEN (NEW) ────────────────────────────────────────────────
+// ─── PAID CONTENT SCREEN ──────────────────────────────────────────────────────
 function PaidGuideScreen({ user, answers, onReset, onFeature }) {
   const situation = answers.situation || "parent_declining";
   const situationLabel = {
@@ -345,33 +334,19 @@ function PaidGuideScreen({ user, answers, onReset, onFeature }) {
               <p style={{ fontSize: 16, color: S.goldLight, fontFamily: "Cormorant Garamond, serif", marginBottom: 4 }}>{f.title}</p>
               <p style={{ fontSize: 12, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.6 }}>{f.desc}</p>
               {i === 0 ? (
-                <button onClick={() => onFeature("doctor")} style={{ marginTop: 10, background: "linear-gradient(135deg, #c8a97e, #a8895e)", border: "none", borderRadius: 6, color: S.dark, padding: "8px 16px", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif" }}>
-                  Open ->
-                </button>
+                <button onClick={() => onFeature("doctor")} style={{ marginTop: 10, background: "linear-gradient(135deg, #c8a97e, #a8895e)", border: "none", borderRadius: 6, color: S.dark, padding: "8px 16px", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif" }}>Open -></button>
               ) : i === 1 ? (
-                <button onClick={() => onFeature("documents")} style={{ marginTop: 10, background: "linear-gradient(135deg, #c8a97e, #a8895e)", border: "none", borderRadius: 6, color: S.dark, padding: "8px 16px", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif" }}>
-                  Open ->
-                </button>
+                <button onClick={() => onFeature("documents")} style={{ marginTop: 10, background: "linear-gradient(135deg, #c8a97e, #a8895e)", border: "none", borderRadius: 6, color: S.dark, padding: "8px 16px", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif" }}>Open -></button>
               ) : i === 2 ? (
-                <button onClick={() => onFeature("family")} style={{ marginTop: 10, background: "linear-gradient(135deg, #c8a97e, #a8895e)", border: "none", borderRadius: 6, color: S.dark, padding: "8px 16px", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif" }}>
-                  Open ->
-                </button>
+                <button onClick={() => onFeature("family")} style={{ marginTop: 10, background: "linear-gradient(135deg, #c8a97e, #a8895e)", border: "none", borderRadius: 6, color: S.dark, padding: "8px 16px", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif" }}>Open -></button>
               ) : i === 3 ? (
-                <button onClick={() => onFeature("stages")} style={{ marginTop: 10, background: "linear-gradient(135deg, #c8a97e, #a8895e)", border: "none", borderRadius: 6, color: S.dark, padding: "8px 16px", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif" }}>
-                  Open ->
-                </button>
+                <button onClick={() => onFeature("stages")} style={{ marginTop: 10, background: "linear-gradient(135deg, #c8a97e, #a8895e)", border: "none", borderRadius: 6, color: S.dark, padding: "8px 16px", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif" }}>Open -></button>
               ) : i === 4 ? (
-                <button onClick={() => onFeature("finaldays")} style={{ marginTop: 10, background: "linear-gradient(135deg, #c8a97e, #a8895e)", border: "none", borderRadius: 6, color: S.dark, padding: "8px 16px", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif" }}>
-                  Open ->
-                </button>
+                <button onClick={() => onFeature("finaldays")} style={{ marginTop: 10, background: "linear-gradient(135deg, #c8a97e, #a8895e)", border: "none", borderRadius: 6, color: S.dark, padding: "8px 16px", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif" }}>Open -></button>
               ) : i === 5 ? (
-                <button onClick={() => onFeature("after")} style={{ marginTop: 10, background: "linear-gradient(135deg, #c8a97e, #a8895e)", border: "none", borderRadius: 6, color: S.dark, padding: "8px 16px", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif" }}>
-                  Open ->
-                </button>
+                <button onClick={() => onFeature("after")} style={{ marginTop: 10, background: "linear-gradient(135deg, #c8a97e, #a8895e)", border: "none", borderRadius: 6, color: S.dark, padding: "8px 16px", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif" }}>Open -></button>
               ) : (
-                <button style={{ marginTop: 10, background: "rgba(200,169,126,0.08)", border: "1px solid rgba(200,169,126,0.2)", borderRadius: 6, color: S.textFaint, padding: "8px 16px", fontSize: 12, cursor: "not-allowed", fontFamily: "sans-serif" }}>
-                  Coming Soon
-                </button>
+                <button style={{ marginTop: 10, background: "rgba(200,169,126,0.08)", border: "1px solid rgba(200,169,126,0.2)", borderRadius: 6, color: S.textFaint, padding: "8px 16px", fontSize: 12, cursor: "not-allowed", fontFamily: "sans-serif" }}>Coming Soon</button>
               )}
             </div>
           </div>
@@ -746,7 +721,7 @@ function FreeGuideScreen({ answers, onUnlock, onReset, userEmail }) {
           </div>
         ))}
 
-        {/* 4th Universal Step — Document Teaser */}
+        {/* Document Teaser Step */}
         <div onClick={() => setExpanded(expanded === 99 ? null : 99)} style={{ background: expanded === 99 ? "rgba(200,169,126,0.08)" : "rgba(255,255,255,0.03)", border: `1px solid ${expanded === 99 ? "rgba(200,169,126,0.35)" : "rgba(255,255,255,0.08)"}`, borderRadius: 16, padding: "22px 22px", cursor: "pointer", transition: "all 0.3s" }}>
           <div style={{ display: "flex", gap: 16, alignItems: "flex-start" }}>
             <span style={{ fontSize: 24, flexShrink: 0 }}>{documentTeaserStep.icon}</span>
@@ -788,7 +763,7 @@ function FreeGuideScreen({ answers, onUnlock, onReset, userEmail }) {
       <div style={{ textAlign: "center", marginBottom: 32 }}>
         <div style={{ width: 1, height: 48, background: "linear-gradient(to bottom, rgba(200,169,126,0.3), transparent)", margin: "0 auto 24px" }} />
         <p style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 22, fontStyle: "italic", color: S.textDim, marginBottom: 8 }}>"You've taken the first step."</p>
-        <p style={{ fontSize: 13, color: S.textFaint, fontFamily: "sans-serif" }}>Most families walk this journey for 3 to 12 months.<br />LifeGuide walks with you every step of the way.</p>
+        <p style={{ fontSize: 13, color: S.textFaint, fontFamily: "sans-serif" }}>Most families walk this journey for 3 to 6 months.<br />LifeGuide walks with you every step of the way.</p>
       </div>
 
       <div style={{ marginBottom: 32 }}>
@@ -809,35 +784,45 @@ function FreeGuideScreen({ answers, onUnlock, onReset, userEmail }) {
         </div>
       </div>
 
-      {/* PAYWALL */}
+      {/* ─── PAYWALL ─── */}
       <div style={{ background: "rgba(200,169,126,0.06)", border: "1px solid rgba(200,169,126,0.25)", borderRadius: 20, padding: "36px 28px", textAlign: "center", position: "relative", overflow: "hidden" }}>
         <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: "linear-gradient(90deg, transparent, #c8a97e, transparent)" }} />
         <p style={{ fontSize: 11, letterSpacing: 3, textTransform: "uppercase", color: S.gold, fontFamily: "sans-serif", marginBottom: 16 }}>Unlock Full LifeGuide</p>
         <h3 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 28, fontWeight: 300, color: S.goldLight, marginBottom: 12, lineHeight: 1.2 }}>For less than a therapy copay,<br />you don't have to walk this alone.</h3>
-        <p style={{ fontSize: 13, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.7, marginBottom: 28 }}>Most families are in this journey for 3 to 12 months. LifeGuide is with you every step — doctor prep, documents, family coordination, and everything that comes after.</p>
+        <p style={{ fontSize: 13, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.7, marginBottom: 28 }}>Most families are in this journey for 3 to 6 months. LifeGuide is with you every step — doctor prep, documents, family coordination, and everything that comes after.</p>
+
         <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 20 }}>
+          {/* Monthly */}
           <button onClick={() => window.open(STRIPE_MONTHLY, "_blank")} style={{ background: "transparent", color: S.textDim, border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, padding: "16px 24px", fontSize: 14, cursor: "pointer", fontFamily: "sans-serif", width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <div style={{ textAlign: "left" }}><div>Monthly</div><div style={{ fontSize: 12, color: S.textFaint, marginTop: 2 }}>Cancel anytime</div></div>
+            <div style={{ textAlign: "left" }}>
+              <div>Monthly</div>
+              <div style={{ fontSize: 12, color: S.textFaint, marginTop: 2 }}>Cancel anytime</div>
+            </div>
             <div style={{ fontSize: 18, fontWeight: 600 }}>$20/mo</div>
           </button>
+
+          {/* 6 Month — Most Popular */}
           <div style={{ position: "relative" }}>
             <div style={{ position: "absolute", top: -10, left: "50%", transform: "translateX(-50%)", background: S.gold, color: S.dark, fontSize: 10, fontWeight: 700, fontFamily: "sans-serif", letterSpacing: 1, padding: "3px 14px", borderRadius: 20, textTransform: "uppercase", whiteSpace: "nowrap" }}>Most Popular</div>
             <button onClick={() => window.open(STRIPE_6MONTH, "_blank")} style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", color: S.dark, border: "none", borderRadius: 12, padding: "20px 24px", fontSize: 15, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif", width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", boxShadow: "0 8px 24px rgba(200,169,126,0.3)" }}>
-              <div style={{ textAlign: "left" }}><div style={{ fontSize: 16 }}>6 Months Access</div><div style={{ fontSize: 12, fontWeight: 400, opacity: 0.8, marginTop: 2 }}>Best for most families · Save $23</div></div>
-              <div style={{ textAlign: "right" }}><div style={{ fontSize: 22, fontWeight: 700 }}>$97</div><div style={{ fontSize: 11, fontWeight: 400, opacity: 0.8 }}>one time</div></div>
+              <div style={{ textAlign: "left" }}>
+                <div style={{ fontSize: 16 }}>6 Months Access</div>
+                <div style={{ fontSize: 12, fontWeight: 400, opacity: 0.8, marginTop: 2 }}>Most families only need 3–6 months · Save $23 vs monthly</div>
+              </div>
+              <div style={{ textAlign: "right" }}>
+                <div style={{ fontSize: 22, fontWeight: 700 }}>$97</div>
+                <div style={{ fontSize: 11, fontWeight: 400, opacity: 0.8 }}>one time</div>
+              </div>
             </button>
           </div>
-          <button onClick={() => window.open(STRIPE_ANNUAL, "_blank")} style={{ background: "rgba(200,169,126,0.1)", color: S.goldLight, border: "1px solid rgba(200,169,126,0.35)", borderRadius: 12, padding: "18px 24px", fontSize: 15, fontWeight: 600, cursor: "pointer", fontFamily: "sans-serif", width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <div style={{ textAlign: "left" }}><div>Annual Access</div><div style={{ fontSize: 12, color: S.gold, marginTop: 2 }}>Best value · Save $73</div></div>
-            <div style={{ textAlign: "right" }}><div style={{ fontSize: 20, fontWeight: 700 }}>$167</div><div style={{ fontSize: 11, color: S.textFaint }}>one time</div></div>
-          </button>
         </div>
+
         <p style={{ fontSize: 11, color: S.textFaint, fontFamily: "sans-serif", lineHeight: 1.6 }}>Secure payment via Stripe · Instant access · No medical data collected</p>
       </div>
 
-      {/* Already paid? Login link */}
+      {/* Already paid? */}
       <div style={{ textAlign: "center", marginTop: 20, padding: "20px", background: "rgba(200,169,126,0.08)", borderRadius: 10, border: "1px solid rgba(200,169,126,0.25)" }}>
-        <p style={{ fontSize: 14, color: S.goldLight, fontFamily: "Cormorant Garamond, serif", marginBottom: 6, fontSize: 18 }}>Already a member?</p>
+        <p style={{ fontSize: 18, color: S.goldLight, fontFamily: "Cormorant Garamond, serif", marginBottom: 6 }}>Already a member?</p>
         <p style={{ fontSize: 13, color: S.textDim, fontFamily: "sans-serif", marginBottom: 10 }}>Use the <strong style={{ color: S.gold }}>Log In</strong> button at the top of the page to access your guide.</p>
         <span onClick={onUnlock} style={{ color: S.gold, cursor: "pointer", textDecoration: "underline", fontSize: 14, fontFamily: "sans-serif" }}>Or click here to log in now</span>
       </div>
@@ -858,16 +843,23 @@ export default function App() {
   const [loggedInUser, setLoggedInUser] = useState(null);
   const [activeFeature, setActiveFeature] = useState(null);
 
-  // Check for existing session on load and payment success
   useEffect(() => {
-    // Check for payment success redirect from Stripe
     const params = new URLSearchParams(window.location.search);
+
+    // ── Capture affiliate ref ──────────────────────────────────────────────────
+    const ref = params.get("ref");
+    if (ref) {
+      try { localStorage.setItem("lifeguide_ref", ref); } catch(e) {}
+    }
+
+    // ── Payment success redirect from Stripe ───────────────────────────────────
     if (params.get("payment") === "success") {
       setScreen("payment_success");
       window.history.replaceState({}, "", "/");
       return;
     }
-    // Magic link auto-login from welcome email
+
+    // ── Magic link auto-login from welcome email ────────────────────────────────
     if (params.get("token") && params.get("email")) {
       const emailParam = decodeURIComponent(params.get("email"));
       const token = params.get("token");
@@ -894,17 +886,17 @@ export default function App() {
         });
       return;
     }
-    // Check for login=true param from email link
+
+    // ── Login=true param from email link ───────────────────────────────────────
     if (params.get("login") === "true") {
       const emailParam = params.get("email");
-      if (emailParam) {
-        setUserEmail(decodeURIComponent(emailParam));
-      }
+      if (emailParam) setUserEmail(decodeURIComponent(emailParam));
       setScreen("direct_login");
       window.history.replaceState({}, "", "/");
       return;
     }
-    // Check for existing session
+
+    // ── Check for existing session ─────────────────────────────────────────────
     try {
       const saved = localStorage.getItem("lifeguide_user");
       if (saved) {
@@ -965,31 +957,17 @@ export default function App() {
       {screen === "quiz" && <QuizScreen currentQ={currentQ} onAnswer={handleAnswer} />}
       {screen === "email" && <EmailScreen onContinue={handleEmailContinue} situation={answers.situation} />}
       {screen === "guide" && (
-        <FreeGuideScreen
-          answers={answers}
-          onUnlock={() => setScreen("login")}
-          onReset={handleReset}
-          userEmail={userEmail}
-        />
+        <FreeGuideScreen answers={answers} onUnlock={() => setScreen("login")} onReset={handleReset} userEmail={userEmail} />
       )}
       {screen === "login" && (
-        <LoginScreen
-          email={userEmail}
-          onVerified={handleVerified}
-          onBack={() => setScreen("guide")}
-          directLogin={false}
-        />
+        <LoginScreen email={userEmail} onVerified={handleVerified} onBack={() => setScreen("guide")} directLogin={false} />
       )}
       {screen === "payment_success" && (
         <div style={{ maxWidth: 480, width: "100%", margin: "0 auto", padding: "100px 24px 60px", textAlign: "center" }}>
           <div style={{ fontSize: 64, marginBottom: 24 }}>🕊️</div>
           <p style={{ fontSize: 11, letterSpacing: 4, textTransform: "uppercase", color: S.gold, marginBottom: 16, fontFamily: "sans-serif" }}>Payment Confirmed</p>
-          <h2 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 34, fontWeight: 300, color: S.goldLight, marginBottom: 16, lineHeight: 1.2 }}>
-            You now have full access to LifeGuide.
-          </h2>
-          <p style={{ fontSize: 14, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.7, marginBottom: 32 }}>
-            A welcome email with your magic login link is on its way. Or enter your email below to access your guide right now.
-          </p>
+          <h2 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 34, fontWeight: 300, color: S.goldLight, marginBottom: 16, lineHeight: 1.2 }}>You now have full access to LifeGuide.</h2>
+          <p style={{ fontSize: 14, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.7, marginBottom: 32 }}>A welcome email with your magic login link is on its way. Or enter your email below to access your guide right now.</p>
           <input
             type="email"
             placeholder="Enter your email to access now"
@@ -1001,45 +979,21 @@ export default function App() {
             Access My Guide Now →
           </button>
           <p style={{ fontSize: 12, color: S.textFaint, fontFamily: "sans-serif", marginBottom: 16 }}>Or check your email for the magic login link — no password needed.</p>
-          <button onClick={() => setScreen("landing")} style={{ background: "none", border: "none", color: S.textFaint, fontSize: 12, cursor: "pointer", fontFamily: "sans-serif", textDecoration: "underline" }}>
-            Back to home
-          </button>
+          <button onClick={() => setScreen("landing")} style={{ background: "none", border: "none", color: S.textFaint, fontSize: 12, cursor: "pointer", fontFamily: "sans-serif", textDecoration: "underline" }}>Back to home</button>
         </div>
       )}
       {screen === "direct_login" && (
-        <LoginScreen
-          email={userEmail}
-          onVerified={handleVerified}
-          onBack={() => setScreen("landing")}
-          directLogin={true}
-        />
+        <LoginScreen email={userEmail} onVerified={handleVerified} onBack={() => setScreen("landing")} directLogin={true} />
       )}
       {screen === "paid" && !activeFeature && (
-        <PaidGuideScreen
-          user={loggedInUser}
-          answers={answers}
-          onReset={handleReset}
-          onFeature={setActiveFeature}
-        />
+        <PaidGuideScreen user={loggedInUser} answers={answers} onReset={handleReset} onFeature={setActiveFeature} />
       )}
-      {screen === "paid" && activeFeature === "doctor" && (
-        <DoctorVisitPrep onBack={() => setActiveFeature(null)} />
-      )}
-      {screen === "paid" && activeFeature === "documents" && (
-        <DocumentVault onBack={() => setActiveFeature(null)} />
-      )}
-      {screen === "paid" && activeFeature === "family" && (
-        <FamilyCoordination onBack={() => setActiveFeature(null)} />
-      )}
-      {screen === "paid" && activeFeature === "stages" && (
-        <StageByStageGuide onBack={() => setActiveFeature(null)} />
-      )}
-      {screen === "paid" && activeFeature === "finaldays" && (
-        <FinalDaysGuide onBack={() => setActiveFeature(null)} />
-      )}
-      {screen === "paid" && activeFeature === "after" && (
-        <AfterGuide onBack={() => setActiveFeature(null)} />
-      )}
+      {screen === "paid" && activeFeature === "doctor" && <DoctorVisitPrep onBack={() => setActiveFeature(null)} />}
+      {screen === "paid" && activeFeature === "documents" && <DocumentVault onBack={() => setActiveFeature(null)} />}
+      {screen === "paid" && activeFeature === "family" && <FamilyCoordination onBack={() => setActiveFeature(null)} />}
+      {screen === "paid" && activeFeature === "stages" && <StageByStageGuide onBack={() => setActiveFeature(null)} />}
+      {screen === "paid" && activeFeature === "finaldays" && <FinalDaysGuide onBack={() => setActiveFeature(null)} />}
+      {screen === "paid" && activeFeature === "after" && <AfterGuide onBack={() => setActiveFeature(null)} />}
 
       {screen !== "landing" && (
         <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, borderTop: "1px solid rgba(255,255,255,0.04)", background: "rgba(10,21,32,0.97)", backdropFilter: "blur(10px)", padding: "10px 24px", textAlign: "center", zIndex: 50 }}>
