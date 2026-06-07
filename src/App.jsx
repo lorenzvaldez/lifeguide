@@ -353,6 +353,12 @@ function PaidGuideScreen({ user, answers, onReset, onFeature }) {
         ))}
       </div>
 
+      <div style={{ background: "rgba(200,169,126,0.04)", border: "1px solid rgba(200,169,126,0.15)", borderRadius: 12, padding: "16px 20px", textAlign: "center", marginBottom: 16 }}>
+        <p style={{ fontSize: 13, color: S.textDim, fontFamily: "sans-serif", marginBottom: 10 }}>Monthly subscriber? Manage or cancel your subscription anytime.</p>
+        <button onClick={() => window.open("https://billing.stripe.com/p/login/bJedRagpY67wbUwdVqgw000", "_blank")} style={{ background: "transparent", border: "1px solid rgba(200,169,126,0.3)", borderRadius: 8, color: S.gold, padding: "10px 24px", fontSize: 13, cursor: "pointer", fontFamily: "sans-serif" }}>
+          Manage Subscription →
+        </button>
+      </div>
       <p style={{ fontSize: 11, color: S.textFaint, fontFamily: "sans-serif", textAlign: "center" }}>
         Need help? <a href="mailto:support@thelifeguide.app" style={{ color: S.gold, textDecoration: "underline" }}>support@thelifeguide.app</a>
       </p>
