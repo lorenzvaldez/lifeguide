@@ -156,14 +156,9 @@ const lockedFeatures = [
 
 // ─── STYLES ───────────────────────────────────────────────────────────────────
 const S = {
-  dark: "#0a1520",
-  darkMid: "#111e2b",
-  darkCard: "#0f1a25",
-  gold: "#c8a97e",
-  goldLight: "#e8d5b7",
-  text: "#ffffff",
-  textDim: "#c0b8b0",
-  textFaint: "#8a8278",
+  dark: "#0a1520", darkMid: "#111e2b", darkCard: "#0f1a25",
+  gold: "#c8a97e", goldLight: "#e8d5b7", text: "#ffffff",
+  textDim: "#c0b8b0", textFaint: "#8a8278",
 };
 
 // ─── MODAL ────────────────────────────────────────────────────────────────────
@@ -185,56 +180,32 @@ function Modal({ title, content, onClose }) {
 }
 
 // ─── LOGIN SCREEN ─────────────────────────────────────────────────────────────
-function LoginScreen({ email: initialEmail, onVerified, onBack, directLogin }) {
-  const [step, setStep] = useState(directLogin ? "enter_email" : "send");
+function LoginScreen({ email: initialEmail, onVerified, onBack, directLogin, startAtVerify }) {
+  const [step, setStep] = useState(startAtVerify ? "verify" : directLogin ? "enter_email" : "send");
   const [inputEmail, setInputEmail] = useState(initialEmail || "");
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [sent, setSent] = useState(false);
 
   const email = inputEmail;
 
   const sendCode = async () => {
-    setLoading(true);
-    setError("");
+    setLoading(true); setError("");
     try {
-      const res = await fetch("/api/send-code", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
-      if (res.ok) {
-        setSent(true);
-        setStep("verify");
-      } else {
-        setError("Something went wrong. Please try again.");
-      }
-    } catch (e) {
-      setError("Connection error. Please try again.");
-    }
+      const res = await fetch("/api/send-code", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email }) });
+      if (res.ok) { setStep("verify"); } else { setError("Something went wrong. Please try again."); }
+    } catch (e) { setError("Connection error. Please try again."); }
     setLoading(false);
   };
 
   const verifyCode = async () => {
     if (!code || code.length < 6) { setError("Please enter the 6-digit code."); return; }
-    setLoading(true);
-    setError("");
+    setLoading(true); setError("");
     try {
-      const res = await fetch("/api/verify-code", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, code }),
-      });
+      const res = await fetch("/api/verify-code", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, code }) });
       const data = await res.json();
-      if (res.ok && data.user) {
-        onVerified(data.user);
-      } else {
-        setError("Invalid or expired code. Please try again.");
-      }
-    } catch (e) {
-      setError("Connection error. Please try again.");
-    }
+      if (res.ok && data.user) { onVerified(data.user); } else { setError("Invalid or expired code. Please try again."); }
+    } catch (e) { setError("Connection error. Please try again."); }
     setLoading(false);
   };
 
@@ -242,62 +213,59 @@ function LoginScreen({ email: initialEmail, onVerified, onBack, directLogin }) {
     <div style={{ maxWidth: 440, width: "100%", margin: "0 auto", padding: "80px 24px 40px", textAlign: "center" }}>
       <img src="/logo.png" alt="LifeGuide" style={{ width: 60, height: 60, objectFit: "contain", margin: "0 auto 24px", display: "block" }} />
 
-      {step === "enter_email" ? (
+      {step === "enter_email" && (
         <>
           <p style={{ fontSize: 11, letterSpacing: 4, textTransform: "uppercase", color: S.gold, marginBottom: 16, fontFamily: "sans-serif" }}>Welcome Back</p>
           <h2 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 30, fontWeight: 300, color: S.goldLight, marginBottom: 12, lineHeight: 1.2 }}>Enter your email to log in</h2>
           <p style={{ fontSize: 14, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.6, marginBottom: 32 }}>We'll send a 6-digit code to your inbox. No password needed.</p>
-          <input
-            type="email"
-            value={inputEmail}
-            onChange={e => { setInputEmail(e.target.value); setError(""); }}
-            placeholder="Your email address"
+          <input type="email" value={inputEmail} onChange={e => { setInputEmail(e.target.value); setError(""); }} placeholder="Your email address"
             style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(200,169,126,0.3)", color: S.text, padding: "18px 24px", fontFamily: "sans-serif", fontSize: 15, outline: "none", borderRadius: 10, width: "100%", textAlign: "center", marginBottom: 16 }}
-            onKeyDown={e => e.key === "Enter" && setStep("send")}
-          />
-          <button onClick={() => { if (!inputEmail.includes("@")) { setError("Please enter a valid email."); return; } setStep("send"); }} style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", color: S.dark, border: "none", borderRadius: 10, padding: "18px 48px", fontSize: 15, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif", width: "100%" }}>
+            onKeyDown={e => e.key === "Enter" && setStep("send")} />
+          <button onClick={() => { if (!inputEmail.includes("@")) { setError("Please enter a valid email."); return; } setStep("send"); }}
+            style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", color: S.dark, border: "none", borderRadius: 10, padding: "18px 48px", fontSize: 15, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif", width: "100%" }}>
             Continue ->
           </button>
           {error && <p style={{ fontSize: 13, color: "rgba(255,100,100,0.8)", fontFamily: "sans-serif", marginTop: 12 }}>{error}</p>}
           <button onClick={onBack} style={{ background: "none", border: "none", color: S.textFaint, fontSize: 12, cursor: "pointer", fontFamily: "sans-serif", marginTop: 20, textDecoration: "underline" }}>← Back</button>
         </>
-      ) : step === "send" ? (
+      )}
+
+      {step === "send" && (
         <>
           <p style={{ fontSize: 11, letterSpacing: 4, textTransform: "uppercase", color: S.gold, marginBottom: 16, fontFamily: "sans-serif" }}>Access Your Guide</p>
           <h2 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 30, fontWeight: 300, color: S.goldLight, marginBottom: 12, lineHeight: 1.2 }}>We'll send you a login code</h2>
           <p style={{ fontSize: 14, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.6, marginBottom: 32 }}>
             We'll send a 6-digit code to <strong style={{ color: S.goldLight }}>{email}</strong>. No password needed — ever.
           </p>
-          <button onClick={sendCode} disabled={loading} style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", color: S.dark, border: "none", borderRadius: 10, padding: "18px 48px", fontSize: 15, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif", width: "100%", opacity: loading ? 0.7 : 1 }}>
+          <button onClick={sendCode} disabled={loading}
+            style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", color: S.dark, border: "none", borderRadius: 10, padding: "18px 48px", fontSize: 15, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif", width: "100%", opacity: loading ? 0.7 : 1 }}>
             {loading ? "Sending..." : "Send My Code ->"}
           </button>
           {error && <p style={{ fontSize: 13, color: "rgba(255,100,100,0.8)", fontFamily: "sans-serif", marginTop: 12 }}>{error}</p>}
           <button onClick={onBack} style={{ background: "none", border: "none", color: S.textFaint, fontSize: 12, cursor: "pointer", fontFamily: "sans-serif", marginTop: 20, textDecoration: "underline" }}>← Back</button>
         </>
-      ) : step === "verify" ? (
+      )}
+
+      {step === "verify" && (
         <>
           <p style={{ fontSize: 11, letterSpacing: 4, textTransform: "uppercase", color: S.gold, marginBottom: 16, fontFamily: "sans-serif" }}>Check Your Email</p>
           <h2 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 30, fontWeight: 300, color: S.goldLight, marginBottom: 12, lineHeight: 1.2 }}>Enter your 6-digit code</h2>
           <p style={{ fontSize: 14, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.6, marginBottom: 32 }}>
             Sent to <strong style={{ color: S.goldLight }}>{email}</strong>. Check your inbox — it expires in 15 minutes.
           </p>
-          <input
-            type="text"
-            inputMode="numeric"
-            maxLength={6}
-            value={code}
-            onChange={e => { setCode(e.target.value.replace(/\D/g, "")); setError(""); }}
+          <input type="text" inputMode="numeric" maxLength={6} value={code} onChange={e => { setCode(e.target.value.replace(/\D/g, "")); setError(""); }}
             placeholder="_ _ _ _ _ _"
             style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(200,169,126,0.3)", color: S.text, padding: "20px 24px", fontFamily: "sans-serif", fontSize: 28, letterSpacing: 12, outline: "none", borderRadius: 10, width: "100%", textAlign: "center", marginBottom: 16 }}
-            onKeyDown={e => e.key === "Enter" && verifyCode()}
-          />
-          <button onClick={verifyCode} disabled={loading} style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", color: S.dark, border: "none", borderRadius: 10, padding: "18px", fontSize: 15, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif", width: "100%", opacity: loading ? 0.7 : 1 }}>
+            onKeyDown={e => e.key === "Enter" && verifyCode()} />
+          <button onClick={verifyCode} disabled={loading}
+            style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", color: S.dark, border: "none", borderRadius: 10, padding: "18px", fontSize: 15, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif", width: "100%", opacity: loading ? 0.7 : 1 }}>
             {loading ? "Verifying..." : "Access My Guide ->"}
           </button>
           {error && <p style={{ fontSize: 13, color: "rgba(255,100,100,0.8)", fontFamily: "sans-serif", marginTop: 12 }}>{error}</p>}
-          <button onClick={() => { setStep("send"); setCode(""); setError(""); }} style={{ background: "none", border: "none", color: S.textFaint, fontSize: 12, cursor: "pointer", fontFamily: "sans-serif", marginTop: 20, textDecoration: "underline" }}>Resend code</button>
+          <button onClick={() => { setStep("send"); setCode(""); setError(""); }}
+            style={{ background: "none", border: "none", color: S.textFaint, fontSize: 12, cursor: "pointer", fontFamily: "sans-serif", marginTop: 20, textDecoration: "underline" }}>Resend code</button>
         </>
-      ) : null}
+      )}
     </div>
   );
 }
@@ -305,12 +273,7 @@ function LoginScreen({ email: initialEmail, onVerified, onBack, directLogin }) {
 // ─── PAID CONTENT SCREEN ──────────────────────────────────────────────────────
 function PaidGuideScreen({ user, answers, onReset, onFeature }) {
   const situation = answers.situation || "parent_declining";
-  const situationLabel = {
-    parent_declining: "Parent Declining",
-    terminal_diagnosis: "Terminal Diagnosis",
-    hospice_referral: "Hospice Referral",
-    in_hospice: "In Hospice",
-  }[situation];
+  const situationLabel = { parent_declining: "Parent Declining", terminal_diagnosis: "Terminal Diagnosis", hospice_referral: "Hospice Referral", in_hospice: "In Hospice" }[situation];
 
   return (
     <div style={{ maxWidth: 560, width: "100%", margin: "0 auto", padding: "50px 24px 120px" }}>
@@ -333,21 +296,10 @@ function PaidGuideScreen({ user, answers, onReset, onFeature }) {
             <div>
               <p style={{ fontSize: 16, color: S.goldLight, fontFamily: "Cormorant Garamond, serif", marginBottom: 4 }}>{f.title}</p>
               <p style={{ fontSize: 12, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.6 }}>{f.desc}</p>
-              {i === 0 ? (
-                <button onClick={() => onFeature("doctor")} style={{ marginTop: 10, background: "linear-gradient(135deg, #c8a97e, #a8895e)", border: "none", borderRadius: 6, color: S.dark, padding: "8px 16px", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif" }}>Open -></button>
-              ) : i === 1 ? (
-                <button onClick={() => onFeature("documents")} style={{ marginTop: 10, background: "linear-gradient(135deg, #c8a97e, #a8895e)", border: "none", borderRadius: 6, color: S.dark, padding: "8px 16px", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif" }}>Open -></button>
-              ) : i === 2 ? (
-                <button onClick={() => onFeature("family")} style={{ marginTop: 10, background: "linear-gradient(135deg, #c8a97e, #a8895e)", border: "none", borderRadius: 6, color: S.dark, padding: "8px 16px", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif" }}>Open -></button>
-              ) : i === 3 ? (
-                <button onClick={() => onFeature("stages")} style={{ marginTop: 10, background: "linear-gradient(135deg, #c8a97e, #a8895e)", border: "none", borderRadius: 6, color: S.dark, padding: "8px 16px", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif" }}>Open -></button>
-              ) : i === 4 ? (
-                <button onClick={() => onFeature("finaldays")} style={{ marginTop: 10, background: "linear-gradient(135deg, #c8a97e, #a8895e)", border: "none", borderRadius: 6, color: S.dark, padding: "8px 16px", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif" }}>Open -></button>
-              ) : i === 5 ? (
-                <button onClick={() => onFeature("after")} style={{ marginTop: 10, background: "linear-gradient(135deg, #c8a97e, #a8895e)", border: "none", borderRadius: 6, color: S.dark, padding: "8px 16px", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif" }}>Open -></button>
-              ) : (
-                <button style={{ marginTop: 10, background: "rgba(200,169,126,0.08)", border: "1px solid rgba(200,169,126,0.2)", borderRadius: 6, color: S.textFaint, padding: "8px 16px", fontSize: 12, cursor: "not-allowed", fontFamily: "sans-serif" }}>Coming Soon</button>
-              )}
+              <button onClick={() => onFeature(["doctor","documents","family","stages","finaldays","after"][i])}
+                style={{ marginTop: 10, background: "linear-gradient(135deg, #c8a97e, #a8895e)", border: "none", borderRadius: 6, color: S.dark, padding: "8px 16px", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif" }}>
+                Open ->
+              </button>
             </div>
           </div>
         ))}
@@ -355,14 +307,39 @@ function PaidGuideScreen({ user, answers, onReset, onFeature }) {
 
       <div style={{ background: "rgba(200,169,126,0.04)", border: "1px solid rgba(200,169,126,0.15)", borderRadius: 12, padding: "16px 20px", textAlign: "center", marginBottom: 16 }}>
         <p style={{ fontSize: 13, color: S.textDim, fontFamily: "sans-serif", marginBottom: 10 }}>Monthly subscriber? Manage or cancel your subscription anytime.</p>
-        <button onClick={() => window.open("https://billing.stripe.com/p/login/bJedRagpY67wbUwdVqgw000", "_blank")} style={{ background: "transparent", border: "1px solid rgba(200,169,126,0.3)", borderRadius: 8, color: S.gold, padding: "10px 24px", fontSize: 13, cursor: "pointer", fontFamily: "sans-serif" }}>
+        <button onClick={() => window.open("https://billing.stripe.com/p/login/bJedRagpY67wbUwdVqgw000", "_blank")}
+          style={{ background: "transparent", border: "1px solid rgba(200,169,126,0.3)", borderRadius: 8, color: S.gold, padding: "10px 24px", fontSize: 13, cursor: "pointer", fontFamily: "sans-serif" }}>
           Manage Subscription →
         </button>
       </div>
+
       <p style={{ fontSize: 11, color: S.textFaint, fontFamily: "sans-serif", textAlign: "center" }}>
         Need help? <a href="mailto:support@thelifeguide.app" style={{ color: S.gold, textDecoration: "underline" }}>support@thelifeguide.app</a>
       </p>
       <button onClick={onReset} style={{ background: "none", border: "none", color: S.textFaint, fontSize: 12, cursor: "pointer", fontFamily: "sans-serif", display: "block", margin: "16px auto 0", textDecoration: "underline" }}>Sign out</button>
+    </div>
+  );
+}
+
+// ─── FOUNDING MEMBERS COUNTER ─────────────────────────────────────────────────
+function FoundingMembersCounter() {
+  const [count, setCount] = useState(null);
+
+  useEffect(() => {
+    fetch("/api/member-count")
+      .then(r => r.json())
+      .then(data => { if (data.count !== undefined) setCount(data.count); })
+      .catch(() => {});
+  }, []);
+
+  if (count === null) return null;
+
+  return (
+    <div style={{ display: "inline-flex", alignItems: "center", gap: 10, background: "rgba(200,169,126,0.08)", border: "1px solid rgba(200,169,126,0.2)", borderRadius: 20, padding: "8px 20px", marginBottom: 32 }}>
+      <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#c8a97e", display: "inline-block", boxShadow: "0 0 6px rgba(200,169,126,0.6)" }} />
+      <span style={{ fontSize: 13, color: "#c8a97e", fontFamily: "sans-serif" }}>
+        <strong>{count}</strong> founding members have joined
+      </span>
     </div>
   );
 }
@@ -376,11 +353,8 @@ function LandingScreen({ onStart, onNurse, onLogin }) {
   const handleWaitlist = async () => {
     if (!email || !email.includes("@")) return;
     setLoading(true);
-    try {
-      await fetch("/api/subscribe", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, tag: "landing-waitlist" }) });
-    } catch (e) {}
-    setLoading(false);
-    setSubmitted(true);
+    try { await fetch("/api/subscribe", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, tag: "landing-waitlist" }) }); } catch (e) {}
+    setLoading(false); setSubmitted(true);
   };
 
   return (
@@ -404,7 +378,8 @@ function LandingScreen({ onStart, onNurse, onLogin }) {
           When someone you love<br />is <em style={{ fontStyle: "italic", color: "#c8a97e" }}>declining</em>
         </h1>
         <p style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "clamp(18px, 3vw, 26px)", fontWeight: 300, color: "#7a7268", marginBottom: 24, fontStyle: "italic", lineHeight: 1.6, maxWidth: 600 }}>You shouldn't have to figure it out alone.</p>
-        <p style={{ fontSize: 15, lineHeight: 1.8, color: "#7a7268", marginBottom: 48, maxWidth: 520 }}>LifeGuide walks your family through the most difficult journey of their lives — step by step, document by document, question by question.</p>
+        <p style={{ fontSize: 15, lineHeight: 1.8, color: "#7a7268", marginBottom: 32, maxWidth: 520 }}>LifeGuide walks your family through the most difficult journey of their lives — step by step, document by document, question by question.</p>
+        <FoundingMembersCounter />
         <button onClick={onStart} style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", color: "#0a1520", border: "none", borderRadius: 8, padding: "20px 56px", fontSize: 16, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif", letterSpacing: 1, boxShadow: "0 8px 32px rgba(200,169,126,0.3)", marginBottom: 16, position: "relative", zIndex: 200 }}>
           Start My Free Guide ->
         </button>
@@ -648,9 +623,9 @@ function EmailScreen({ onContinue, situation }) {
       <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 16 }}>
         <input type="email" value={email} onChange={e => { setEmail(e.target.value); setError(false); }} placeholder="Your email address"
           style={{ background: "rgba(255,255,255,0.04)", border: `1px solid ${error ? "rgba(255,100,100,0.5)" : "rgba(200,169,126,0.3)"}`, color: S.text, padding: "18px 24px", fontFamily: "sans-serif", fontSize: 15, outline: "none", borderRadius: 10, width: "100%", textAlign: "center" }}
-          onKeyDown={e => e.key === "Enter" && handleSubmit()}
-        />
-        <button onClick={handleSubmit} disabled={loading} style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", color: S.dark, border: "none", borderRadius: 10, padding: "18px", fontSize: 15, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif", boxShadow: "0 8px 24px rgba(200,169,126,0.25)", opacity: loading ? 0.7 : 1 }}>
+          onKeyDown={e => e.key === "Enter" && handleSubmit()} />
+        <button onClick={handleSubmit} disabled={loading}
+          style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", color: S.dark, border: "none", borderRadius: 10, padding: "18px", fontSize: 15, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif", boxShadow: "0 8px 24px rgba(200,169,126,0.25)", opacity: loading ? 0.7 : 1 }}>
           {loading ? "Saving..." : "Save My Guide ->"}
         </button>
       </div>
@@ -680,7 +655,8 @@ function QuizScreen({ currentQ, onAnswer }) {
       <h2 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "clamp(22px, 4vw, 30px)", fontWeight: 400, lineHeight: 1.3, color: S.goldLight, marginBottom: 40, letterSpacing: -0.5 }}>{q.question}</h2>
       <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
         {q.options.map((opt) => (
-          <button key={opt.value} onClick={() => handleSelect(opt.value)} style={{ background: selected === opt.value ? "rgba(200,169,126,0.15)" : "rgba(255,255,255,0.03)", border: `1px solid ${selected === opt.value ? "rgba(200,169,126,0.6)" : "rgba(200,169,126,0.2)"}`, borderRadius: 12, padding: "20px 24px", textAlign: "left", color: selected === opt.value ? S.goldLight : S.textDim, fontSize: 15, cursor: "pointer", fontFamily: "Georgia, serif", lineHeight: 1.4, transition: "all 0.2s" }}>
+          <button key={opt.value} onClick={() => handleSelect(opt.value)}
+            style={{ background: selected === opt.value ? "rgba(200,169,126,0.15)" : "rgba(255,255,255,0.03)", border: `1px solid ${selected === opt.value ? "rgba(200,169,126,0.6)" : "rgba(200,169,126,0.2)"}`, borderRadius: 12, padding: "20px 24px", textAlign: "left", color: selected === opt.value ? S.goldLight : S.textDim, fontSize: 15, cursor: "pointer", fontFamily: "Georgia, serif", lineHeight: 1.4, transition: "all 0.2s" }}>
             {opt.label}
           </button>
         ))}
@@ -706,7 +682,8 @@ function FreeGuideScreen({ answers, onUnlock, onReset, userEmail }) {
 
       <div style={{ display: "flex", flexDirection: "column", gap: 16, marginBottom: 40 }}>
         {guide.map((step, i) => (
-          <div key={i} onClick={() => setExpanded(expanded === i ? null : i)} style={{ background: expanded === i ? "rgba(200,169,126,0.08)" : "rgba(255,255,255,0.03)", border: `1px solid ${expanded === i ? "rgba(200,169,126,0.35)" : "rgba(255,255,255,0.08)"}`, borderRadius: 16, padding: "22px 22px", cursor: "pointer", transition: "all 0.3s" }}>
+          <div key={i} onClick={() => setExpanded(expanded === i ? null : i)}
+            style={{ background: expanded === i ? "rgba(200,169,126,0.08)" : "rgba(255,255,255,0.03)", border: `1px solid ${expanded === i ? "rgba(200,169,126,0.35)" : "rgba(255,255,255,0.08)"}`, borderRadius: 16, padding: "22px 22px", cursor: "pointer", transition: "all 0.3s" }}>
             <div style={{ display: "flex", gap: 16, alignItems: "flex-start" }}>
               <span style={{ fontSize: 24, flexShrink: 0 }}>{step.icon}</span>
               <div style={{ flex: 1 }}>
@@ -729,8 +706,8 @@ function FreeGuideScreen({ answers, onUnlock, onReset, userEmail }) {
           </div>
         ))}
 
-        {/* Document Teaser Step */}
-        <div onClick={() => setExpanded(expanded === 99 ? null : 99)} style={{ background: expanded === 99 ? "rgba(200,169,126,0.08)" : "rgba(255,255,255,0.03)", border: `1px solid ${expanded === 99 ? "rgba(200,169,126,0.35)" : "rgba(255,255,255,0.08)"}`, borderRadius: 16, padding: "22px 22px", cursor: "pointer", transition: "all 0.3s" }}>
+        <div onClick={() => setExpanded(expanded === 99 ? null : 99)}
+          style={{ background: expanded === 99 ? "rgba(200,169,126,0.08)" : "rgba(255,255,255,0.03)", border: `1px solid ${expanded === 99 ? "rgba(200,169,126,0.35)" : "rgba(255,255,255,0.08)"}`, borderRadius: 16, padding: "22px 22px", cursor: "pointer", transition: "all 0.3s" }}>
           <div style={{ display: "flex", gap: 16, alignItems: "flex-start" }}>
             <span style={{ fontSize: 24, flexShrink: 0 }}>{documentTeaserStep.icon}</span>
             <div style={{ flex: 1 }}>
@@ -783,7 +760,7 @@ function FreeGuideScreen({ answers, onUnlock, onReset, userEmail }) {
               <div>
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
                   <span style={{ fontSize: 15, color: S.goldLight, fontFamily: "Cormorant Garamond, serif" }}>{f.title}</span>
-                  <span style={{ fontSize: 10, color: S.textFaint, fontFamily: "sans-serif" }}>🔒</span>
+                  <span style={{ fontSize: 10, color: S.textFaint }}>🔒</span>
                 </div>
                 <p style={{ fontSize: 12, color: S.textFaint, lineHeight: 1.6, fontFamily: "sans-serif" }}>{f.desc}</p>
               </div>
@@ -798,21 +775,16 @@ function FreeGuideScreen({ answers, onUnlock, onReset, userEmail }) {
         <p style={{ fontSize: 11, letterSpacing: 3, textTransform: "uppercase", color: S.gold, fontFamily: "sans-serif", marginBottom: 16 }}>Unlock Full LifeGuide</p>
         <h3 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 28, fontWeight: 300, color: S.goldLight, marginBottom: 12, lineHeight: 1.2 }}>For less than a therapy copay,<br />you don't have to walk this alone.</h3>
         <p style={{ fontSize: 13, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.7, marginBottom: 28 }}>Most families are in this journey for 3 to 6 months. LifeGuide is with you every step — doctor prep, documents, family coordination, and everything that comes after.</p>
-
         <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 20 }}>
-          {/* Monthly */}
-          <button onClick={() => window.open(STRIPE_MONTHLY, "_blank")} style={{ background: "transparent", color: S.textDim, border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, padding: "16px 24px", fontSize: 14, cursor: "pointer", fontFamily: "sans-serif", width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <div style={{ textAlign: "left" }}>
-              <div>Monthly</div>
-              <div style={{ fontSize: 12, color: S.textFaint, marginTop: 2 }}>Cancel anytime</div>
-            </div>
+          <button onClick={() => window.open(STRIPE_MONTHLY, "_blank")}
+            style={{ background: "transparent", color: S.textDim, border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, padding: "16px 24px", fontSize: 14, cursor: "pointer", fontFamily: "sans-serif", width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div style={{ textAlign: "left" }}><div>Monthly</div><div style={{ fontSize: 12, color: S.textFaint, marginTop: 2 }}>Cancel anytime</div></div>
             <div style={{ fontSize: 18, fontWeight: 600 }}>$20/mo</div>
           </button>
-
-          {/* 6 Month — Most Popular */}
           <div style={{ position: "relative" }}>
             <div style={{ position: "absolute", top: -10, left: "50%", transform: "translateX(-50%)", background: S.gold, color: S.dark, fontSize: 10, fontWeight: 700, fontFamily: "sans-serif", letterSpacing: 1, padding: "3px 14px", borderRadius: 20, textTransform: "uppercase", whiteSpace: "nowrap" }}>Most Popular</div>
-            <button onClick={() => window.open(STRIPE_6MONTH, "_blank")} style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", color: S.dark, border: "none", borderRadius: 12, padding: "20px 24px", fontSize: 15, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif", width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", boxShadow: "0 8px 24px rgba(200,169,126,0.3)" }}>
+            <button onClick={() => window.open(STRIPE_6MONTH, "_blank")}
+              style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", color: S.dark, border: "none", borderRadius: 12, padding: "20px 24px", fontSize: 15, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif", width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", boxShadow: "0 8px 24px rgba(200,169,126,0.3)" }}>
               <div style={{ textAlign: "left" }}>
                 <div style={{ fontSize: 16 }}>6 Months Access</div>
                 <div style={{ fontSize: 12, fontWeight: 400, opacity: 0.8, marginTop: 2 }}>Most families only need 3–6 months · Save $23 vs monthly</div>
@@ -824,11 +796,9 @@ function FreeGuideScreen({ answers, onUnlock, onReset, userEmail }) {
             </button>
           </div>
         </div>
-
         <p style={{ fontSize: 11, color: S.textFaint, fontFamily: "sans-serif", lineHeight: 1.6 }}>Secure payment via Stripe · Instant access · No medical data collected</p>
       </div>
 
-      {/* Already paid? */}
       <div style={{ textAlign: "center", marginTop: 20, padding: "20px", background: "rgba(200,169,126,0.08)", borderRadius: 10, border: "1px solid rgba(200,169,126,0.25)" }}>
         <p style={{ fontSize: 18, color: S.goldLight, fontFamily: "Cormorant Garamond, serif", marginBottom: 6 }}>Already a member?</p>
         <p style={{ fontSize: 13, color: S.textDim, fontFamily: "sans-serif", marginBottom: 10 }}>Use the <strong style={{ color: S.gold }}>Log In</strong> button at the top of the page to access your guide.</p>
@@ -850,52 +820,36 @@ export default function App() {
   const [userEmail, setUserEmail] = useState("");
   const [loggedInUser, setLoggedInUser] = useState(null);
   const [activeFeature, setActiveFeature] = useState(null);
+  const [codeSent, setCodeSent] = useState(false);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
 
-    // ── Capture affiliate ref ──────────────────────────────────────────────────
+    // Capture affiliate ref
     const ref = params.get("ref");
-    if (ref) {
-      try { localStorage.setItem("lifeguide_ref", ref); } catch(e) {}
-    }
+    if (ref) { try { localStorage.setItem("lifeguide_ref", ref); } catch(e) {} }
 
-    // ── Payment success redirect from Stripe ───────────────────────────────────
     if (params.get("payment") === "success") {
       setScreen("payment_success");
       window.history.replaceState({}, "", "/");
       return;
     }
-
-    // ── Magic link auto-login from welcome email ────────────────────────────────
     if (params.get("token") && params.get("email")) {
       const emailParam = decodeURIComponent(params.get("email"));
       const token = params.get("token");
       window.history.replaceState({}, "", "/");
-      fetch("/api/verify-magic", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: emailParam, token })
-      })
+      fetch("/api/verify-magic", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: emailParam, token }) })
         .then(r => r.json())
         .then(data => {
           if (data.user) {
             setLoggedInUser(data.user);
             try { localStorage.setItem("lifeguide_user", JSON.stringify(data.user)); } catch(e) {}
             setScreen("paid");
-          } else {
-            setUserEmail(emailParam);
-            setScreen("direct_login");
-          }
+          } else { setUserEmail(emailParam); setScreen("direct_login"); }
         })
-        .catch(() => {
-          setUserEmail(emailParam);
-          setScreen("direct_login");
-        });
+        .catch(() => { setUserEmail(emailParam); setScreen("direct_login"); });
       return;
     }
-
-    // ── Login=true param from email link ───────────────────────────────────────
     if (params.get("login") === "true") {
       const emailParam = params.get("email");
       if (emailParam) setUserEmail(decodeURIComponent(emailParam));
@@ -903,16 +857,11 @@ export default function App() {
       window.history.replaceState({}, "", "/");
       return;
     }
-
-    // ── Check for existing session ─────────────────────────────────────────────
     try {
       const saved = localStorage.getItem("lifeguide_user");
       if (saved) {
         const user = JSON.parse(saved);
-        if (user && user.email && user.is_paid) {
-          setLoggedInUser(user);
-          setScreen("paid");
-        }
+        if (user && user.email && user.is_paid) { setLoggedInUser(user); setScreen("paid"); }
       }
     } catch (e) {}
   }, []);
@@ -920,35 +869,33 @@ export default function App() {
   const handleAnswer = (questionId, value) => {
     const newAnswers = { ...answers, [questionId]: value };
     setAnswers(newAnswers);
-    if (currentQ < questions.length - 1) {
-      setCurrentQ(currentQ + 1);
-    } else {
-      setScreen("email");
-    }
+    if (currentQ < questions.length - 1) { setCurrentQ(currentQ + 1); } else { setScreen("email"); }
   };
 
-  const handleEmailContinue = (email) => {
-    setUserEmail(email);
-    setScreen("guide");
-  };
+  const handleEmailContinue = (email) => { setUserEmail(email); setScreen("guide"); };
 
   const handleVerified = (user) => {
     setLoggedInUser(user);
     if (user.is_paid) {
       try { localStorage.setItem("lifeguide_user", JSON.stringify(user)); } catch (e) {}
       setScreen("paid");
-    } else {
-      setScreen("guide");
-    }
+    } else { setScreen("guide"); }
   };
 
   const handleReset = () => {
-    setScreen("landing");
-    setCurrentQ(0);
-    setAnswers({});
-    setUserEmail("");
-    setLoggedInUser(null);
+    setScreen("landing"); setCurrentQ(0); setAnswers({});
+    setUserEmail(""); setLoggedInUser(null); setCodeSent(false);
     try { localStorage.removeItem("lifeguide_user"); } catch (e) {}
+  };
+
+  // Auto-send code after payment
+  const handlePaymentEmailSubmit = async () => {
+    if (!userEmail || !userEmail.includes("@")) return;
+    try {
+      await fetch("/api/send-code", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: userEmail }) });
+      setCodeSent(true);
+      setScreen("post_payment_verify");
+    } catch (e) {}
   };
 
   if (screen === "landing") {
@@ -964,38 +911,35 @@ export default function App() {
       {screen === "nurse" && <NurseScreen onBack={() => setScreen("landing")} />}
       {screen === "quiz" && <QuizScreen currentQ={currentQ} onAnswer={handleAnswer} />}
       {screen === "email" && <EmailScreen onContinue={handleEmailContinue} situation={answers.situation} />}
-      {screen === "guide" && (
-        <FreeGuideScreen answers={answers} onUnlock={() => setScreen("login")} onReset={handleReset} userEmail={userEmail} />
-      )}
-      {screen === "login" && (
-        <LoginScreen email={userEmail} onVerified={handleVerified} onBack={() => setScreen("guide")} directLogin={false} />
-      )}
+      {screen === "guide" && <FreeGuideScreen answers={answers} onUnlock={() => setScreen("login")} onReset={handleReset} userEmail={userEmail} />}
+      {screen === "login" && <LoginScreen email={userEmail} onVerified={handleVerified} onBack={() => setScreen("guide")} directLogin={false} />}
+
+      {/* ─── PAYMENT SUCCESS ─── */}
       {screen === "payment_success" && (
         <div style={{ maxWidth: 480, width: "100%", margin: "0 auto", padding: "100px 24px 60px", textAlign: "center" }}>
           <div style={{ fontSize: 64, marginBottom: 24 }}>🕊️</div>
           <p style={{ fontSize: 11, letterSpacing: 4, textTransform: "uppercase", color: S.gold, marginBottom: 16, fontFamily: "sans-serif" }}>Payment Confirmed</p>
           <h2 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 34, fontWeight: 300, color: S.goldLight, marginBottom: 16, lineHeight: 1.2 }}>You now have full access to LifeGuide.</h2>
-          <p style={{ fontSize: 14, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.7, marginBottom: 32 }}>A welcome email with your magic login link is on its way. Or enter your email below to access your guide right now.</p>
-          <input
-            type="email"
-            placeholder="Enter your email to access now"
-            value={userEmail}
-            onChange={e => setUserEmail(e.target.value)}
+          <p style={{ fontSize: 14, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.7, marginBottom: 32 }}>Enter your email below and we'll send your access code instantly — no password needed.</p>
+          <input type="email" placeholder="Enter your email address" value={userEmail} onChange={e => setUserEmail(e.target.value)}
             style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(200,169,126,0.3)", color: S.text, padding: "18px 24px", fontFamily: "sans-serif", fontSize: 15, outline: "none", borderRadius: 10, width: "100%", textAlign: "center", marginBottom: 12, boxSizing: "border-box" }}
-          />
-          <button onClick={() => { if (userEmail) setScreen("direct_login"); }} style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", color: S.dark, border: "none", borderRadius: 10, padding: "20px 48px", fontSize: 15, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif", width: "100%", marginBottom: 12 }}>
-            Access My Guide Now →
+            onKeyDown={e => e.key === "Enter" && handlePaymentEmailSubmit()} />
+          <button onClick={handlePaymentEmailSubmit}
+            style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", color: S.dark, border: "none", borderRadius: 10, padding: "20px 48px", fontSize: 15, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif", width: "100%", marginBottom: 12 }}>
+            Send My Access Code →
           </button>
           <p style={{ fontSize: 12, color: S.textFaint, fontFamily: "sans-serif", marginBottom: 16 }}>Or check your email for the magic login link — no password needed.</p>
           <button onClick={() => setScreen("landing")} style={{ background: "none", border: "none", color: S.textFaint, fontSize: 12, cursor: "pointer", fontFamily: "sans-serif", textDecoration: "underline" }}>Back to home</button>
         </div>
       )}
-      {screen === "direct_login" && (
-        <LoginScreen email={userEmail} onVerified={handleVerified} onBack={() => setScreen("landing")} directLogin={true} />
+
+      {/* ─── POST PAYMENT VERIFY — code auto-sent, just enter it ─── */}
+      {screen === "post_payment_verify" && (
+        <LoginScreen email={userEmail} onVerified={handleVerified} onBack={() => setScreen("payment_success")} directLogin={false} startAtVerify={true} />
       )}
-      {screen === "paid" && !activeFeature && (
-        <PaidGuideScreen user={loggedInUser} answers={answers} onReset={handleReset} onFeature={setActiveFeature} />
-      )}
+
+      {screen === "direct_login" && <LoginScreen email={userEmail} onVerified={handleVerified} onBack={() => setScreen("landing")} directLogin={true} />}
+      {screen === "paid" && !activeFeature && <PaidGuideScreen user={loggedInUser} answers={answers} onReset={handleReset} onFeature={setActiveFeature} />}
       {screen === "paid" && activeFeature === "doctor" && <DoctorVisitPrep onBack={() => setActiveFeature(null)} />}
       {screen === "paid" && activeFeature === "documents" && <DocumentVault onBack={() => setActiveFeature(null)} />}
       {screen === "paid" && activeFeature === "family" && <FamilyCoordination onBack={() => setActiveFeature(null)} />}
