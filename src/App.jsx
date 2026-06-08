@@ -277,38 +277,145 @@ function PaidGuideScreen({ user, answers, onReset, onFeature }) {
   const situation = answers.situation || "parent_declining";
   const situationLabel = { parent_declining: "Parent Declining", terminal_diagnosis: "Terminal Diagnosis", hospice_referral: "Hospice Referral", in_hospice: "In Hospice" }[situation];
 
+  const [visited, setVisited] = useState({});
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("lifeguide_visited");
+      if (saved) setVisited(JSON.parse(saved));
+    } catch(e) {}
+  }, []);
+
+  const handleOpen = (key) => {
+    const updated = { ...visited, [key]: true };
+    setVisited(updated);
+    try { localStorage.setItem("lifeguide_visited", JSON.stringify(updated)); } catch(e) {}
+    onFeature(key);
+  };
+
+  const FeatureCard = ({ icon, title, desc, featureKey, wide }) => {
+    const isVisited = visited[featureKey];
+    return (
+      <div style={{
+        background: "rgba(200,169,126,0.06)", border: "1px solid rgba(200,169,126,0.18)",
+        borderRadius: 14, padding: "18px 16px", display: "flex", flexDirection: "column",
+        gap: 10, position: "relative", gridColumn: wide ? "span 2" : "span 1"
+      }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <span style={{ fontSize: 22, flexShrink: 0 }}>{icon}</span>
+          <div style={{ flex: 1 }}>
+            <p style={{ fontSize: 15, color: S.goldLight, fontFamily: "Cormorant Garamond, serif", lineHeight: 1.3 }}>{title}</p>
+          </div>
+          <span style={{
+            fontSize: 10, fontFamily: "sans-serif", letterSpacing: 1,
+            padding: "2px 8px", borderRadius: 10,
+            background: isVisited ? "rgba(255,255,255,0.05)" : "rgba(200,169,126,0.15)",
+            color: isVisited ? S.textFaint : S.gold,
+            flexShrink: 0
+          }}>
+            {isVisited ? "✓ Visited" : "● New"}
+          </span>
+        </div>
+        <p style={{ fontSize: 12, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.6 }}>{desc}</p>
+        <button onClick={() => handleOpen(featureKey)}
+          style={{
+            marginTop: 4, background: "linear-gradient(135deg, #c8a97e, #a8895e)",
+            border: "none", borderRadius: 8, color: S.dark,
+            padding: "10px 16px", fontSize: 12, fontWeight: 700,
+            cursor: "pointer", fontFamily: "sans-serif", alignSelf: "flex-start"
+          }}>
+          Open →
+        </button>
+      </div>
+    );
+  };
+
+  const CategoryLabel = ({ label }) => (
+    <p style={{
+      fontSize: 10, color: S.textFaint, fontFamily: "sans-serif",
+      letterSpacing: 3, textTransform: "uppercase", marginBottom: 10, marginTop: 24
+    }}>{label}</p>
+  );
+
   return (
     <div style={{ maxWidth: 560, width: "100%", margin: "0 auto", padding: "50px 24px 120px" }}>
-      <div style={{ background: "rgba(200,169,126,0.08)", border: "1px solid rgba(200,169,126,0.25)", borderRadius: 16, padding: "24px 24px", marginBottom: 32, textAlign: "center" }}>
-        <p style={{ fontSize: 11, color: S.gold, letterSpacing: 3, textTransform: "uppercase", fontFamily: "sans-serif", marginBottom: 8 }}>✓ Full Access Unlocked</p>
-        <h2 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 28, fontWeight: 300, color: S.goldLight, marginBottom: 8 }}>Welcome back.</h2>
-        <p style={{ fontSize: 13, color: S.textDim, fontFamily: "sans-serif" }}>Logged in as <strong style={{ color: S.goldLight }}>{user.email}</strong> · Plan: <strong style={{ color: S.gold }}>{user.plan}</strong></p>
-      </div>
 
-      <div style={{ marginBottom: 8 }}>
+      {/* Welcome */}
+      <div style={{ textAlign: "center", marginBottom: 28 }}>
         <span style={{ background: "rgba(200,169,126,0.15)", border: "1px solid rgba(200,169,126,0.3)", borderRadius: 20, padding: "4px 14px", fontSize: 11, color: S.gold, fontFamily: "sans-serif", letterSpacing: 2, textTransform: "uppercase" }}>{situationLabel}</span>
+        <h2 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 30, fontWeight: 300, color: S.goldLight, marginTop: 12, marginBottom: 4 }}>Your Complete Guide</h2>
+        <p style={{ fontSize: 12, color: S.textFaint, fontFamily: "sans-serif" }}>{user.email} · {user.plan}</p>
       </div>
-      <h2 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 32, fontWeight: 300, color: S.goldLight, marginBottom: 8, marginTop: 16 }}>Your Complete Guide</h2>
-      <p style={{ fontSize: 14, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.6, marginBottom: 32 }}>You have full access to every tool, document, and resource in LifeGuide.</p>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: 14, marginBottom: 40 }}>
-        {lockedFeatures.map((f, i) => (
-          <div key={i} style={{ background: "rgba(200,169,126,0.06)", border: "1px solid rgba(200,169,126,0.2)", borderRadius: 14, padding: "20px 20px", display: "flex", gap: 16, alignItems: "flex-start" }}>
-            <span style={{ fontSize: 24, flexShrink: 0 }}>{f.icon}</span>
-            <div>
-              <p style={{ fontSize: 16, color: S.goldLight, fontFamily: "Cormorant Garamond, serif", marginBottom: 4 }}>{f.title}</p>
-              <p style={{ fontSize: 12, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.6 }}>{f.desc}</p>
-              <button onClick={() => onFeature(["doctor","documents","family","stages","finaldays","after","companion"][i])}
-                style={{ marginTop: 10, background: "linear-gradient(135deg, #c8a97e, #a8895e)", border: "none", borderRadius: 6, color: S.dark, padding: "8px 16px", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif" }}>
-                Open ->
-              </button>
+      {/* HERO — 2 AM Companion */}
+      <div style={{
+        background: "linear-gradient(135deg, rgba(200,169,126,0.12), rgba(200,169,126,0.04))",
+        border: "1px solid rgba(200,169,126,0.35)", borderRadius: 18,
+        padding: "28px 24px", marginBottom: 8, position: "relative", overflow: "hidden"
+      }}>
+        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: "linear-gradient(90deg, transparent, #c8a97e, transparent)" }} />
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
+          <span style={{ fontSize: 28 }}>🕊️</span>
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <p style={{ fontSize: 19, color: S.goldLight, fontFamily: "Cormorant Garamond, serif" }}>2 AM Caregiver Companion</p>
+              <span style={{ fontSize: 10, background: "rgba(200,169,126,0.2)", color: S.gold, padding: "2px 8px", borderRadius: 10, fontFamily: "sans-serif", letterSpacing: 1 }}>24/7</span>
             </div>
+            <p style={{ fontSize: 11, color: S.textFaint, fontFamily: "sans-serif", marginTop: 2 }}>Powered by Google Gemini</p>
           </div>
-        ))}
+          <span style={{
+            marginLeft: "auto", fontSize: 10, fontFamily: "sans-serif", letterSpacing: 1,
+            padding: "2px 8px", borderRadius: 10,
+            background: visited["companion"] ? "rgba(255,255,255,0.05)" : "rgba(200,169,126,0.15)",
+            color: visited["companion"] ? S.textFaint : S.gold, flexShrink: 0
+          }}>
+            {visited["companion"] ? "✓ Visited" : "● New"}
+          </span>
+        </div>
+        <p style={{ fontSize: 13, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.7, marginBottom: 16 }}>
+          Ask anything, any hour. What does this medication do? Who do I call right now? What are the signs? Get calm, practical answers instantly — no matter what time it is.
+        </p>
+        <button onClick={() => handleOpen("companion")}
+          style={{
+            background: "linear-gradient(135deg, #c8a97e, #a8895e)", border: "none",
+            borderRadius: 10, color: S.dark, padding: "14px 28px",
+            fontSize: 14, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif",
+            boxShadow: "0 4px 16px rgba(200,169,126,0.25)"
+          }}>
+          Open the Companion →
+        </button>
       </div>
 
+      {/* PREPARE */}
+      <CategoryLabel label="Prepare" />
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 4 }}>
+        <FeatureCard icon="🏥" title="Doctor Visit Prep AI" featureKey="doctor"
+          desc="Get 10 personalized questions for your next appointment based on your loved one's condition." />
+        <FeatureCard icon="📋" title="Document Vault" featureKey="documents"
+          desc="POA, living will, DNR, POLST, Medicare — explained in plain language with state-specific links." />
+      </div>
+
+      {/* NAVIGATE */}
+      <CategoryLabel label="Navigate" />
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 4 }}>
+        <FeatureCard icon="📊" title="Stage by Stage Guide" featureKey="stages"
+          desc="What to expect physically and emotionally at each stage of decline. No surprises." />
+        <FeatureCard icon="👨‍👩‍👧" title="Family Coordination Hub" featureKey="family"
+          desc="Assign roles, share updates, reduce the chaos. Who manages finances. Who is medical POC." />
+      </div>
+
+      {/* BE PRESENT */}
+      <CategoryLabel label="Be Present" />
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 32 }}>
+        <FeatureCard icon="🌙" title="The Final Days Guide" featureKey="finaldays"
+          desc="What the last days look like. What is normal. What to say. How to be present." />
+        <FeatureCard icon="🌅" title="After — First 30 Days" featureKey="after"
+          desc="Death certificate, funeral basics, grief resources. A calm guide for what comes after." />
+      </div>
+
+      {/* Manage + Footer */}
       <div style={{ background: "rgba(200,169,126,0.04)", border: "1px solid rgba(200,169,126,0.15)", borderRadius: 12, padding: "16px 20px", textAlign: "center", marginBottom: 16 }}>
-        <p style={{ fontSize: 13, color: S.textDim, fontFamily: "sans-serif", marginBottom: 10 }}>Monthly subscriber? Manage or cancel your subscription anytime.</p>
+        <p style={{ fontSize: 13, color: S.textDim, fontFamily: "sans-serif", marginBottom: 10 }}>Monthly subscriber? Manage or cancel anytime.</p>
         <button onClick={() => window.open("https://billing.stripe.com/p/login/bJedRagpY67wbUwdVqgw000", "_blank")}
           style={{ background: "transparent", border: "1px solid rgba(200,169,126,0.3)", borderRadius: 8, color: S.gold, padding: "10px 24px", fontSize: 13, cursor: "pointer", fontFamily: "sans-serif" }}>
           Manage Subscription →
