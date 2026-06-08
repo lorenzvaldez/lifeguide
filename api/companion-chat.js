@@ -52,7 +52,7 @@ Start every response ready to help immediately. No long intros.`;
           contents: geminiMessages,
           generationConfig: {
             temperature: 0.7,
-            maxOutputTokens: 500,
+            maxOutputTokens: 1000,
           }
         })
       }
