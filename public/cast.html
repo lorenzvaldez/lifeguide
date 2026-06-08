@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LifeGuide — For LeadingAge CAST Members</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --navy: #0a1628;
+  --navy-mid: #111e2b;
+  --navy-card: #0f1a25;
+  --gold: #c8a97e;
+  --gold-light: #e8d5b7;
+  --gold-dim: rgba(200,169,126,0.15);
+  --gold-border: rgba(200,169,126,0.25);
+  --text: #ffffff;
+  --text-dim: #c0b8b0;
+  --text-faint: #7a7268;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--navy);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 16px 40px;
+  display: flex; justify-content: space-between; align-items: center;
+  background: rgba(10,22,40,0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--gold-border);
+}
+.nav-brand { display: flex; align-items: center; gap: 12px; }
+.nav-brand span { font-family: 'Cormorant Garamond', serif; font-size: 22px; color: var(--gold-light); letter-spacing: 1px; }
+.nav-badge { font-size: 11px; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; background: var(--gold-dim); border: 1px solid var(--gold-border); padding: 4px 12px; border-radius: 20px; }
+.nav-cta { background: linear-gradient(135deg, #c8a97e, #a8895e); color: var(--navy); border: none; padding: 10px 24px; border-radius: 6px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  text-align: center;
+  padding: 120px 24px 80px;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(200,169,126,0.07) 0%, transparent 70%);
+}
+.hero-eyebrow {
+  font-size: 11px; letter-spacing: 4px; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 24px; font-family: 'DM Sans', sans-serif;
+}
+.hero h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(48px, 8vw, 84px);
+  font-weight: 300; line-height: 1.05;
+  color: var(--gold-light);
+  margin-bottom: 24px; letter-spacing: -1px;
+}
+.hero h1 em { color: var(--gold); font-style: italic; }
+.hero-sub {
+  font-size: 18px; color: var(--text-dim); max-width: 600px;
+  margin: 0 auto 16px; line-height: 1.7; font-weight: 300;
+}
+.hero-sub2 {
+  font-size: 14px; color: var(--text-faint); max-width: 500px;
+  margin: 0 auto 48px; line-height: 1.7;
+}
+.hero-cta-group { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+.btn-primary { background: linear-gradient(135deg, #c8a97e, #a8895e); color: var(--navy); border: none; padding: 18px 40px; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 700; cursor: pointer; text-decoration: none; display: inline-block; letter-spacing: 0.5px; box-shadow: 0 8px 32px rgba(200,169,126,0.3); }
+.btn-secondary { background: transparent; color: var(--gold); border: 1px solid var(--gold-border); padding: 18px 40px; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; text-decoration: none; display: inline-block; }
+
+.scroll-hint { margin-top: 64px; color: var(--text-faint); font-size: 12px; letter-spacing: 2px; text-transform: uppercase; }
+.scroll-hint::after { content: '↓'; display: block; margin-top: 8px; font-size: 18px; animation: bounce 2s infinite; }
+@keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
+
+/* ── SECTIONS ── */
+section { padding: 100px 24px; }
+.container { max-width: 960px; margin: 0 auto; }
+.section-eyebrow { font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; display: block; }
+.section-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(36px, 5vw, 56px); font-weight: 300; color: var(--gold-light); line-height: 1.1; margin-bottom: 20px; }
+.section-title em { color: var(--gold); font-style: italic; }
+.section-body { font-size: 16px; color: var(--text-dim); line-height: 1.8; max-width: 680px; }
+
+/* ── STATS BAR ── */
+.stats-bar { background: var(--navy-mid); border-top: 1px solid var(--gold-border); border-bottom: 1px solid var(--gold-border); padding: 40px 24px; }
+.stats-inner { max-width: 960px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 40px; text-align: center; }
+.stat-num { font-family: 'Cormorant Garamond', serif; font-size: 48px; font-weight: 300; color: var(--gold); line-height: 1; margin-bottom: 8px; }
+.stat-label { font-size: 12px; color: var(--text-faint); letter-spacing: 1px; text-transform: uppercase; }
+
+/* ── PROBLEM ── */
+.problem-section { background: var(--navy); }
+.problem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+.problem-quotes { display: flex; flex-direction: column; gap: 16px; }
+.quote-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 20px 24px; display: flex; gap: 14px; align-items: flex-start; }
+.quote-icon { font-size: 20px; flex-shrink: 0; }
+.quote-text { font-size: 14px; color: var(--text-dim); line-height: 1.6; font-style: italic; }
+
+/* ── STORY ── */
+.story-section { background: linear-gradient(135deg, #0d1e2e 0%, #111e2b 100%); }
+.story-card { background: rgba(200,169,126,0.04); border: 1px solid var(--gold-border); border-radius: 20px; padding: 48px; position: relative; overflow: hidden; }
+.story-card::before { content: '"'; position: absolute; top: -20px; left: 24px; font-family: 'Cormorant Garamond', serif; font-size: 200px; color: rgba(200,169,126,0.05); line-height: 1; }
+.story-text { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 300; color: var(--gold-light); line-height: 1.7; margin-bottom: 24px; position: relative; }
+.story-text p { margin-bottom: 20px; }
+.story-attribution { font-size: 13px; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; }
+
+/* ── WALKTHROUGH ── */
+.walkthrough-section { background: var(--navy); }
+.steps { display: flex; flex-direction: column; gap: 0; }
+.step { display: grid; grid-template-columns: 80px 1fr; gap: 32px; padding: 40px 0; border-bottom: 1px solid rgba(255,255,255,0.06); align-items: flex-start; }
+.step:last-child { border-bottom: none; }
+.step-num { font-family: 'Cormorant Garamond', serif; font-size: 64px; font-weight: 300; color: rgba(200,169,126,0.15); line-height: 1; }
+.step-content h3 { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 400; color: var(--gold-light); margin-bottom: 12px; }
+.step-content p { font-size: 15px; color: var(--text-dim); line-height: 1.7; margin-bottom: 16px; }
+.step-tag { display: inline-flex; align-items: center; gap: 6px; background: var(--gold-dim); border: 1px solid var(--gold-border); border-radius: 20px; padding: 4px 12px; font-size: 11px; color: var(--gold); letter-spacing: 1px; text-transform: uppercase; }
+
+/* ── FEATURES ── */
+.features-section { background: var(--navy-mid); }
+.features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 48px; }
+.feature-card { background: rgba(0,0,0,0.2); border: 1px solid rgba(200,169,126,0.1); border-radius: 16px; padding: 28px; transition: border-color 0.3s; }
+.feature-card:hover { border-color: rgba(200,169,126,0.3); }
+.feature-card.highlight { border-color: rgba(200,169,126,0.4); background: rgba(200,169,126,0.06); position: relative; overflow: hidden; }
+.feature-card.highlight::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, #c8a97e, transparent); }
+.feature-icon { font-size: 28px; margin-bottom: 14px; }
+.feature-title { font-family: 'Cormorant Garamond', serif; font-size: 20px; color: var(--gold-light); margin-bottom: 8px; font-weight: 400; }
+.feature-desc { font-size: 13px; color: var(--text-faint); line-height: 1.7; }
+.feature-badge { display: inline-block; margin-top: 12px; font-size: 10px; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; background: var(--gold-dim); padding: 3px 10px; border-radius: 20px; }
+
+/* ── XPRIZE ── */
+.xprize-section { background: var(--navy); }
+.xprize-card { background: linear-gradient(135deg, rgba(200,169,126,0.08), rgba(200,169,126,0.03)); border: 1px solid var(--gold-border); border-radius: 20px; padding: 48px; display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+.xprize-badge { display: inline-flex; align-items: center; gap: 8px; background: var(--gold-dim); border: 1px solid var(--gold-border); border-radius: 20px; padding: 6px 16px; margin-bottom: 20px; }
+.xprize-badge span { font-size: 11px; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; }
+.xprize-title { font-family: 'Cormorant Garamond', serif; font-size: 36px; font-weight: 300; color: var(--gold-light); line-height: 1.2; margin-bottom: 16px; }
+.xprize-body { font-size: 15px; color: var(--text-dim); line-height: 1.8; }
+.xprize-stats { display: flex; flex-direction: column; gap: 20px; }
+.xprize-stat { background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 20px 24px; }
+.xprize-stat-num { font-family: 'Cormorant Garamond', serif; font-size: 36px; color: var(--gold); line-height: 1; margin-bottom: 4px; }
+.xprize-stat-label { font-size: 12px; color: var(--text-faint); text-transform: uppercase; letter-spacing: 1px; }
+
+/* ── PRO ── */
+.pro-section { background: var(--navy-mid); }
+.pro-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 48px; display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
+.pro-features { display: flex; flex-direction: column; gap: 16px; margin-top: 24px; }
+.pro-feature { display: flex; gap: 14px; align-items: flex-start; }
+.pro-feature-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+.pro-feature-text h4 { font-size: 15px; color: var(--gold-light); margin-bottom: 4px; font-weight: 500; }
+.pro-feature-text p { font-size: 13px; color: var(--text-faint); line-height: 1.6; }
+
+/* ── PRICING ── */
+.pricing-section { background: var(--navy); }
+.pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; margin-top: 48px; }
+.price-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 36px 28px; text-align: center; position: relative; }
+.price-card.featured { border-color: var(--gold-border); background: rgba(200,169,126,0.06); }
+.price-card.featured::before { content: 'MOST POPULAR'; position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--gold); color: var(--navy); font-size: 10px; font-weight: 700; letter-spacing: 2px; padding: 4px 14px; border-radius: 20px; white-space: nowrap; }
+.price-plan { font-size: 12px; color: var(--text-faint); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 16px; }
+.price-amount { font-family: 'Cormorant Garamond', serif; font-size: 56px; font-weight: 300; color: var(--gold-light); line-height: 1; margin-bottom: 4px; }
+.price-period { font-size: 13px; color: var(--text-faint); margin-bottom: 20px; }
+.price-desc { font-size: 14px; color: var(--text-dim); line-height: 1.6; margin-bottom: 8px; }
+.price-save { font-size: 12px; color: var(--gold); }
+.price-note { font-size: 11px; color: var(--text-faint); margin-top: 16px; }
+
+/* ── COMPLIANCE ── */
+.compliance-section { background: var(--navy-mid); }
+.compliance-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 40px; }
+.compliance-item { background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 24px; text-align: center; }
+.compliance-icon { font-size: 28px; margin-bottom: 12px; }
+.compliance-title { font-size: 14px; color: var(--gold-light); font-weight: 500; margin-bottom: 6px; }
+.compliance-desc { font-size: 12px; color: var(--text-faint); line-height: 1.6; }
+
+/* ── CTA ── */
+.cta-section { background: linear-gradient(135deg, #0d1e2e 0%, #111e2b 100%); text-align: center; padding: 120px 24px; }
+.cta-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(40px, 6vw, 64px); font-weight: 300; color: var(--gold-light); margin-bottom: 20px; line-height: 1.1; }
+.cta-title em { color: var(--gold); font-style: italic; }
+.cta-body { font-size: 16px; color: var(--text-dim); max-width: 560px; margin: 0 auto 40px; line-height: 1.7; }
+.cta-group { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-bottom: 24px; }
+.cta-footnote { font-size: 13px; color: var(--text-faint); }
+
+/* ── FOOTER ── */
+footer { background: var(--navy); border-top: 1px solid var(--gold-border); padding: 40px 24px; text-align: center; }
+.footer-brand { font-family: 'Cormorant Garamond', serif; font-size: 24px; color: var(--gold); margin-bottom: 8px; }
+.footer-sub { font-size: 11px; color: var(--text-faint); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 16px; }
+.footer-note { font-size: 11px; color: rgba(255,255,255,0.15); line-height: 1.6; max-width: 600px; margin: 0 auto; }
+
+/* ── DIVIDER ── */
+.gold-line { width: 60px; height: 1px; background: var(--gold); margin: 24px auto; opacity: 0.4; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  nav { padding: 16px 20px; }
+  .problem-grid { grid-template-columns: 1fr; }
+  .step { grid-template-columns: 1fr; gap: 12px; }
+  .step-num { font-size: 40px; }
+  .xprize-card { grid-template-columns: 1fr; }
+  .pro-card { grid-template-columns: 1fr; }
+  .hero-cta-group { flex-direction: column; align-items: center; }
+  .cta-group { flex-direction: column; align-items: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand">
+    <span>LifeGuide</span>
+    <div class="nav-badge">For LeadingAge CAST</div>
+  </div>
+  <a href="https://thelifeguide.app" target="_blank" class="nav-cta">Visit thelifeguide.app →</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <p class="hero-eyebrow">Prepared for Scott Code · LeadingAge CAST · June 2026</p>
+  <h1>The family navigator<br />for the <em>hardest</em> journey.</h1>
+  <p class="hero-sub">LifeGuide gives families a clear roadmap through caregiving, hospice, and the first 30 days after loss — built by someone who lived it firsthand.</p>
+  <p class="hero-sub2">Designed to complement the work of your 5,500 member organizations — not replace it.</p>
+  <div class="hero-cta-group">
+    <a href="https://thelifeguide.app" target="_blank" class="btn-primary">See the Live App →</a>
+    <a href="#walkthrough" class="btn-secondary">Walk Through It ↓</a>
+  </div>
+  <p class="scroll-hint">Scroll to explore</p>
+</section>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stats-inner">
+    <div>
+      <div class="stat-num">7</div>
+      <div class="stat-label">AI-Powered Features Live</div>
+    </div>
+    <div>
+      <div class="stat-num">$0</div>
+      <div class="stat-label">Health Data Collected</div>
+    </div>
+    <div>
+      <div class="stat-num">2</div>
+      <div class="stat-label">AI Models (Claude + Gemini)</div>
+    </div>
+    <div>
+      <div class="stat-num">$2M</div>
+      <div class="stat-label">XPRIZE Submitted</div>
+    </div>
+  </div>
+</div>
+
+<!-- PROBLEM -->
+<section class="problem-section">
+  <div class="container">
+    <div class="problem-grid">
+      <div>
+        <span class="section-eyebrow">The Problem</span>
+        <h2 class="section-title">Families are left <em>completely lost.</em></h2>
+        <p class="section-body" style="margin-bottom: 20px;">When a loved one starts declining, nobody hands families a roadmap. They are Googling at 2am, missing critical paperwork, asking the wrong questions at doctor visits, and trying to hold everything together — all while grieving.</p>
+        <p class="section-body">Your member organizations see this every single day. LifeGuide is the resource families reach for when they don't know what to do next.</p>
+      </div>
+      <div class="problem-quotes">
+        <div class="quote-card">
+          <span class="quote-icon">😰</span>
+          <p class="quote-text">"I don't even know what questions to ask the doctor."</p>
+        </div>
+        <div class="quote-card">
+          <span class="quote-icon">📋</span>
+          <p class="quote-text">"We never got the power of attorney signed in time."</p>
+        </div>
+        <div class="quote-card">
+          <span class="quote-icon">👨‍👩‍👧‍👦</span>
+          <p class="quote-text">"My siblings are fighting and nobody knows who's in charge."</p>
+        </div>
+        <div class="quote-card">
+          <span class="quote-icon">🌙</span>
+          <p class="quote-text">"I was up until 3am reading Medicare websites that made no sense."</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STORY -->
+<section class="story-section">
+  <div class="container">
+    <span class="section-eyebrow">Why I Built This</span>
+    <h2 class="section-title" style="margin-bottom: 40px;">This is <em>personal.</em></h2>
+    <div class="story-card">
+      <div class="story-text">
+        <p>"When I was younger I started down the path of nursing school. I wanted to help people — that was always the thing. But it wasn't the right fit. I went into digital marketing and eventually helped build the largest business networking organization in Hawaii."</p>
+        <p>"Over the years I did a lot of things. But nothing felt truly meaningful. Then I discovered AI and realized I was a builder. And I started thinking about my wife."</p>
+        <p>"My wife is a hospice nurse. Her best friend is a hospice nurse. My aunties are nurses. I grew up with a lot of death in my family. And I watched my wife come home from shifts describing families who were completely lost. No roadmap. No checklist. Just Google at 2am and panic."</p>
+        <p>"It clicked. I knew this was what I was supposed to build. Not a generic PDF — an AI-powered navigator that walks families through the hardest journey of their lives, step by step. That's LifeGuide."</p>
+      </div>
+      <p class="story-attribution">— Lorenz, Founder · Husband of a hospice nurse</p>
+    </div>
+  </div>
+</section>
+
+<!-- WALKTHROUGH -->
+<section class="walkthrough-section" id="walkthrough">
+  <div class="container">
+    <span class="section-eyebrow">How It Works</span>
+    <h2 class="section-title">What a family <em>experiences.</em></h2>
+    <div class="gold-line" style="margin: 24px 0 48px;"></div>
+    <div class="steps">
+
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-content">
+          <h3>They land on thelifeguide.app</h3>
+          <p>A family member — usually an adult child in crisis — finds LifeGuide searching for help. The landing page meets them where they are: "When someone you love is declining." No jargon. No clinical language. Just calm, clear next steps.</p>
+          <span class="step-tag">Free to start</span>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-content">
+          <h3>They answer 4 questions about their situation</h3>
+          <p>A short quiz identifies where the family is in their journey — parent declining, terminal diagnosis, hospice referral, or already in hospice. Their role in the situation. Their urgency level. What they need most right now. LifeGuide uses these answers to personalize everything.</p>
+          <span class="step-tag">Personalized from minute one</span>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-content">
+          <h3>They receive their First Week Guide — free</h3>
+          <p>A personalized, situation-specific guide with immediate action steps for today, this week, and beyond. Includes a preview of the 5 critical documents every family needs. This is their first taste of clarity in what may be the most chaotic time of their lives.</p>
+          <span class="step-tag">No credit card required</span>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">04</div>
+        <div class="step-content">
+          <h3>They unlock full access — 7 features, one place</h3>
+          <p>For $20/month or $97 for 6 months, families get complete access to all 7 features. Doctor Visit Prep AI, Document Vault, Family Coordination Hub, Stage by Stage Guide, The Final Days Guide, After — The First 30 Days, and the new 2AM Caregiver Companion powered by Google Gemini.</p>
+          <span class="step-tag">$97 one-time · most popular</span>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">05</div>
+        <div class="step-content">
+          <h3>They have a companion for the whole journey</h3>
+          <p>The 2AM Companion is always there. Families can ask anything — "what does terminal lucidity mean," "how do I coordinate getting a hospital bed delivered," "what happens to Medicare after death." Real answers. No panic-Googling. Powered by Google Gemini 2.5 Flash in production today.</p>
+          <span class="step-tag">Available 24/7 · Gemini-powered</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features-section">
+  <div class="container">
+    <span class="section-eyebrow">All 7 Features</span>
+    <h2 class="section-title">Started with 6. <em>Built a 7th</em> for XPRIZE.</h2>
+    <p class="section-body" style="margin-top: 16px;">Every feature was built around a real question a family asks in crisis. Nothing generic. Nothing filler.</p>
+    <div class="features-grid">
+      <div class="feature-card highlight">
+        <div class="feature-icon">🌙</div>
+        <div class="feature-title">The 2AM Companion</div>
+        <div class="feature-desc">Free-form AI chat for caregivers who need answers at any hour. Practical logistics and knowledge — not emotional support. Low liability, high value. Powered by Google Gemini 2.5 Flash.</div>
+        <span class="feature-badge">NEW · Gemini-powered · XPRIZE feature</span>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🏥</div>
+        <div class="feature-title">Doctor Visit Prep AI</div>
+        <div class="feature-desc">User selects condition, stage, and biggest concern. Claude generates 10 personalized questions to bring to the next appointment. Families stop leaving doctor's offices wishing they'd asked something.</div>
+        <span class="feature-badge">Claude-powered</span>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📋</div>
+        <div class="feature-title">Document Vault</div>
+        <div class="feature-desc">The 5 critical documents — POA, Healthcare Proxy, Living Will, POLST, Medicare info — explained in plain language with urgency levels and state-specific links. Families know what to get and in what order.</div>
+        <span class="feature-badge">Step-by-step</span>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">👨‍👩‍👧</div>
+        <div class="feature-title">Family Coordination Hub</div>
+        <div class="feature-desc">Assign roles across the family — medical, finances, daily care, communications, emotional support. Updates feed and coordination checklist. Reduces the chaos of group texts and family conflict.</div>
+        <span class="feature-badge">Structured</span>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <div class="feature-title">Stage by Stage Guide</div>
+        <div class="feature-desc">4 stages of decline with 4 action tabs each: Physical Signs, Emotional, For Your Family, For Them. Families know what to expect before it happens. Knowledge is the antidote to fear.</div>
+        <span class="feature-badge">4 stages · 4 tabs each</span>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🕊️</div>
+        <div class="feature-title">The Final Days Guide</div>
+        <div class="feature-desc">What the last days actually look like. What is normal. What means call the nurse now. What to say. How to be present. Written with dignity, informed by those who have been there.</div>
+        <span class="feature-badge">Nurse-informed</span>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🌅</div>
+        <div class="feature-title">After — The First 30 Days</div>
+        <div class="feature-desc">30+ task checklist: Day 1, Week 1, Weeks 2-4, Grief, Resources. Death certificate, funeral basics, notifying accounts, bereavement leave, grief support. A calm guide through the logistical storm after loss.</div>
+        <span class="feature-badge">30+ tasks</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- XPRIZE -->
+<section class="xprize-section">
+  <div class="container">
+    <div class="xprize-card">
+      <div>
+        <div class="xprize-badge">
+          <span>🏆 XPRIZE Submission</span>
+        </div>
+        <h2 class="xprize-title">Submitted to a Google-sponsored $2M AI competition.</h2>
+        <p class="xprize-body" style="margin-bottom: 20px;">The XPRIZE competition required integrating Google's Gemini AI stack. That requirement led directly to building The 2AM Companion — the free-form caregiver chat that is now one of LifeGuide's most powerful features.</p>
+        <p class="xprize-body">Our architecture uses a hybrid LLM strategy: Claude powers the structured features like Doctor Visit Prep and Document Vault. Gemini 2.5 Flash powers The 2AM Companion, the real-time chat layer. Each model doing what it does best for families in crisis.</p>
+      </div>
+      <div class="xprize-stats">
+        <div class="xprize-stat">
+          <div class="xprize-stat-num">$2M</div>
+          <div class="xprize-stat-label">Prize Pool · Google-sponsored</div>
+        </div>
+        <div class="xprize-stat">
+          <div class="xprize-stat-num">Aug 17</div>
+          <div class="xprize-stat-label">Submission Deadline · 2026</div>
+        </div>
+        <div class="xprize-stat">
+          <div class="xprize-stat-num">Live</div>
+          <div class="xprize-stat-label">Gemini 2.5 Flash · In Production</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LIFEGUIDE PRO -->
+<section class="pro-section">
+  <div class="container">
+    <span class="section-eyebrow">Coming Soon</span>
+    <h2 class="section-title">LifeGuide <em>Pro</em> — for the care teams.</h2>
+    <div class="gold-line" style="margin: 24px 0 40px;"></div>
+    <div class="pro-card">
+      <div>
+        <p class="section-body" style="margin-bottom: 24px;">The consumer side of LifeGuide serves families. LifeGuide Pro is being built for the hospice nurses, social workers, and care teams who serve those families every day.</p>
+        <p class="section-body">The Gemini-powered consumer engine feeds directly into a B2B dashboard for hospice professionals — turning a family navigation tool into a permanent enterprise asset for aging care organizations.</p>
+        <p class="section-body" style="margin-top: 16px;">This is where CAST member organizations come in. LifeGuide Pro could give every care team a tool to onboard families from day one — no more paper packets, no more families left in the dark.</p>
+      </div>
+      <div>
+        <p style="font-size: 13px; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 20px;">What Pro includes</p>
+        <div class="pro-features">
+          <div class="pro-feature">
+            <span class="pro-feature-icon">📤</span>
+            <div class="pro-feature-text">
+              <h4>Family Onboarding</h4>
+              <p>Send a personalized LifeGuide link to every new family on day one. No more paper packets.</p>
+            </div>
+          </div>
+          <div class="pro-feature">
+            <span class="pro-feature-icon">📊</span>
+            <div class="pro-feature-text">
+              <h4>Family Dashboard</h4>
+              <p>See where each family is in their journey. Know what they need before they call you.</p>
+            </div>
+          </div>
+          <div class="pro-feature">
+            <span class="pro-feature-icon">💬</span>
+            <div class="pro-feature-text">
+              <h4>Direct Messaging</h4>
+              <p>Share resources and notes directly into the family's guide. Everything in one place.</p>
+            </div>
+          </div>
+          <div class="pro-feature">
+            <span class="pro-feature-icon">📋</span>
+            <div class="pro-feature-text">
+              <h4>Custom Resource Library</h4>
+              <p>Build your own library for your patients. Tailored to your organization.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing-section">
+  <div class="container">
+    <span class="section-eyebrow">Pricing</span>
+    <h2 class="section-title">Less than a <em>therapy copay.</em></h2>
+    <p class="section-body" style="margin-top: 16px;">Most families are in this journey for 3 to 6 months. We priced LifeGuide to reflect that — accessible to any family going through the hardest time of their lives.</p>
+    <div class="pricing-grid">
+      <div class="price-card">
+        <div class="price-plan">Monthly</div>
+        <div class="price-amount">$20</div>
+        <div class="price-period">per month · cancel anytime</div>
+        <div class="price-desc">Full access to all 7 features. No commitment. Stop when you need to.</div>
+        <div class="price-note">Best for families who need flexibility</div>
+      </div>
+      <div class="price-card featured">
+        <div class="price-plan">6 Months</div>
+        <div class="price-amount">$97</div>
+        <div class="price-period">one time · no renewal required</div>
+        <div class="price-desc">Most families only need 3–6 months. This covers the full journey at a fraction of the cost.</div>
+        <div class="price-save">Save $23 vs monthly</div>
+        <div class="price-note">Best for most families in active caregiving</div>
+      </div>
+    </div>
+    <p style="font-size: 13px; color: var(--text-faint); text-align: center; margin-top: 32px;">Secure payment via Stripe · Instant access · 7-day refund guarantee · No medical data collected</p>
+  </div>
+</section>
+
+<!-- COMPLIANCE -->
+<section class="compliance-section">
+  <div class="container">
+    <span class="section-eyebrow">Built for Trust</span>
+    <h2 class="section-title">Safe for <em>institutional recommendation.</em></h2>
+    <div class="compliance-grid">
+      <div class="compliance-item">
+        <div class="compliance-icon">🔒</div>
+        <div class="compliance-title">Zero Health Data</div>
+        <div class="compliance-desc">We collect only email and payment info. No medical records, no PHI, no health data of any kind.</div>
+      </div>
+      <div class="compliance-item">
+        <div class="compliance-icon">⚖️</div>
+        <div class="compliance-title">HIPAA Notice</div>
+        <div class="compliance-desc">LifeGuide is not a covered entity. HIPAA notice included in our privacy policy. Fully transparent.</div>
+      </div>
+      <div class="compliance-item">
+        <div class="compliance-icon">🩺</div>
+        <div class="compliance-title">Not Medical Advice</div>
+        <div class="compliance-desc">"NOT MEDICAL ADVICE" appears persistently on every screen. We are a navigator, not a clinical tool.</div>
+      </div>
+      <div class="compliance-item">
+        <div class="compliance-icon">🛡️</div>
+        <div class="compliance-title">7-Day Refund</div>
+        <div class="compliance-desc">Full refund within 7 days, no questions asked. We built this for families — not to trap them.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="container">
+    <h2 class="cta-title">Let's build this<br /><em>together.</em></h2>
+    <p class="cta-body">LifeGuide doesn't replace what your member organizations do. It's the resource families reach for at 2am — and it sends them to you more prepared, less panicked, and better equipped to work with their care team.</p>
+    <div class="cta-group">
+      <a href="https://thelifeguide.app" target="_blank" class="btn-primary">See the Live App →</a>
+      <a href="mailto:lorenz@thelifeguide.app" class="btn-secondary">Email Lorenz →</a>
+    </div>
+    <p class="cta-footnote">lorenz@thelifeguide.app · thelifeguide.app</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">LifeGuide</div>
+  <div class="footer-sub">Family Care Navigator · thelifeguide.app</div>
+  <div class="footer-note">NOT MEDICAL ADVICE · LifeGuide is an informational and organizational tool only. It does not provide medical advice, diagnosis, or treatment recommendations. Always consult your physician or qualified healthcare provider. © 2026 LifeGuide</div>
+</footer>
+
+</body>
+</html>
