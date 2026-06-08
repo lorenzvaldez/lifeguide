@@ -186,11 +186,14 @@ export default function CaregiverCompanion({ onBack }) {
       }}>
         {messages.length > 0 && (
           <button onClick={() => setMessages([])} style={{
-            background: 'none', border: 'none', color: S.textFaint,
-            fontSize: 11, cursor: 'pointer', marginBottom: 8,
-            padding: 0, fontFamily: 'sans-serif'
+            background: 'rgba(200,169,126,0.08)',
+            border: '1px solid rgba(200,169,126,0.25)',
+            borderRadius: 8, color: S.gold,
+            fontSize: 12, cursor: 'pointer', marginBottom: 10,
+            padding: '6px 14px', fontFamily: 'sans-serif',
+            display: 'block', width: '100%'
           }}>
-            Clear conversation
+            🗑 Clear conversation
           </button>
         )}
         <div style={{ display: 'flex', gap: 8 }}>
