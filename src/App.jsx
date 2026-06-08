@@ -5,6 +5,7 @@ import StageByStageGuide from "./StageByStageGuide";
 import FinalDaysGuide from "./FinalDaysGuide";
 import AfterGuide from "./AfterGuide";
 import FamilyCoordination from "./FamilyCoordination";
+import CaregiverCompanion from "./CaregiverCompanion";
 
 // ─── STRIPE LINKS ─────────────────────────────────────────────────────────────
 const STRIPE_MONTHLY = "https://buy.stripe.com/bJedRagpY67wbUwdVqgw000";
@@ -152,6 +153,7 @@ const lockedFeatures = [
   { icon: "📊", title: "Stage by Stage Guide", desc: "What to expect physically and emotionally at each stage of decline. No surprises. No being blindsided. Knowledge is the antidote to fear." },
   { icon: "🌙", title: "The Final Days Guide", desc: "What the last days actually look like. What is normal. What means call the nurse now. How to be present. What to say. Written by those who have been there." },
   { icon: "🌅", title: "After — The First 30 Days", desc: "Death certificate, funeral basics, notifying accounts, bereavement leave, grief resources. A calm guide for the logistical and emotional storm that follows." },
+  { icon: "🕊️", title: "2 AM Caregiver Companion", desc: "Ask anything, any hour. Our AI companion answers your questions about hospice logistics, Medicare, paperwork, and what to do next — powered by Google Gemini." },
 ];
 
 // ─── STYLES ───────────────────────────────────────────────────────────────────
@@ -296,7 +298,7 @@ function PaidGuideScreen({ user, answers, onReset, onFeature }) {
             <div>
               <p style={{ fontSize: 16, color: S.goldLight, fontFamily: "Cormorant Garamond, serif", marginBottom: 4 }}>{f.title}</p>
               <p style={{ fontSize: 12, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.6 }}>{f.desc}</p>
-              <button onClick={() => onFeature(["doctor","documents","family","stages","finaldays","after"][i])}
+              <button onClick={() => onFeature(["doctor","documents","family","stages","finaldays","after","companion"][i])}
                 style={{ marginTop: 10, background: "linear-gradient(135deg, #c8a97e, #a8895e)", border: "none", borderRadius: 6, color: S.dark, padding: "8px 16px", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif" }}>
                 Open ->
               </button>
@@ -455,7 +457,7 @@ function LandingScreen({ onStart, onNurse, onLogin }) {
               { icon: "📋", title: "Document Checklist", desc: "Power of attorney, living will, DNR, Medicare — explained in plain language with links to get them done." },
               { icon: "🏥", title: "Doctor Visit Prep", desc: "Walk into every appointment with the right questions. Generated based on your loved one's condition and stage." },
               { icon: "👨‍👩‍👧", title: "Family Coordination", desc: "Assign roles, share updates, and reduce the chaos of group texts. Everyone stays on the same page." },
-              { icon: "💙", title: "Grief & Transition Guide", desc: "What to expect emotionally. What happens after. Bereavement resources and a gentle path forward." },
+              { icon: "🕊️", title: "2 AM Companion", desc: "Ask anything, any hour. Gemini-powered AI answers your hospice logistics, Medicare, and caregiving questions instantly." },
               { icon: "🔒", title: "Private & Secure", desc: "We never collect medical information. Your family's journey stays completely private. Always." },
             ].map((f, i) => (
               <div key={i} style={{ padding: 28, border: "1px solid rgba(200,169,126,0.08)", borderRadius: 8, background: "rgba(0,0,0,0.15)" }}>
@@ -825,7 +827,6 @@ export default function App() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
 
-    // Capture affiliate ref
     const ref = params.get("ref");
     if (ref) { try { localStorage.setItem("lifeguide_ref", ref); } catch(e) {} }
 
@@ -888,7 +889,6 @@ export default function App() {
     try { localStorage.removeItem("lifeguide_user"); } catch (e) {}
   };
 
-  // Auto-send code after payment
   const handlePaymentEmailSubmit = async () => {
     if (!userEmail || !userEmail.includes("@")) return;
     try {
@@ -914,7 +914,6 @@ export default function App() {
       {screen === "guide" && <FreeGuideScreen answers={answers} onUnlock={() => setScreen("login")} onReset={handleReset} userEmail={userEmail} />}
       {screen === "login" && <LoginScreen email={userEmail} onVerified={handleVerified} onBack={() => setScreen("guide")} directLogin={false} />}
 
-      {/* ─── PAYMENT SUCCESS ─── */}
       {screen === "payment_success" && (
         <div style={{ maxWidth: 480, width: "100%", margin: "0 auto", padding: "100px 24px 60px", textAlign: "center" }}>
           <div style={{ fontSize: 64, marginBottom: 24 }}>🕊️</div>
@@ -933,7 +932,6 @@ export default function App() {
         </div>
       )}
 
-      {/* ─── POST PAYMENT VERIFY — code auto-sent, just enter it ─── */}
       {screen === "post_payment_verify" && (
         <LoginScreen email={userEmail} onVerified={handleVerified} onBack={() => setScreen("payment_success")} directLogin={false} startAtVerify={true} />
       )}
@@ -946,6 +944,7 @@ export default function App() {
       {screen === "paid" && activeFeature === "stages" && <StageByStageGuide onBack={() => setActiveFeature(null)} />}
       {screen === "paid" && activeFeature === "finaldays" && <FinalDaysGuide onBack={() => setActiveFeature(null)} />}
       {screen === "paid" && activeFeature === "after" && <AfterGuide onBack={() => setActiveFeature(null)} />}
+      {screen === "paid" && activeFeature === "companion" && <CaregiverCompanion onBack={() => setActiveFeature(null)} />}
 
       {screen !== "landing" && (
         <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, borderTop: "1px solid rgba(255,255,255,0.04)", background: "rgba(10,21,32,0.97)", backdropFilter: "blur(10px)", padding: "10px 24px", textAlign: "center", zIndex: 50 }}>
