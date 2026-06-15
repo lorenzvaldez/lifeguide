@@ -7,11 +7,9 @@ import AfterGuide from "./AfterGuide";
 import FamilyCoordination from "./FamilyCoordination";
 import CaregiverCompanion from "./CaregiverCompanion";
 
-// ─── STRIPE LINKS ─────────────────────────────────────────────────────────────
 const STRIPE_MONTHLY = "https://buy.stripe.com/bJedRagpY67wbUwdVqgw000";
 const STRIPE_6MONTH = "https://buy.stripe.com/5kQ00k3DcdzYaQsbNigw001";
 
-// ─── LEGAL ───────────────────────────────────────────────────────────────────
 const DISCLAIMER = "LifeGuide is an informational resource and family navigation tool. It does not provide medical advice, diagnosis, or treatment recommendations. All information provided is for general educational purposes only. Always consult your physician, hospice team, or qualified healthcare provider regarding any medical decisions. Use of LifeGuide does not create a patient-provider relationship.";
 
 const TERMS = `Last updated: May 2026
@@ -61,7 +59,6 @@ LifeGuide is NOT a covered entity under HIPAA. We do not collect, store, or tran
 
 CONTACT: support@thelifeguide.app`;
 
-// ─── QUIZ ─────────────────────────────────────────────────────────────────────
 const questions = [
   {
     id: "situation",
@@ -105,7 +102,6 @@ const questions = [
   },
 ];
 
-// ─── FREE FIRST WEEK GUIDE CONTENT ───────────────────────────────────────────
 const documentTeaserStep = {
   day: "Essential",
   title: "The 5 documents every family needs — and most don't have.",
@@ -145,25 +141,23 @@ const firstWeekGuide = {
   ],
 };
 
-// ─── LOCKED FEATURES ──────────────────────────────────────────────────────────
+// ─── LOCKED FEATURES — 2AM Companion FIRST ───────────────────────────────────
 const lockedFeatures = [
+  { icon: "🕊️", title: "2 AM Caregiver Companion", desc: "Ask anything, any hour. Our AI companion answers your questions about hospice logistics, Medicare, paperwork, and what to do next — powered by Google Gemini.", highlight: true },
   { icon: "🏥", title: "Doctor Visit Prep AI", desc: "Answer 3 questions about your loved one's condition. Get 10 personalized questions to bring to your next appointment. Never leave a doctor's office wishing you'd asked something." },
   { icon: "📋", title: "Document Vault", desc: "Power of attorney, living will, DNR, POLST, Medicare forms — explained in plain language with direct links to complete them in your state. Step by step." },
   { icon: "👨‍👩‍👧", title: "Family Coordination Hub", desc: "Assign roles, share updates, and reduce the chaos of group texts. Who handles appointments. Who manages finances. Who is the medical point of contact." },
   { icon: "📊", title: "Stage by Stage Guide", desc: "What to expect physically and emotionally at each stage of decline. No surprises. No being blindsided. Knowledge is the antidote to fear." },
   { icon: "🌙", title: "The Final Days Guide", desc: "What the last days actually look like. What is normal. What means call the nurse now. How to be present. What to say. Written by those who have been there." },
   { icon: "🌅", title: "After — The First 30 Days", desc: "Death certificate, funeral basics, notifying accounts, bereavement leave, grief resources. A calm guide for the logistical and emotional storm that follows." },
-  { icon: "🕊️", title: "2 AM Caregiver Companion", desc: "Ask anything, any hour. Our AI companion answers your questions about hospice logistics, Medicare, paperwork, and what to do next — powered by Google Gemini." },
 ];
 
-// ─── STYLES ───────────────────────────────────────────────────────────────────
 const S = {
   dark: "#0a1520", darkMid: "#111e2b", darkCard: "#0f1a25",
   gold: "#c8a97e", goldLight: "#e8d5b7", text: "#ffffff",
   textDim: "#c0b8b0", textFaint: "#8a8278",
 };
 
-// ─── MODAL ────────────────────────────────────────────────────────────────────
 function Modal({ title, content, onClose }) {
   return (
     <div onClick={onClose} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.85)", zIndex: 200, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
@@ -181,14 +175,12 @@ function Modal({ title, content, onClose }) {
   );
 }
 
-// ─── LOGIN SCREEN ─────────────────────────────────────────────────────────────
 function LoginScreen({ email: initialEmail, onVerified, onBack, directLogin, startAtVerify }) {
   const [step, setStep] = useState(startAtVerify ? "verify" : directLogin ? "enter_email" : "send");
   const [inputEmail, setInputEmail] = useState(initialEmail || "");
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
   const email = inputEmail;
 
   const sendCode = async () => {
@@ -214,7 +206,6 @@ function LoginScreen({ email: initialEmail, onVerified, onBack, directLogin, sta
   return (
     <div style={{ maxWidth: 440, width: "100%", margin: "0 auto", padding: "80px 24px 40px", textAlign: "center" }}>
       <img src="/logo.png" alt="LifeGuide" style={{ width: 60, height: 60, objectFit: "contain", margin: "0 auto 24px", display: "block" }} />
-
       {step === "enter_email" && (
         <>
           <p style={{ fontSize: 11, letterSpacing: 4, textTransform: "uppercase", color: S.gold, marginBottom: 16, fontFamily: "sans-serif" }}>Welcome Back</p>
@@ -231,7 +222,6 @@ function LoginScreen({ email: initialEmail, onVerified, onBack, directLogin, sta
           <button onClick={onBack} style={{ background: "none", border: "none", color: S.textFaint, fontSize: 12, cursor: "pointer", fontFamily: "sans-serif", marginTop: 20, textDecoration: "underline" }}>← Back</button>
         </>
       )}
-
       {step === "send" && (
         <>
           <p style={{ fontSize: 11, letterSpacing: 4, textTransform: "uppercase", color: S.gold, marginBottom: 16, fontFamily: "sans-serif" }}>Access Your Guide</p>
@@ -247,7 +237,6 @@ function LoginScreen({ email: initialEmail, onVerified, onBack, directLogin, sta
           <button onClick={onBack} style={{ background: "none", border: "none", color: S.textFaint, fontSize: 12, cursor: "pointer", fontFamily: "sans-serif", marginTop: 20, textDecoration: "underline" }}>← Back</button>
         </>
       )}
-
       {step === "verify" && (
         <>
           <p style={{ fontSize: 11, letterSpacing: 4, textTransform: "uppercase", color: S.gold, marginBottom: 16, fontFamily: "sans-serif" }}>Check Your Email</p>
@@ -272,11 +261,9 @@ function LoginScreen({ email: initialEmail, onVerified, onBack, directLogin, sta
   );
 }
 
-// ─── PAID CONTENT SCREEN ──────────────────────────────────────────────────────
 function PaidGuideScreen({ user, answers, onReset, onFeature }) {
   const situation = answers.situation || "parent_declining";
   const situationLabel = { parent_declining: "Parent Declining", terminal_diagnosis: "Terminal Diagnosis", hospice_referral: "Hospice Referral", in_hospice: "In Hospice" }[situation];
-
   const [visited, setVisited] = useState({});
 
   useEffect(() => {
@@ -293,66 +280,37 @@ function PaidGuideScreen({ user, answers, onReset, onFeature }) {
     onFeature(key);
   };
 
-  const FeatureCard = ({ icon, title, desc, featureKey, wide }) => {
+  const FeatureCard = ({ icon, title, desc, featureKey }) => {
     const isVisited = visited[featureKey];
     return (
-      <div style={{
-        background: "rgba(200,169,126,0.06)", border: "1px solid rgba(200,169,126,0.18)",
-        borderRadius: 14, padding: "18px 16px", display: "flex", flexDirection: "column",
-        gap: 10, position: "relative", gridColumn: wide ? "span 2" : "span 1"
-      }}>
+      <div style={{ background: "rgba(200,169,126,0.06)", border: "1px solid rgba(200,169,126,0.18)", borderRadius: 14, padding: "18px 16px", display: "flex", flexDirection: "column", gap: 10 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <span style={{ fontSize: 22, flexShrink: 0 }}>{icon}</span>
-          <div style={{ flex: 1 }}>
-            <p style={{ fontSize: 15, color: S.goldLight, fontFamily: "Cormorant Garamond, serif", lineHeight: 1.3 }}>{title}</p>
-          </div>
-          <span style={{
-            fontSize: 10, fontFamily: "sans-serif", letterSpacing: 1,
-            padding: "2px 8px", borderRadius: 10,
-            background: isVisited ? "rgba(255,255,255,0.05)" : "rgba(200,169,126,0.15)",
-            color: isVisited ? S.textFaint : S.gold,
-            flexShrink: 0
-          }}>
+          <p style={{ fontSize: 15, color: S.goldLight, fontFamily: "Cormorant Garamond, serif", lineHeight: 1.3, flex: 1 }}>{title}</p>
+          <span style={{ fontSize: 10, fontFamily: "sans-serif", letterSpacing: 1, padding: "2px 8px", borderRadius: 10, background: isVisited ? "rgba(255,255,255,0.05)" : "rgba(200,169,126,0.15)", color: isVisited ? S.textFaint : S.gold, flexShrink: 0 }}>
             {isVisited ? "✓ Visited" : "● New"}
           </span>
         </div>
         <p style={{ fontSize: 12, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.6 }}>{desc}</p>
-        <button onClick={() => handleOpen(featureKey)}
-          style={{
-            marginTop: 4, background: "linear-gradient(135deg, #c8a97e, #a8895e)",
-            border: "none", borderRadius: 8, color: S.dark,
-            padding: "10px 16px", fontSize: 12, fontWeight: 700,
-            cursor: "pointer", fontFamily: "sans-serif", alignSelf: "flex-start"
-          }}>
-          Open →
-        </button>
+        <button onClick={() => handleOpen(featureKey)} style={{ marginTop: 4, background: "linear-gradient(135deg, #c8a97e, #a8895e)", border: "none", borderRadius: 8, color: S.dark, padding: "10px 16px", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif", alignSelf: "flex-start" }}>Open →</button>
       </div>
     );
   };
 
   const CategoryLabel = ({ label }) => (
-    <p style={{
-      fontSize: 10, color: S.textFaint, fontFamily: "sans-serif",
-      letterSpacing: 3, textTransform: "uppercase", marginBottom: 10, marginTop: 24
-    }}>{label}</p>
+    <p style={{ fontSize: 10, color: S.textFaint, fontFamily: "sans-serif", letterSpacing: 3, textTransform: "uppercase", marginBottom: 10, marginTop: 24 }}>{label}</p>
   );
 
   return (
     <div style={{ maxWidth: 560, width: "100%", margin: "0 auto", padding: "50px 24px 120px" }}>
-
-      {/* Welcome */}
       <div style={{ textAlign: "center", marginBottom: 28 }}>
         <span style={{ background: "rgba(200,169,126,0.15)", border: "1px solid rgba(200,169,126,0.3)", borderRadius: 20, padding: "4px 14px", fontSize: 11, color: S.gold, fontFamily: "sans-serif", letterSpacing: 2, textTransform: "uppercase" }}>{situationLabel}</span>
         <h2 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 30, fontWeight: 300, color: S.goldLight, marginTop: 12, marginBottom: 4 }}>Your Complete Guide</h2>
         <p style={{ fontSize: 12, color: S.textFaint, fontFamily: "sans-serif" }}>{user.email} · {user.plan}</p>
       </div>
 
-      {/* HERO — 2 AM Companion */}
-      <div style={{
-        background: "linear-gradient(135deg, rgba(200,169,126,0.12), rgba(200,169,126,0.04))",
-        border: "1px solid rgba(200,169,126,0.35)", borderRadius: 18,
-        padding: "28px 24px", marginBottom: 8, position: "relative", overflow: "hidden"
-      }}>
+      {/* ─── 2AM COMPANION HERO ─── */}
+      <div style={{ background: "linear-gradient(135deg, rgba(200,169,126,0.12), rgba(200,169,126,0.04))", border: "1px solid rgba(200,169,126,0.35)", borderRadius: 18, padding: "28px 24px", marginBottom: 8, position: "relative", overflow: "hidden" }}>
         <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: "linear-gradient(90deg, transparent, #c8a97e, transparent)" }} />
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
           <span style={{ fontSize: 28 }}>🕊️</span>
@@ -363,109 +321,70 @@ function PaidGuideScreen({ user, answers, onReset, onFeature }) {
             </div>
             <p style={{ fontSize: 11, color: S.textFaint, fontFamily: "sans-serif", marginTop: 2 }}>Powered by Google Gemini</p>
           </div>
-          <span style={{
-            marginLeft: "auto", fontSize: 10, fontFamily: "sans-serif", letterSpacing: 1,
-            padding: "2px 8px", borderRadius: 10,
-            background: visited["companion"] ? "rgba(255,255,255,0.05)" : "rgba(200,169,126,0.15)",
-            color: visited["companion"] ? S.textFaint : S.gold, flexShrink: 0
-          }}>
+          <span style={{ marginLeft: "auto", fontSize: 10, fontFamily: "sans-serif", letterSpacing: 1, padding: "2px 8px", borderRadius: 10, background: visited["companion"] ? "rgba(255,255,255,0.05)" : "rgba(200,169,126,0.15)", color: visited["companion"] ? S.textFaint : S.gold, flexShrink: 0 }}>
             {visited["companion"] ? "✓ Visited" : "● New"}
           </span>
         </div>
         <p style={{ fontSize: 13, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.7, marginBottom: 16 }}>
           Ask anything, any hour. What does this medication do? Who do I call right now? What are the signs? Get calm, practical answers instantly — no matter what time it is.
         </p>
-        <button onClick={() => handleOpen("companion")}
-          style={{
-            background: "linear-gradient(135deg, #c8a97e, #a8895e)", border: "none",
-            borderRadius: 10, color: S.dark, padding: "14px 28px",
-            fontSize: 14, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif",
-            boxShadow: "0 4px 16px rgba(200,169,126,0.25)"
-          }}>
+        <button onClick={() => handleOpen("companion")} style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", border: "none", borderRadius: 10, color: S.dark, padding: "14px 28px", fontSize: 14, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif", boxShadow: "0 4px 16px rgba(200,169,126,0.25)" }}>
           Open the Companion →
         </button>
       </div>
 
-      {/* PREPARE */}
       <CategoryLabel label="Prepare" />
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 4 }}>
-        <FeatureCard icon="🏥" title="Doctor Visit Prep AI" featureKey="doctor"
-          desc="Get 10 personalized questions for your next appointment based on your loved one's condition." />
-        <FeatureCard icon="📋" title="Document Vault" featureKey="documents"
-          desc="POA, living will, DNR, POLST, Medicare — explained in plain language with state-specific links." />
+        <FeatureCard icon="🏥" title="Doctor Visit Prep AI" featureKey="doctor" desc="Get 10 personalized questions for your next appointment based on your loved one's condition." />
+        <FeatureCard icon="📋" title="Document Vault" featureKey="documents" desc="POA, living will, DNR, POLST, Medicare — plain language with state-specific links." />
       </div>
 
-      {/* NAVIGATE */}
       <CategoryLabel label="Navigate" />
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 4 }}>
-        <FeatureCard icon="📊" title="Stage by Stage Guide" featureKey="stages"
-          desc="What to expect physically and emotionally at each stage of decline. No surprises." />
-        <FeatureCard icon="👨‍👩‍👧" title="Family Coordination Hub" featureKey="family"
-          desc="Assign roles, share updates, reduce the chaos. Who manages finances. Who is medical POC." />
+        <FeatureCard icon="📊" title="Stage by Stage Guide" featureKey="stages" desc="What to expect physically and emotionally at each stage of decline. No surprises." />
+        <FeatureCard icon="👨‍👩‍👧" title="Family Coordination Hub" featureKey="family" desc="Assign roles, share updates, reduce the chaos. Who manages finances. Who is medical POC." />
       </div>
 
-      {/* BE PRESENT */}
       <CategoryLabel label="Be Present" />
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 32 }}>
-        <FeatureCard icon="🌙" title="The Final Days Guide" featureKey="finaldays"
-          desc="What the last days look like. What is normal. What to say. How to be present." />
-        <FeatureCard icon="🌅" title="After — First 30 Days" featureKey="after"
-          desc="Death certificate, funeral basics, grief resources. A calm guide for what comes after." />
+        <FeatureCard icon="🌙" title="The Final Days Guide" featureKey="finaldays" desc="What the last days look like. What is normal. What to say. How to be present." />
+        <FeatureCard icon="🌅" title="After — First 30 Days" featureKey="after" desc="Death certificate, funeral basics, grief resources. A calm guide for what comes after." />
       </div>
 
-      {/* Manage + Footer */}
       <div style={{ background: "rgba(200,169,126,0.04)", border: "1px solid rgba(200,169,126,0.15)", borderRadius: 12, padding: "16px 20px", textAlign: "center", marginBottom: 16 }}>
         <p style={{ fontSize: 13, color: S.textDim, fontFamily: "sans-serif", marginBottom: 10 }}>Monthly subscriber? Manage or cancel anytime.</p>
-        <button onClick={() => window.open("https://billing.stripe.com/p/login/bJedRagpY67wbUwdVqgw000", "_blank")}
-          style={{ background: "transparent", border: "1px solid rgba(200,169,126,0.3)", borderRadius: 8, color: S.gold, padding: "10px 24px", fontSize: 13, cursor: "pointer", fontFamily: "sans-serif" }}>
-          Manage Subscription →
-        </button>
+        <button onClick={() => window.open("https://billing.stripe.com/p/login/bJedRagpY67wbUwdVqgw000", "_blank")} style={{ background: "transparent", border: "1px solid rgba(200,169,126,0.3)", borderRadius: 8, color: S.gold, padding: "10px 24px", fontSize: 13, cursor: "pointer", fontFamily: "sans-serif" }}>Manage Subscription →</button>
       </div>
-
-      <p style={{ fontSize: 11, color: S.textFaint, fontFamily: "sans-serif", textAlign: "center" }}>
-        Need help? <a href="mailto:support@thelifeguide.app" style={{ color: S.gold, textDecoration: "underline" }}>support@thelifeguide.app</a>
-      </p>
+      <p style={{ fontSize: 11, color: S.textFaint, fontFamily: "sans-serif", textAlign: "center" }}>Need help? <a href="mailto:support@thelifeguide.app" style={{ color: S.gold, textDecoration: "underline" }}>support@thelifeguide.app</a></p>
       <button onClick={onReset} style={{ background: "none", border: "none", color: S.textFaint, fontSize: 12, cursor: "pointer", fontFamily: "sans-serif", display: "block", margin: "16px auto 0", textDecoration: "underline" }}>Sign out</button>
     </div>
   );
 }
 
-// ─── FOUNDING MEMBERS COUNTER ─────────────────────────────────────────────────
 function FoundingMembersCounter() {
   const [count, setCount] = useState(null);
-
   useEffect(() => {
-    fetch("/api/member-count")
-      .then(r => r.json())
-      .then(data => { if (data.count !== undefined) setCount(data.count); })
-      .catch(() => {});
+    fetch("/api/member-count").then(r => r.json()).then(data => { if (data.count !== undefined) setCount(data.count); }).catch(() => {});
   }, []);
-
   if (count === null) return null;
-
   return (
     <div style={{ display: "inline-flex", alignItems: "center", gap: 10, background: "rgba(200,169,126,0.08)", border: "1px solid rgba(200,169,126,0.2)", borderRadius: 20, padding: "8px 20px", marginBottom: 32 }}>
       <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#c8a97e", display: "inline-block", boxShadow: "0 0 6px rgba(200,169,126,0.6)" }} />
-      <span style={{ fontSize: 13, color: "#c8a97e", fontFamily: "sans-serif" }}>
-        <strong>{count}</strong> founding members have joined
-      </span>
+      <span style={{ fontSize: 13, color: "#c8a97e", fontFamily: "sans-serif" }}><strong>{count}</strong> founding members have joined</span>
     </div>
   );
 }
 
-// ─── LANDING PAGE SCREEN ──────────────────────────────────────────────────────
 function LandingScreen({ onStart, onNurse, onLogin }) {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
-
   const handleWaitlist = async () => {
     if (!email || !email.includes("@")) return;
     setLoading(true);
     try { await fetch("/api/subscribe", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, tag: "landing-waitlist" }) }); } catch (e) {}
     setLoading(false); setSubmitted(true);
   };
-
   return (
     <div style={{ minHeight: "100vh", background: `linear-gradient(135deg, #0a1520 0%, #1a2a3a 50%, #0a1520 100%)`, color: "#ffffff", fontFamily: "sans-serif" }}>
       <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 100, padding: "16px 20px", display: "flex", justifyContent: "space-between", alignItems: "center", background: "linear-gradient(to bottom, rgba(10,21,32,0.95), transparent)", pointerEvents: "none" }}>
@@ -478,7 +397,6 @@ function LandingScreen({ onStart, onNurse, onLogin }) {
           <button onClick={onLogin} style={{ background: "rgba(200,169,126,0.1)", border: "1px solid rgba(200,169,126,0.3)", color: "#c8a97e", padding: "8px 16px", fontFamily: "sans-serif", fontSize: 11, letterSpacing: 2, textTransform: "uppercase", cursor: "pointer", borderRadius: 2 }}>Log In</button>
         </div>
       </nav>
-
       <section style={{ minHeight: "100vh", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center", padding: "100px 20px 60px", position: "relative", overflow: "hidden", zIndex: 1 }}>
         <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 60% 50% at 50% 60%, rgba(200,169,126,0.06) 0%, transparent 70%)" }} />
         <img src="/logo.png" alt="LifeGuide" style={{ width: 90, height: 90, objectFit: "contain", marginBottom: 32 }} />
@@ -507,7 +425,6 @@ function LandingScreen({ onStart, onNurse, onLogin }) {
           )}
         </div>
       </section>
-
       <section style={{ background: "#111e2b", padding: "60px 20px" }}>
         <div style={{ maxWidth: 900, margin: "0 auto", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 32, alignItems: "center" }}>
           <div>
@@ -531,7 +448,6 @@ function LandingScreen({ onStart, onNurse, onLogin }) {
           </div>
         </div>
       </section>
-
       <section style={{ padding: "60px 20px" }}>
         <div style={{ maxWidth: 900, margin: "0 auto", textAlign: "center" }}>
           <span style={{ fontSize: 10, letterSpacing: 4, textTransform: "uppercase", color: "#c8a97e", marginBottom: 16, display: "block" }}>How It Works</span>
@@ -551,7 +467,6 @@ function LandingScreen({ onStart, onNurse, onLogin }) {
           </div>
         </div>
       </section>
-
       <section style={{ background: "#111e2b", padding: "60px 20px" }}>
         <div style={{ maxWidth: 900, margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: 48 }}>
@@ -560,23 +475,24 @@ function LandingScreen({ onStart, onNurse, onLogin }) {
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16 }}>
             {[
+              { icon: "🕊️", title: "2 AM Companion", desc: "Ask anything, any hour. Gemini-powered AI answers your hospice logistics, Medicare, and caregiving questions instantly." },
               { icon: "🗺️", title: "Personalized Navigator", desc: "A custom roadmap based on your exact situation. Step-by-step, prioritized, and updated as things change." },
               { icon: "📋", title: "Document Checklist", desc: "Power of attorney, living will, DNR, Medicare — explained in plain language with links to get them done." },
               { icon: "🏥", title: "Doctor Visit Prep", desc: "Walk into every appointment with the right questions. Generated based on your loved one's condition and stage." },
               { icon: "👨‍👩‍👧", title: "Family Coordination", desc: "Assign roles, share updates, and reduce the chaos of group texts. Everyone stays on the same page." },
-              { icon: "🕊️", title: "2 AM Companion", desc: "Ask anything, any hour. Gemini-powered AI answers your hospice logistics, Medicare, and caregiving questions instantly." },
               { icon: "🔒", title: "Private & Secure", desc: "We never collect medical information. Your family's journey stays completely private. Always." },
             ].map((f, i) => (
-              <div key={i} style={{ padding: 28, border: "1px solid rgba(200,169,126,0.08)", borderRadius: 8, background: "rgba(0,0,0,0.15)" }}>
+              <div key={i} style={{ padding: 28, border: `1px solid ${i === 0 ? "rgba(200,169,126,0.3)" : "rgba(200,169,126,0.08)"}`, borderRadius: 8, background: i === 0 ? "rgba(200,169,126,0.06)" : "rgba(0,0,0,0.15)", position: "relative", overflow: i === 0 ? "hidden" : "visible" }}>
+                {i === 0 && <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: "linear-gradient(90deg, transparent, #c8a97e, transparent)" }} />}
                 <div style={{ fontSize: 28, marginBottom: 12 }}>{f.icon}</div>
                 <h3 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 18, color: "#e8d5b7", marginBottom: 8, fontWeight: 400 }}>{f.title}</h3>
                 <p style={{ fontSize: 13, color: "#7a7268", lineHeight: 1.7 }}>{f.desc}</p>
+                {i === 0 && <span style={{ display: "inline-block", marginTop: 10, fontSize: 10, color: "#c8a97e", letterSpacing: 2, background: "rgba(200,169,126,0.15)", padding: "3px 10px", borderRadius: 20 }}>POWERED BY GOOGLE GEMINI</span>}
               </div>
             ))}
           </div>
         </div>
       </section>
-
       <section style={{ padding: "60px 20px" }}>
         <div style={{ maxWidth: 700, margin: "0 auto", textAlign: "center" }}>
           <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(200,169,126,0.08)", border: "1px solid rgba(200,169,126,0.2)", borderRadius: 20, padding: "6px 16px", marginBottom: 24 }}>
@@ -588,13 +504,11 @@ function LandingScreen({ onStart, onNurse, onLogin }) {
           <button onClick={onNurse} style={{ background: "transparent", border: "1px solid rgba(200,169,126,0.4)", color: "#c8a97e", padding: "14px 32px", fontFamily: "sans-serif", fontSize: 12, fontWeight: 600, letterSpacing: 2, textTransform: "uppercase", cursor: "pointer", borderRadius: 4 }}>Learn About LifeGuide Pro -></button>
         </div>
       </section>
-
       <div style={{ background: "rgba(200,169,126,0.04)", borderTop: "1px solid rgba(200,169,126,0.1)", borderBottom: "1px solid rgba(200,169,126,0.1)", padding: "16px 24px", textAlign: "center" }}>
         <p style={{ fontSize: 11, color: "#3a3530", maxWidth: 700, margin: "0 auto", lineHeight: 1.6 }}>
           <strong style={{ color: "#5a5650" }}>Important:</strong> LifeGuide is an informational and organizational tool only. It does not provide medical advice, diagnosis, or treatment recommendations. Always consult your physician or healthcare provider.
         </p>
       </div>
-
       <footer style={{ padding: "40px 24px", textAlign: "center", borderTop: "1px solid rgba(255,255,255,0.04)" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, marginBottom: 12 }}>
           <img src="/logo.png" alt="LifeGuide" style={{ width: 28, height: 28, objectFit: "contain" }} />
@@ -607,7 +521,6 @@ function LandingScreen({ onStart, onNurse, onLogin }) {
   );
 }
 
-// ─── DISCLAIMER SCREEN ────────────────────────────────────────────────────────
 function DisclaimerScreen({ onFamily, onNurse, onModal }) {
   return (
     <div style={{ maxWidth: 520, width: "100%", margin: "0 auto", padding: "60px 24px 40px", textAlign: "center" }}>
@@ -645,7 +558,6 @@ function DisclaimerScreen({ onFamily, onNurse, onModal }) {
   );
 }
 
-// ─── NURSE SCREEN ─────────────────────────────────────────────────────────────
 function NurseScreen({ onBack }) {
   const [submitted, setSubmitted] = useState(false);
   const [email, setEmail] = useState("");
@@ -705,12 +617,10 @@ function NurseScreen({ onBack }) {
   );
 }
 
-// ─── EMAIL CAPTURE SCREEN ─────────────────────────────────────────────────────
 function EmailScreen({ onContinue, situation }) {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
-
   const handleSubmit = async () => {
     if (!email || !email.includes("@")) { setError(true); return; }
     setLoading(true);
@@ -722,7 +632,6 @@ function EmailScreen({ onContinue, situation }) {
     setLoading(false);
     onContinue(email);
   };
-
   return (
     <div style={{ maxWidth: 480, width: "100%", textAlign: "center", margin: "0 auto", padding: "80px 24px 40px" }}>
       <div style={{ width: 1, height: 48, background: "linear-gradient(to bottom, transparent, #c8a97e, transparent)", margin: "0 auto 32px" }} />
@@ -745,7 +654,6 @@ function EmailScreen({ onContinue, situation }) {
   );
 }
 
-// ─── QUIZ SCREEN ──────────────────────────────────────────────────────────────
 function QuizScreen({ currentQ, onAnswer }) {
   const q = questions[currentQ];
   const [selected, setSelected] = useState(null);
@@ -774,7 +682,6 @@ function QuizScreen({ currentQ, onAnswer }) {
   );
 }
 
-// ─── FREE GUIDE SCREEN ────────────────────────────────────────────────────────
 function FreeGuideScreen({ answers, onUnlock, onReset, userEmail }) {
   const [expanded, setExpanded] = useState(null);
   const situation = answers.situation || "parent_declining";
@@ -798,271 +705,4 @@ function FreeGuideScreen({ answers, onUnlock, onReset, userEmail }) {
               <div style={{ flex: 1 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
                   <span style={{ fontSize: 11, color: S.gold, fontFamily: "sans-serif", letterSpacing: 2, textTransform: "uppercase" }}>{step.day}</span>
-                  <span style={{ color: S.textFaint, fontSize: 18 }}>{expanded === i ? "−" : "+"}</span>
-                </div>
-                <h3 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 20, fontWeight: 400, color: S.goldLight, lineHeight: 1.3 }}>{step.title}</h3>
-                {expanded === i && (
-                  <div style={{ marginTop: 16 }}>
-                    <p style={{ fontSize: 14, color: S.textDim, lineHeight: 1.8, fontFamily: "sans-serif", marginBottom: 20 }}>{step.detail}</p>
-                    <div style={{ background: "rgba(200,169,126,0.08)", border: "1px solid rgba(200,169,126,0.2)", borderRadius: 10, padding: "16px 18px" }}>
-                      <p style={{ fontSize: 11, color: S.gold, fontFamily: "sans-serif", letterSpacing: 2, textTransform: "uppercase", marginBottom: 8 }}>-> Your Action</p>
-                      <p style={{ fontSize: 14, color: S.text, lineHeight: 1.7, fontFamily: "sans-serif" }}>{step.action}</p>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        ))}
-
-        <div onClick={() => setExpanded(expanded === 99 ? null : 99)}
-          style={{ background: expanded === 99 ? "rgba(200,169,126,0.08)" : "rgba(255,255,255,0.03)", border: `1px solid ${expanded === 99 ? "rgba(200,169,126,0.35)" : "rgba(255,255,255,0.08)"}`, borderRadius: 16, padding: "22px 22px", cursor: "pointer", transition: "all 0.3s" }}>
-          <div style={{ display: "flex", gap: 16, alignItems: "flex-start" }}>
-            <span style={{ fontSize: 24, flexShrink: 0 }}>{documentTeaserStep.icon}</span>
-            <div style={{ flex: 1 }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-                <span style={{ fontSize: 11, color: S.gold, fontFamily: "sans-serif", letterSpacing: 2, textTransform: "uppercase" }}>{documentTeaserStep.day}</span>
-                <span style={{ color: S.textFaint, fontSize: 18 }}>{expanded === 99 ? "−" : "+"}</span>
-              </div>
-              <h3 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 20, fontWeight: 400, color: S.goldLight, lineHeight: 1.3 }}>{documentTeaserStep.title}</h3>
-              {expanded === 99 && (
-                <div style={{ marginTop: 16 }}>
-                  <p style={{ fontSize: 14, color: S.textDim, lineHeight: 1.8, fontFamily: "sans-serif", marginBottom: 20 }}>{documentTeaserStep.detail}</p>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 20 }}>
-                    {documentTeaserStep.teaser.map((doc, i) => (
-                      <div key={i} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 10, padding: "14px 16px", display: "flex", gap: 12, alignItems: "flex-start" }}>
-                        <span style={{ color: S.gold, fontSize: 14, marginTop: 2, flexShrink: 0 }}>✦</span>
-                        <div>
-                          <p style={{ fontSize: 14, color: S.goldLight, fontFamily: "Cormorant Garamond, serif", marginBottom: 3 }}>{doc.name}</p>
-                          <p style={{ fontSize: 12, color: S.textFaint, fontFamily: "sans-serif", lineHeight: 1.5 }}>{doc.desc}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  <div style={{ background: "rgba(200,169,126,0.08)", border: "1px solid rgba(200,169,126,0.2)", borderRadius: 10, padding: "16px 18px", marginBottom: 16 }}>
-                    <p style={{ fontSize: 11, color: S.gold, fontFamily: "sans-serif", letterSpacing: 2, textTransform: "uppercase", marginBottom: 8 }}>-> Your Action</p>
-                    <p style={{ fontSize: 14, color: S.text, lineHeight: 1.7, fontFamily: "sans-serif" }}>{documentTeaserStep.action}</p>
-                  </div>
-                  <div style={{ background: "rgba(200,169,126,0.04)", border: "1px dashed rgba(200,169,126,0.25)", borderRadius: 10, padding: "14px 16px", display: "flex", gap: 10, alignItems: "flex-start" }}>
-                    <span style={{ fontSize: 16, flexShrink: 0 }}>🔒</span>
-                    <p style={{ fontSize: 12, color: S.textFaint, fontFamily: "sans-serif", lineHeight: 1.6, fontStyle: "italic" }}>{documentTeaserStep.locked}</p>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div style={{ textAlign: "center", marginBottom: 32 }}>
-        <div style={{ width: 1, height: 48, background: "linear-gradient(to bottom, rgba(200,169,126,0.3), transparent)", margin: "0 auto 24px" }} />
-        <p style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 22, fontStyle: "italic", color: S.textDim, marginBottom: 8 }}>"You've taken the first step."</p>
-        <p style={{ fontSize: 13, color: S.textFaint, fontFamily: "sans-serif" }}>Most families walk this journey for 3 to 6 months.<br />LifeGuide walks with you every step of the way.</p>
-      </div>
-
-      <div style={{ marginBottom: 32 }}>
-        <p style={{ fontSize: 11, color: S.gold, fontFamily: "sans-serif", letterSpacing: 3, textTransform: "uppercase", marginBottom: 20, textAlign: "center" }}>What's waiting for you inside</p>
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          {lockedFeatures.map((f, i) => (
-            <div key={i} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 12, padding: "18px 20px", display: "flex", gap: 16, alignItems: "flex-start", opacity: 0.75 }}>
-              <span style={{ fontSize: 22, flexShrink: 0 }}>{f.icon}</span>
-              <div>
-                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-                  <span style={{ fontSize: 15, color: S.goldLight, fontFamily: "Cormorant Garamond, serif" }}>{f.title}</span>
-                  <span style={{ fontSize: 10, color: S.textFaint }}>🔒</span>
-                </div>
-                <p style={{ fontSize: 12, color: S.textFaint, lineHeight: 1.6, fontFamily: "sans-serif" }}>{f.desc}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* ─── PAYWALL ─── */}
-      <div style={{ background: "rgba(200,169,126,0.06)", border: "1px solid rgba(200,169,126,0.25)", borderRadius: 20, padding: "36px 28px", textAlign: "center", position: "relative", overflow: "hidden" }}>
-        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: "linear-gradient(90deg, transparent, #c8a97e, transparent)" }} />
-        <p style={{ fontSize: 11, letterSpacing: 3, textTransform: "uppercase", color: S.gold, fontFamily: "sans-serif", marginBottom: 16 }}>Unlock Full LifeGuide</p>
-        <h3 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 28, fontWeight: 300, color: S.goldLight, marginBottom: 12, lineHeight: 1.2 }}>For less than a therapy copay,<br />you don't have to walk this alone.</h3>
-        <p style={{ fontSize: 13, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.7, marginBottom: 28 }}>Most families are in this journey for 3 to 6 months. LifeGuide is with you every step — doctor prep, documents, family coordination, and everything that comes after.</p>
-        <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 20 }}>
-          <button onClick={() => window.open(STRIPE_MONTHLY, "_blank")}
-            style={{ background: "transparent", color: S.textDim, border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, padding: "16px 24px", fontSize: 14, cursor: "pointer", fontFamily: "sans-serif", width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <div style={{ textAlign: "left" }}><div>Monthly</div><div style={{ fontSize: 12, color: S.textFaint, marginTop: 2 }}>Cancel anytime</div></div>
-            <div style={{ fontSize: 18, fontWeight: 600 }}>$20/mo</div>
-          </button>
-          <div style={{ position: "relative" }}>
-            <div style={{ position: "absolute", top: -10, left: "50%", transform: "translateX(-50%)", background: S.gold, color: S.dark, fontSize: 10, fontWeight: 700, fontFamily: "sans-serif", letterSpacing: 1, padding: "3px 14px", borderRadius: 20, textTransform: "uppercase", whiteSpace: "nowrap" }}>Most Popular</div>
-            <button onClick={() => window.open(STRIPE_6MONTH, "_blank")}
-              style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", color: S.dark, border: "none", borderRadius: 12, padding: "20px 24px", fontSize: 15, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif", width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", boxShadow: "0 8px 24px rgba(200,169,126,0.3)" }}>
-              <div style={{ textAlign: "left" }}>
-                <div style={{ fontSize: 16 }}>6 Months Access</div>
-                <div style={{ fontSize: 12, fontWeight: 400, opacity: 0.8, marginTop: 2 }}>Most families only need 3–6 months · Save $23 vs monthly</div>
-              </div>
-              <div style={{ textAlign: "right" }}>
-                <div style={{ fontSize: 22, fontWeight: 700 }}>$97</div>
-                <div style={{ fontSize: 11, fontWeight: 400, opacity: 0.8 }}>one time</div>
-              </div>
-            </button>
-          </div>
-        </div>
-        <p style={{ fontSize: 11, color: S.textFaint, fontFamily: "sans-serif", lineHeight: 1.6 }}>Secure payment via Stripe · Instant access · No medical data collected</p>
-      </div>
-
-      <div style={{ textAlign: "center", marginTop: 20, padding: "20px", background: "rgba(200,169,126,0.08)", borderRadius: 10, border: "1px solid rgba(200,169,126,0.25)" }}>
-        <p style={{ fontSize: 18, color: S.goldLight, fontFamily: "Cormorant Garamond, serif", marginBottom: 6 }}>Already a member?</p>
-        <p style={{ fontSize: 13, color: S.textDim, fontFamily: "sans-serif", marginBottom: 10 }}>Use the <strong style={{ color: S.gold }}>Log In</strong> button at the top of the page to access your guide.</p>
-        <span onClick={onUnlock} style={{ color: S.gold, cursor: "pointer", textDecoration: "underline", fontSize: 14, fontFamily: "sans-serif" }}>Or click here to log in now</span>
-      </div>
-
-      <p style={{ fontSize: 11, color: S.textFaint, fontFamily: "sans-serif", textAlign: "center", marginTop: 16 }}>Need help? <a href="mailto:support@thelifeguide.app" style={{ color: S.gold, textDecoration: "underline" }}>support@thelifeguide.app</a></p>
-      <button onClick={onReset} style={{ background: "none", border: "none", color: S.textFaint, fontSize: 12, cursor: "pointer", fontFamily: "sans-serif", display: "block", margin: "16px auto 0", textDecoration: "underline" }}>Start over</button>
-    </div>
-  );
-}
-
-// ─── MAIN APP ─────────────────────────────────────────────────────────────────
-export default function App() {
-  const [screen, setScreen] = useState("landing");
-  const [currentQ, setCurrentQ] = useState(0);
-  const [answers, setAnswers] = useState({});
-  const [modal, setModal] = useState(null);
-  const [userEmail, setUserEmail] = useState("");
-  const [loggedInUser, setLoggedInUser] = useState(null);
-  const [activeFeature, setActiveFeature] = useState(null);
-  const [codeSent, setCodeSent] = useState(false);
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-
-    const ref = params.get("ref");
-    if (ref) { try { localStorage.setItem("lifeguide_ref", ref); } catch(e) {} }
-
-    if (params.get("payment") === "success") {
-      setScreen("payment_success");
-      window.history.replaceState({}, "", "/");
-      return;
-    }
-    if (params.get("token") && params.get("email")) {
-      const emailParam = decodeURIComponent(params.get("email"));
-      const token = params.get("token");
-      window.history.replaceState({}, "", "/");
-      fetch("/api/verify-magic", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: emailParam, token }) })
-        .then(r => r.json())
-        .then(data => {
-          if (data.user) {
-            setLoggedInUser(data.user);
-            try { localStorage.setItem("lifeguide_user", JSON.stringify(data.user)); } catch(e) {}
-            setScreen("paid");
-          } else { setUserEmail(emailParam); setScreen("direct_login"); }
-        })
-        .catch(() => { setUserEmail(emailParam); setScreen("direct_login"); });
-      return;
-    }
-    if (params.get("login") === "true") {
-      const emailParam = params.get("email");
-      if (emailParam) setUserEmail(decodeURIComponent(emailParam));
-      setScreen("direct_login");
-      window.history.replaceState({}, "", "/");
-      return;
-    }
-    try {
-      const saved = localStorage.getItem("lifeguide_user");
-      if (saved) {
-        const user = JSON.parse(saved);
-        if (user && user.email && user.is_paid) { setLoggedInUser(user); setScreen("paid"); }
-      }
-    } catch (e) {}
-  }, []);
-
-  const handleAnswer = (questionId, value) => {
-    const newAnswers = { ...answers, [questionId]: value };
-    setAnswers(newAnswers);
-    if (currentQ < questions.length - 1) { setCurrentQ(currentQ + 1); } else { setScreen("email"); }
-  };
-
-  const handleEmailContinue = (email) => { setUserEmail(email); setScreen("guide"); };
-
-  const handleVerified = (user) => {
-    setLoggedInUser(user);
-    if (user.is_paid) {
-      try { localStorage.setItem("lifeguide_user", JSON.stringify(user)); } catch (e) {}
-      setScreen("paid");
-    } else { setScreen("guide"); }
-  };
-
-  const handleReset = () => {
-    setScreen("landing"); setCurrentQ(0); setAnswers({});
-    setUserEmail(""); setLoggedInUser(null); setCodeSent(false);
-    try { localStorage.removeItem("lifeguide_user"); } catch (e) {}
-  };
-
-  const handlePaymentEmailSubmit = async () => {
-    if (!userEmail || !userEmail.includes("@")) return;
-    try {
-      await fetch("/api/send-code", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: userEmail }) });
-      setCodeSent(true);
-      setScreen("post_payment_verify");
-    } catch (e) {}
-  };
-
-  if (screen === "landing") {
-    return <LandingScreen onStart={() => setScreen("disclaimer")} onNurse={() => setScreen("nurse")} onLogin={() => setScreen("direct_login")} />;
-  }
-
-  return (
-    <div style={{ minHeight: "100vh", background: `linear-gradient(135deg, ${S.dark} 0%, #1a2a3a 50%, ${S.dark} 100%)`, color: S.text, display: "flex", flexDirection: "column", alignItems: "center", paddingBottom: 80 }}>
-
-      {modal && <Modal title={modal === "terms" ? "Terms of Service" : "Privacy Policy"} content={modal === "terms" ? TERMS : PRIVACY} onClose={() => setModal(null)} />}
-
-      {screen === "disclaimer" && <DisclaimerScreen onFamily={() => setScreen("quiz")} onNurse={() => setScreen("nurse")} onModal={setModal} />}
-      {screen === "nurse" && <NurseScreen onBack={() => setScreen("landing")} />}
-      {screen === "quiz" && <QuizScreen currentQ={currentQ} onAnswer={handleAnswer} />}
-      {screen === "email" && <EmailScreen onContinue={handleEmailContinue} situation={answers.situation} />}
-      {screen === "guide" && <FreeGuideScreen answers={answers} onUnlock={() => setScreen("login")} onReset={handleReset} userEmail={userEmail} />}
-      {screen === "login" && <LoginScreen email={userEmail} onVerified={handleVerified} onBack={() => setScreen("guide")} directLogin={false} />}
-
-      {screen === "payment_success" && (
-        <div style={{ maxWidth: 480, width: "100%", margin: "0 auto", padding: "100px 24px 60px", textAlign: "center" }}>
-          <div style={{ fontSize: 64, marginBottom: 24 }}>🕊️</div>
-          <p style={{ fontSize: 11, letterSpacing: 4, textTransform: "uppercase", color: S.gold, marginBottom: 16, fontFamily: "sans-serif" }}>Payment Confirmed</p>
-          <h2 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 34, fontWeight: 300, color: S.goldLight, marginBottom: 16, lineHeight: 1.2 }}>You now have full access to LifeGuide.</h2>
-          <p style={{ fontSize: 14, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.7, marginBottom: 32 }}>Enter your email below and we'll send your access code instantly — no password needed.</p>
-          <input type="email" placeholder="Enter your email address" value={userEmail} onChange={e => setUserEmail(e.target.value)}
-            style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(200,169,126,0.3)", color: S.text, padding: "18px 24px", fontFamily: "sans-serif", fontSize: 15, outline: "none", borderRadius: 10, width: "100%", textAlign: "center", marginBottom: 12, boxSizing: "border-box" }}
-            onKeyDown={e => e.key === "Enter" && handlePaymentEmailSubmit()} />
-          <button onClick={handlePaymentEmailSubmit}
-            style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", color: S.dark, border: "none", borderRadius: 10, padding: "20px 48px", fontSize: 15, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif", width: "100%", marginBottom: 12 }}>
-            Send My Access Code →
-          </button>
-          <p style={{ fontSize: 12, color: S.textFaint, fontFamily: "sans-serif", marginBottom: 16 }}>Or check your email for the magic login link — no password needed.</p>
-          <button onClick={() => setScreen("landing")} style={{ background: "none", border: "none", color: S.textFaint, fontSize: 12, cursor: "pointer", fontFamily: "sans-serif", textDecoration: "underline" }}>Back to home</button>
-        </div>
-      )}
-
-      {screen === "post_payment_verify" && (
-        <LoginScreen email={userEmail} onVerified={handleVerified} onBack={() => setScreen("payment_success")} directLogin={false} startAtVerify={true} />
-      )}
-
-      {screen === "direct_login" && <LoginScreen email={userEmail} onVerified={handleVerified} onBack={() => setScreen("landing")} directLogin={true} />}
-      {screen === "paid" && !activeFeature && <PaidGuideScreen user={loggedInUser} answers={answers} onReset={handleReset} onFeature={setActiveFeature} />}
-      {screen === "paid" && activeFeature === "doctor" && <DoctorVisitPrep onBack={() => setActiveFeature(null)} />}
-      {screen === "paid" && activeFeature === "documents" && <DocumentVault onBack={() => setActiveFeature(null)} />}
-      {screen === "paid" && activeFeature === "family" && <FamilyCoordination onBack={() => setActiveFeature(null)} />}
-      {screen === "paid" && activeFeature === "stages" && <StageByStageGuide onBack={() => setActiveFeature(null)} />}
-      {screen === "paid" && activeFeature === "finaldays" && <FinalDaysGuide onBack={() => setActiveFeature(null)} />}
-      {screen === "paid" && activeFeature === "after" && <AfterGuide onBack={() => setActiveFeature(null)} />}
-      {screen === "paid" && activeFeature === "companion" && <CaregiverCompanion onBack={() => setActiveFeature(null)} />}
-
-      {screen !== "landing" && (
-        <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, borderTop: "1px solid rgba(255,255,255,0.04)", background: "rgba(10,21,32,0.97)", backdropFilter: "blur(10px)", padding: "10px 24px", textAlign: "center", zIndex: 50 }}>
-          <p style={{ fontSize: 10, color: "#2a2622", letterSpacing: 1, marginBottom: 3, fontFamily: "sans-serif" }}>NOT MEDICAL ADVICE · FOR INFORMATIONAL PURPOSES ONLY</p>
-          <p style={{ fontSize: 10, color: "#2a2622", fontFamily: "sans-serif" }}>
-            <span onClick={() => setModal("terms")} style={{ cursor: "pointer", textDecoration: "underline", color: "#3a3830" }}>Terms</span>{" · "}
-            <span onClick={() => setModal("privacy")} style={{ cursor: "pointer", textDecoration: "underline", color: "#3a3830" }}>Privacy</span>{" · "}
-            © 2026 LifeGuide
-          </p>
-        </div>
-      )}
-    </div>
-  );
-}
+                  <span style={{ color: S.textFaint, fontSize: 18 }}>{expanded === i ? "−" : "+"}</s
