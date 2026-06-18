@@ -38,11 +38,17 @@ export default function CaregiverCompanion({ onBack }) {
     setLoading(true);
 
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
+
       const res = await fetch('/api/companion-chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: newMessages }),
+        signal: controller.signal,
       });
+
+      clearTimeout(timeoutId);
 
       const data = await res.json();
 
@@ -52,7 +58,11 @@ export default function CaregiverCompanion({ onBack }) {
         setMessages(prev => [...prev, { role: 'assistant', content: "I'm sorry, something went wrong. Please try again in a moment." }]);
       }
     } catch (err) {
-      setMessages(prev => [...prev, { role: 'assistant', content: "Connection error. Please check your internet and try again." }]);
+      if (err.name === 'AbortError') {
+        setMessages(prev => [...prev, { role: 'assistant', content: "This is taking longer than expected. Please try asking again — sometimes a shorter question helps." }]);
+      } else {
+        setMessages(prev => [...prev, { role: 'assistant', content: "Connection error. Please check your internet and try again." }]);
+      }
     } finally {
       setLoading(false);
     }
