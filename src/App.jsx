@@ -351,7 +351,7 @@ function FoundingMembersCounter() {
   return (
     <div style={{ display: "inline-flex", alignItems: "center", gap: 10, background: "rgba(200,169,126,0.08)", border: "1px solid rgba(200,169,126,0.2)", borderRadius: 20, padding: "8px 20px", marginBottom: 32 }}>
       <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#c8a97e", display: "inline-block" }} />
-      <span style={{ fontSize: 13, color: "#c8a97e", fontFamily: "sans-serif" }}><strong>{count}</strong> founding members have joined</span>
+      <span style={{ fontSize: 13, color: "#c8a97e", fontFamily: "sans-serif" }}><strong>{count}</strong> families have joined</span>
     </div>
   );
 }
