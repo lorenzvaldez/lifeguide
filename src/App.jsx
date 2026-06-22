@@ -134,10 +134,14 @@ const lockedFeatures = [
   { icon: "🌅", title: "After — The First 30 Days", desc: "Death certificate, funeral basics, notifying accounts, bereavement leave, grief resources. A calm guide for the logistical and emotional storm that follows." },
 ];
 
+/* FIX #3 (GLOBAL): S.textFaint brightened from #8a8278 to #a89f93 so footer text,
+   locked-feature descriptions, and Document Vault notes are actually readable
+   against the dark background. Everything that referenced S.textFaint inherits
+   this fix automatically with zero other code changes needed. */
 const S = {
   dark: "#0a1520", darkMid: "#111e2b", darkCard: "#0f1a25",
   gold: "#c8a97e", goldLight: "#e8d5b7", text: "#ffffff",
-  textDim: "#c0b8b0", textFaint: "#8a8278",
+  textDim: "#c0b8b0", textFaint: "#a89f93",
 };
 
 function Modal({ title, content, onClose }) {
@@ -335,6 +339,7 @@ function PaidGuideScreen({ user, answers, onReset, onFeature }) {
       <div style={{ background: "rgba(200,169,126,0.04)", border: "1px solid rgba(200,169,126,0.15)", borderRadius: 12, padding: "16px 20px", textAlign: "center", marginBottom: 16 }}>
         <p style={{ fontSize: 13, color: S.textDim, fontFamily: "sans-serif", marginBottom: 10 }}>Monthly subscriber? Manage or cancel anytime.</p>
         <button onClick={() => window.open("https://billing.stripe.com/p/login/bJedRagpY67wbUwdVqgw000", "_blank")} style={{ background: "transparent", border: "1px solid rgba(200,169,126,0.3)", borderRadius: 8, color: S.gold, padding: "10px 24px", fontSize: 13, cursor: "pointer", fontFamily: "sans-serif" }}>Manage Subscription</button>
+        <p style={{ fontSize: 11, color: S.textFaint, fontFamily: "sans-serif", marginTop: 10 }}>Enter the email you used at checkout to access your billing details.</p>
       </div>
       <p style={{ fontSize: 11, color: S.textFaint, fontFamily: "sans-serif", textAlign: "center" }}>Need help? <a href="mailto:support@thelifeguide.app" style={{ color: S.gold, textDecoration: "underline" }}>support@thelifeguide.app</a></p>
       <button onClick={onReset} style={{ background: "none", border: "none", color: S.textFaint, fontSize: 12, cursor: "pointer", fontFamily: "sans-serif", display: "block", margin: "16px auto 0", textDecoration: "underline" }}>Sign out</button>
@@ -368,17 +373,22 @@ function LandingScreen({ onStart, onNurse, onLogin }) {
   };
   return (
     <div style={{ minHeight: "100vh", background: "linear-gradient(135deg, #0a1520 0%, #1a2a3a 50%, #0a1520 100%)", color: "#ffffff", fontFamily: "sans-serif" }}>
-      <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 100, padding: "16px 20px", display: "flex", justifyContent: "space-between", alignItems: "center", background: "linear-gradient(to bottom, rgba(10,21,32,0.95), transparent)", pointerEvents: "none" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10, pointerEvents: "auto" }}>
+      {/* FIX #4: nav given a solid background + higher z-index so it never lets
+          scrolled content show through or render on top of its buttons. */}
+      <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 500, padding: "16px 20px", display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(10,21,32,0.97)", backdropFilter: "blur(10px)", borderBottom: "1px solid rgba(200,169,126,0.08)" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <img src="/logo.png" alt="LifeGuide" style={{ width: 36, height: 36, objectFit: "contain" }} />
           <span style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 20, fontWeight: 400, color: "#e8d5b7", letterSpacing: 1 }}>LifeGuide</span>
         </div>
-        <div style={{ display: "flex", gap: 12, alignItems: "center", pointerEvents: "auto" }}>
+        <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
           <button onClick={onNurse} style={{ background: "transparent", border: "1px solid rgba(200,169,126,0.3)", color: "#c8a97e", padding: "8px 16px", fontFamily: "sans-serif", fontSize: 11, letterSpacing: 2, textTransform: "uppercase", cursor: "pointer", borderRadius: 2 }}>For Nurses</button>
           <button onClick={onLogin} style={{ background: "rgba(200,169,126,0.1)", border: "1px solid rgba(200,169,126,0.3)", color: "#c8a97e", padding: "8px 16px", fontFamily: "sans-serif", fontSize: 11, letterSpacing: 2, textTransform: "uppercase", cursor: "pointer", borderRadius: 2 }}>Log In</button>
         </div>
       </nav>
-      <section style={{ minHeight: "100vh", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center", padding: "100px 20px 60px", position: "relative", zIndex: 1 }}>
+      {/* FIX #4: added paddingTop so hero section content starts below the fixed nav
+          instead of underneath it. Nav bar is roughly 68-72px tall, so 90px gives
+          comfortable clearance on all phone sizes. */}
+      <section style={{ minHeight: "100vh", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center", padding: "150px 20px 60px", position: "relative", zIndex: 1 }}>
         <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 60% 50% at 50% 60%, rgba(200,169,126,0.06) 0%, transparent 70%)" }} />
         <img src="/logo.png" alt="LifeGuide" style={{ width: 90, height: 90, objectFit: "contain", marginBottom: 32 }} />
         <p style={{ fontSize: 11, letterSpacing: 4, textTransform: "uppercase", color: "#c8a97e", marginBottom: 24 }}>Family Care Navigator</p>
@@ -391,7 +401,9 @@ function LandingScreen({ onStart, onNurse, onLogin }) {
         <button onClick={onStart} style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", color: "#0a1520", border: "none", borderRadius: 8, padding: "20px 56px", fontSize: 16, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif", letterSpacing: 1, boxShadow: "0 8px 32px rgba(200,169,126,0.3)", marginBottom: 16, position: "relative", zIndex: 200 }}>
           Start My Free Guide
         </button>
-        <p style={{ fontSize: 12, color: "#3a3530", position: "relative", zIndex: 200 }}>No credit card required</p>
+        {/* FIX #1: "No credit card required" line removed entirely — Lorenz doesn't
+            want this claim since a card will be required later, and didn't want it
+            to read as deceptive even before that point. */}
         <div style={{ marginTop: 48, maxWidth: 480, width: "100%" }}>
           <p style={{ fontSize: 13, color: "#5a5650", marginBottom: 16 }}>Or join the waitlist for updates</p>
           {submitted ? (
@@ -440,7 +452,10 @@ function LandingScreen({ onStart, onNurse, onLogin }) {
               { num: "03", title: "Walk through it together", desc: "Prep for doctor visits, organize your family, access expert resources — all in one calm, private place." },
             ].map((step, i) => (
               <div key={i} style={{ padding: "32px 24px", background: "#0f1a25", border: "1px solid rgba(200,169,126,0.1)", borderRadius: 8, textAlign: "left" }}>
-                <div style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 56, fontWeight: 300, color: "rgba(200,169,126,0.1)", lineHeight: 1, marginBottom: 16 }}>{step.num}</div>
+                {/* FIX #2: step number opacity raised from 0.1 to 0.22 so 01/02/03
+                    are actually legible on mobile while still reading as a subtle
+                    background accent rather than competing with the title text. */}
+                <div style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 56, fontWeight: 300, color: "rgba(200,169,126,0.22)", lineHeight: 1, marginBottom: 16 }}>{step.num}</div>
                 <h3 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 20, color: "#e8d5b7", marginBottom: 10, fontWeight: 400 }}>{step.title}</h3>
                 <p style={{ fontSize: 13, color: "#7a7268", lineHeight: 1.7 }}>{step.desc}</p>
               </div>
@@ -486,8 +501,8 @@ function LandingScreen({ onStart, onNurse, onLogin }) {
         </div>
       </section>
       <div style={{ background: "rgba(200,169,126,0.04)", borderTop: "1px solid rgba(200,169,126,0.1)", borderBottom: "1px solid rgba(200,169,126,0.1)", padding: "16px 24px", textAlign: "center" }}>
-        <p style={{ fontSize: 11, color: "#3a3530", maxWidth: 700, margin: "0 auto", lineHeight: 1.6 }}>
-          <strong style={{ color: "#5a5650" }}>Important:</strong> LifeGuide is an informational and organizational tool only. It does not provide medical advice, diagnosis, or treatment recommendations. Always consult your physician or healthcare provider.
+        <p style={{ fontSize: 11, color: "#8a8278", maxWidth: 700, margin: "0 auto", lineHeight: 1.6 }}>
+          <strong style={{ color: "#a89f93" }}>Important:</strong> LifeGuide is an informational and organizational tool only. It does not provide medical advice, diagnosis, or treatment recommendations. Always consult your physician or healthcare provider.
         </p>
       </div>
       <footer style={{ padding: "40px 24px", textAlign: "center", borderTop: "1px solid rgba(255,255,255,0.04)" }}>
@@ -495,8 +510,11 @@ function LandingScreen({ onStart, onNurse, onLogin }) {
           <img src="/logo.png" alt="LifeGuide" style={{ width: 28, height: 28, objectFit: "contain" }} />
           <span style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 20, color: "#c8a97e", fontWeight: 300 }}>LifeGuide</span>
         </div>
-        <p style={{ fontSize: 11, color: "#3a3530", marginBottom: 12, letterSpacing: 1, textTransform: "uppercase" }}>Family Care Navigator</p>
-        <p style={{ fontSize: 10, color: "#2a2622", lineHeight: 1.6 }}>NOT MEDICAL ADVICE - 2026 LifeGuide - <a href="mailto:support@thelifeguide.app" style={{ color: "#3a3830", textDecoration: "none" }}>support@thelifeguide.app</a></p>
+        <p style={{ fontSize: 11, color: "#8a8278", marginBottom: 12, letterSpacing: 1, textTransform: "uppercase" }}>Family Care Navigator</p>
+        {/* FIX #3 applied here too: footer text brightened from #2a2622/#3a3830 to
+            #8a8278/#a89f93 so the compliance line is actually readable, not just
+            present in the DOM. */}
+        <p style={{ fontSize: 10, color: "#8a8278", lineHeight: 1.6 }}>NOT MEDICAL ADVICE - 2026 LifeGuide - <a href="mailto:support@thelifeguide.app" style={{ color: "#a89f93", textDecoration: "none" }}>support@thelifeguide.app</a></p>
       </footer>
     </div>
   );
@@ -630,7 +648,10 @@ function EmailScreen({ onContinue, situation }) {
       </div>
       {error && <p style={{ fontSize: 13, color: "rgba(255,100,100,0.8)", fontFamily: "sans-serif", marginBottom: 12 }}>Please enter a valid email address.</p>}
       <button onClick={() => onContinue("")} style={{ background: "none", border: "none", color: S.textFaint, fontSize: 12, cursor: "pointer", fontFamily: "sans-serif", textDecoration: "underline", marginTop: 8 }}>Continue without saving</button>
-      <p style={{ fontSize: 11, color: S.textFaint, marginTop: 20, fontFamily: "sans-serif", lineHeight: 1.6 }}>No spam. No credit card. We'll only send you things that help.</p>
+      {/* FIX #5: reworded to drop the "No credit card" clause specifically (per
+          Lorenz — keep the line since it's accurate at this exact step, just
+          remove the one phrase he's moving away from everywhere). */}
+      <p style={{ fontSize: 11, color: S.textFaint, marginTop: 20, fontFamily: "sans-serif", lineHeight: 1.6 }}>No spam. We'll only send you things that help.</p>
     </div>
   );
 }
@@ -759,9 +780,12 @@ function FreeGuideScreen({ answers, onUnlock, onReset }) {
           </div>
           <p style={{ fontSize: 12, color: S.textDim, lineHeight: 1.6, fontFamily: "sans-serif" }}>Ask anything, any hour. Hospice logistics, Medicare, paperwork — calm answers instantly.</p>
         </div>
+        {/* FIX #3 note: removed the extra opacity:0.75 wrapper that was double-dimming
+            these cards on top of S.textFaint. The brightened textFaint color alone
+            now carries the contrast fix without stacking a second dimming layer. */}
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
           {lockedFeatures.slice(1).map((f, i) => (
-            <div key={i} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 12, padding: "18px 20px", display: "flex", gap: 16, alignItems: "flex-start", opacity: 0.75 }}>
+            <div key={i} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 12, padding: "18px 20px", display: "flex", gap: 16, alignItems: "flex-start" }}>
               <span style={{ fontSize: 22, flexShrink: 0 }}>{f.icon}</span>
               <div>
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
@@ -921,10 +945,13 @@ export default function App() {
       {screen === "paid" && activeFeature === "companion" && <CaregiverCompanion onBack={() => setActiveFeature(null)} />}
       {screen !== "landing" && (
         <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, borderTop: "1px solid rgba(255,255,255,0.04)", background: "rgba(10,21,32,0.97)", backdropFilter: "blur(10px)", padding: "10px 24px", textAlign: "center", zIndex: 50 }}>
-          <p style={{ fontSize: 10, color: "#2a2622", letterSpacing: 1, marginBottom: 3, fontFamily: "sans-serif" }}>NOT MEDICAL ADVICE - FOR INFORMATIONAL PURPOSES ONLY</p>
-          <p style={{ fontSize: 10, color: "#2a2622", fontFamily: "sans-serif" }}>
-            <span onClick={() => setModal("terms")} style={{ cursor: "pointer", textDecoration: "underline", color: "#3a3830" }}>Terms</span>{" - "}
-            <span onClick={() => setModal("privacy")} style={{ cursor: "pointer", textDecoration: "underline", color: "#3a3830" }}>Privacy</span>{" - "}
+          {/* FIX #3 applied here too: footer brightened from #2a2622/#3a3830 to
+              #8a8278/#a89f93 so this persistent bottom bar is readable on every
+              screen in the app, not just the landing page. */}
+          <p style={{ fontSize: 10, color: "#8a8278", letterSpacing: 1, marginBottom: 3, fontFamily: "sans-serif" }}>NOT MEDICAL ADVICE - FOR INFORMATIONAL PURPOSES ONLY</p>
+          <p style={{ fontSize: 10, color: "#8a8278", fontFamily: "sans-serif" }}>
+            <span onClick={() => setModal("terms")} style={{ cursor: "pointer", textDecoration: "underline", color: "#a89f93" }}>Terms</span>{" - "}
+            <span onClick={() => setModal("privacy")} style={{ cursor: "pointer", textDecoration: "underline", color: "#a89f93" }}>Privacy</span>{" - "}
             2026 LifeGuide
           </p>
         </div>
