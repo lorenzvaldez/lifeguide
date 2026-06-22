@@ -894,8 +894,7 @@ export default function App() {
       {screen === "nurse" && <NurseScreen onBack={() => setScreen("landing")} />}
       {screen === "quiz" && <QuizScreen currentQ={currentQ} onAnswer={handleAnswer} />}
       {screen === "email" && <EmailScreen onContinue={handleEmailContinue} situation={answers.situation} />}
-      {screen === "guide" && <FreeGuideScreen answers={answers} onUnlock={() => setScreen("login")} onReset={handleReset} userEmail={userEmail} />}
-      {screen === "login" && <LoginScreen email={userEmail} onVerified={handleVerified} onBack={() => setScreen("guide")} directLogin={false} />}
+      {screen === "guide" && <FreeGuideScreen answers={answers} onUnlock={() => { setUserEmail(""); setScreen("direct_login"); }} onReset={handleReset} userEmail={userEmail} />}
       {screen === "payment_success" && (
         <div style={{ maxWidth: 480, width: "100%", margin: "0 auto", padding: "100px 24px 60px", textAlign: "center" }}>
           <div style={{ fontSize: 64, marginBottom: 24 }}>🕊️</div>
