@@ -10,6 +10,28 @@ import CaregiverCompanion from "./CaregiverCompanion";
 const STRIPE_MONTHLY = "https://buy.stripe.com/bJedRagpY67wbUwdVqgw000";
 const STRIPE_6MONTH = "https://buy.stripe.com/5kQ00k3DcdzYaQsbNigw001";
 
+// Tracks when someone clicks a Stripe checkout button — fires before they
+// leave the site, so this is the earliest reliable signal of purchase intent.
+// plan should be "monthly" or "6month" to distinguish which tier was clicked.
+function trackCheckoutClick(plan) {
+  try {
+    if (typeof window.gtag === "function") {
+      window.gtag("event", "begin_checkout", {
+        currency: "USD",
+        value: plan === "monthly" ? 20 : 97,
+        items: [{ item_id: plan, item_name: plan === "monthly" ? "Monthly Plan" : "6 Month Plan" }],
+      });
+    }
+    if (typeof window.fbq === "function") {
+      window.fbq("track", "InitiateCheckout", {
+        value: plan === "monthly" ? 20 : 97,
+        currency: "USD",
+        content_name: plan,
+      });
+    }
+  } catch (e) {}
+}
+
 const DISCLAIMER = "LifeGuide is an informational resource and family navigation tool. It does not provide medical advice, diagnosis, or treatment recommendations. All information provided is for general educational purposes only. Always consult your physician, hospice team, or qualified healthcare provider regarding any medical decisions. Use of LifeGuide does not create a patient-provider relationship.";
 
 const TERMS = `Last updated: May 2026
@@ -805,7 +827,7 @@ function FreeGuideScreen({ answers, onUnlock, onReset }) {
         <h3 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 28, fontWeight: 300, color: S.goldLight, marginBottom: 12, lineHeight: 1.2 }}>For less than a therapy copay, you don't have to walk this alone.</h3>
         <p style={{ fontSize: 13, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.7, marginBottom: 28 }}>Most families are in this journey for 3 to 6 months. LifeGuide is with you every step.</p>
         <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 20 }}>
-          <button onClick={() => window.open(STRIPE_MONTHLY, "_blank")}
+          <button onClick={() => { trackCheckoutClick("monthly"); window.open(STRIPE_MONTHLY, "_blank"); }}
             style={{ background: "transparent", color: S.textDim, border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, padding: "16px 24px", fontSize: 14, cursor: "pointer", fontFamily: "sans-serif", width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <div style={{ textAlign: "left" }}>
               <div>Monthly</div>
@@ -815,7 +837,7 @@ function FreeGuideScreen({ answers, onUnlock, onReset }) {
           </button>
           <div style={{ position: "relative" }}>
             <div style={{ position: "absolute", top: -10, left: "50%", transform: "translateX(-50%)", background: S.gold, color: S.dark, fontSize: 10, fontWeight: 700, fontFamily: "sans-serif", letterSpacing: 1, padding: "3px 14px", borderRadius: 20, textTransform: "uppercase", whiteSpace: "nowrap" }}>Most Popular</div>
-            <button onClick={() => window.open(STRIPE_6MONTH, "_blank")}
+            <button onClick={() => { trackCheckoutClick("6month"); window.open(STRIPE_6MONTH, "_blank"); }}
               style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", color: S.dark, border: "none", borderRadius: 12, padding: "20px 24px", fontSize: 15, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif", width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", boxShadow: "0 8px 24px rgba(200,169,126,0.3)" }}>
               <div style={{ textAlign: "left" }}>
                 <div style={{ fontSize: 16 }}>6 Months Access</div>
