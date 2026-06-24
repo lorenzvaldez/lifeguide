@@ -6,7 +6,7 @@ import { useState, useRef, useEffect } from 'react';
 const S = {
   dark: "#0a1520", darkMid: "#111e2b", darkCard: "#0d1526",
   gold: "#c8a97e", goldLight: "#e8d5b7",
-  text: "#ffffff", textDim: "#c0b8b0", textFaint: "#8a8278",
+  text: "#ffffff", textDim: "#c0b8b0", textFaint: "#a89f93",
 };
 
 const STARTERS = [
@@ -128,15 +128,24 @@ export default function CaregiverCompanion({ onBack }) {
               Ask anything about hospice logistics, paperwork,<br />
               Medicare, coordination, or what to do next.
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {/* FIX #6: starter buttons brightened so they read as clearly tappable
+                prompts rather than blending in as passive body text. Background
+                opacity raised 0.06 -> 0.12, border raised 0.15 -> 0.45, text
+                switched from dim gray to gold-light + bold weight, and an arrow
+                icon added as a visual affordance signaling "this does something." */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               {STARTERS.map((s, i) => (
                 <button key={i} onClick={() => send(s)} style={{
-                  background: 'rgba(200,169,126,0.06)',
-                  border: '1px solid rgba(200,169,126,0.15)',
-                  borderRadius: 10, padding: '10px 14px', cursor: 'pointer',
-                  color: S.textDim, fontSize: 13, textAlign: 'left',
-                  fontFamily: 'sans-serif', lineHeight: 1.4
+                  background: 'rgba(200,169,126,0.12)',
+                  border: '1px solid rgba(200,169,126,0.45)',
+                  borderRadius: 10, padding: '12px 16px', cursor: 'pointer',
+                  color: S.goldLight, fontSize: 13, fontWeight: 600, textAlign: 'left',
+                  fontFamily: 'sans-serif', lineHeight: 1.4,
+                  display: 'flex', alignItems: 'center', gap: 10,
+                  boxShadow: '0 2px 8px rgba(200,169,126,0.08)',
+                  transition: 'all 0.15s'
                 }}>
+                  <span style={{ color: S.gold, fontSize: 14, flexShrink: 0 }}>→</span>
                   {s}
                 </button>
               ))}
