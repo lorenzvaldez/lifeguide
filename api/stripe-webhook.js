@@ -96,8 +96,12 @@ export default async function handler(req, res) {
 
     const magicLink = `https://www.thelifeguide.app?token=${magicToken}&email=${encodeURIComponent(email)}`;
 
+    // FIX: sender changed from lorenz@thelifeguide.app to support@thelifeguide.app
+    // for the same reason as send-code.js — role-based address, and "just reply
+    // to this email" in the body now actually routes somewhere monitored.
+    // Footer mailto link also updated to match.
     const { error: emailError } = await resend.emails.send({
-      from: 'LifeGuide <lorenz@thelifeguide.app>',
+      from: 'LifeGuide <support@thelifeguide.app>',
       to: email,
       subject: "Welcome to LifeGuide — you're in 🕊️",
       html: `
@@ -162,7 +166,7 @@ export default async function handler(req, res) {
                       <p style="margin: 0; font-size: 12px; font-family: sans-serif;">
                         <a href="https://thelifeguide.app" style="color: #c8a97e; text-decoration: none;">thelifeguide.app</a>
                         <span style="color: #3a3530;"> · </span>
-                        <a href="mailto:lorenz@thelifeguide.app" style="color: #c8a97e; text-decoration: none;">lorenz@thelifeguide.app</a>
+                        <a href="mailto:support@thelifeguide.app" style="color: #c8a97e; text-decoration: none;">support@thelifeguide.app</a>
                       </p>
                       <p style="margin: 16px 0 0; font-size: 11px; color: #3a3530; font-family: sans-serif;">LifeGuide — Bringing calm to the most chaotic moments of a family's life.</p>
                     </td>
