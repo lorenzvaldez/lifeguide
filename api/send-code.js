@@ -5,7 +5,6 @@ const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_SERVICE_KEY
 );
-
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 // In-memory rate limit store (resets on cold start — good enough for now)
@@ -21,7 +20,6 @@ export default async function handler(req, res) {
   const now = Date.now();
   const windowMs = 60 * 60 * 1000; // 1 hour
   const maxRequests = 3;
-
   const key = email.toLowerCase();
   const record = rateLimitStore.get(key) || { count: 0, resetAt: now + windowMs };
 
@@ -55,8 +53,11 @@ export default async function handler(req, res) {
   if (error) return res.status(500).json({ error: 'Failed to save code' });
 
   // Send email
+  // FIX: sender changed from lorenz@thelifeguide.app to support@thelifeguide.app
+  // so login-code emails come from a role address instead of a personal name,
+  // and any replies land in the same support inbox Lorenz already monitors.
   await resend.emails.send({
-    from: 'LifeGuide <lorenz@thelifeguide.app>',
+    from: 'LifeGuide <support@thelifeguide.app>',
     to: email,
     subject: 'Your LifeGuide login code',
     html: `
