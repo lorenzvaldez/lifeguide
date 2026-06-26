@@ -7,7 +7,6 @@ export default async function handler(req, res) {
   }
 
   const { messages } = req.body;
-
   if (!messages || !Array.isArray(messages)) {
     return res.status(400).json({ error: 'Messages array required' });
   }
@@ -52,7 +51,13 @@ Start every response ready to help immediately. No long intros.`;
           contents: geminiMessages,
           generationConfig: {
             temperature: 0.7,
-            maxOutputTokens: 1000,
+            // FIX: raised from 1000 to 2500. The 1000 limit was cutting off
+            // longer list-style answers (e.g. "what questions should I ask
+            // the hospice intake nurse", "what documents do I need") mid-
+            // sentence, which reads as broken to someone using this at 2am.
+            // 2500 gives comfortable headroom for the longest structured
+            // answers without removing a ceiling entirely.
+            maxOutputTokens: 2500,
           }
         })
       }
@@ -72,7 +77,6 @@ Start every response ready to help immediately. No long intros.`;
     }
 
     return res.status(200).json({ response: text });
-
   } catch (err) {
     console.error('Companion chat error:', err);
     return res.status(500).json({ error: 'Server error' });
