@@ -164,7 +164,7 @@ function buildEmailHTML(situation, email) {
     <div style="text-align:center;padding-top:24px;border-top:1px solid rgba(255,255,255,0.06);">
       <p style="font-size:12px;color:#3a3530;line-height:1.6;">
         LifeGuide — Family Care Navigator<br>
-        thelifeguide.app · lorenz@thelifeguide.app
+        thelifeguide.app · support@thelifeguide.app
       </p>
       <p style="font-size:10px;color:#2a2520;margin-top:8px;">NOT MEDICAL ADVICE · FOR INFORMATIONAL PURPOSES ONLY</p>
     </div>
@@ -231,6 +231,9 @@ export default async function handler(req, res) {
   } catch (e) {}
 
   // ── Send personalized guide email via Resend ─────────────────────────────────
+  // FIX: sender changed from lorenz@thelifeguide.app to support@thelifeguide.app
+  // to stay consistent with send-code.js and stripe-webhook.js. Footer text
+  // also updated to show support@ instead of lorenz@.
   if (situation && RESEND_API_KEY) {
     try {
       await fetch('https://api.resend.com/emails', {
@@ -240,7 +243,7 @@ export default async function handler(req, res) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          from: 'LifeGuide <lorenz@thelifeguide.app>',
+          from: 'LifeGuide <support@thelifeguide.app>',
           to: [email],
           subject: 'Your First Week Guide — LifeGuide',
           html: buildEmailHTML(situation, email),
