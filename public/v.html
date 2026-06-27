@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LifeGuide — Guide for V</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --navy: #0a1628;
+  --navy-card: #13233a;
+  --gold: #e8c896;
+  --gold-light: #f5e3c4;
+  --gold-border: rgba(232,200,150,0.4);
+  --text: #ffffff;
+  --text-dim: #e8e4dc;
+}
+body { background: var(--navy); color: var(--text); font-family: 'DM Sans', sans-serif; line-height: 1.65; }
+
+nav { padding: 18px 24px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--gold-border); }
+.nav-brand { font-family: 'Cormorant Garamond', serif; font-size: 22px; color: var(--gold-light); }
+.nav-badge { font-size: 11px; color: var(--navy); letter-spacing: 2px; text-transform: uppercase; background: var(--gold); padding: 5px 12px; border-radius: 20px; font-weight: 600; }
+
+.wrap { max-width: 700px; margin: 0 auto; padding: 0 24px; }
+
+.hero { padding: 48px 0 36px; text-align: center; }
+.hero h1 { font-family: 'Cormorant Garamond', serif; font-size: clamp(32px, 7vw, 46px); font-weight: 500; line-height: 1.2; color: #ffffff; margin-bottom: 14px; }
+.hero h1 em { font-style: italic; color: var(--gold-light); }
+.hero p { font-size: 18px; color: var(--text-dim); max-width: 540px; margin: 0 auto; }
+
+.section { padding: 32px 0; border-top: 1px solid rgba(255,255,255,0.12); }
+.section-num { font-size: 13px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold-light); font-weight: 700; margin-bottom: 10px; }
+.section-title { font-family: 'Cormorant Garamond', serif; font-size: 30px; font-weight: 500; color: #ffffff; margin-bottom: 16px; }
+.section p { color: var(--text-dim); font-size: 18px; margin-bottom: 14px; }
+.section p:last-child { margin-bottom: 0; }
+.section strong { color: #ffffff; font-weight: 700; }
+
+.card { background: var(--navy-card); border: 1px solid var(--gold-border); border-radius: 14px; padding: 20px 22px; margin-bottom: 14px; }
+.card-title { font-size: 18px; color: var(--gold-light); font-weight: 700; margin-bottom: 8px; }
+.card p { font-size: 17px; color: var(--text-dim); margin-bottom: 0; }
+
+.script-box { background: var(--navy-card); border: 2px solid var(--gold); border-radius: 14px; padding: 22px; margin: 16px 0; }
+.script-label { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--gold-light); font-weight: 700; margin-bottom: 10px; }
+.script-text { font-size: 19px; color: #ffffff; line-height: 1.6; }
+
+.commission-box { background: var(--navy-card); border: 2px solid var(--gold); border-radius: 16px; padding: 26px 24px; text-align: center; }
+.commission-box .label { font-size: 14px; letter-spacing: 1px; color: var(--text-dim); margin-bottom: 6px; }
+.commission-box .big { font-family: 'Cormorant Garamond', serif; font-size: 42px; color: var(--gold-light); font-weight: 600; }
+
+.link-btn { display: block; text-align: center; background: var(--gold); color: var(--navy) !important; font-weight: 700; font-size: 20px; padding: 16px; border-radius: 12px; text-decoration: none; margin: 16px 0; }
+
+footer { padding: 36px 24px; text-align: center; border-top: 1px solid rgba(255,255,255,0.12); }
+footer p { font-size: 14px; color: var(--text-dim); }
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-brand">LifeGuide</span>
+  <span class="nav-badge">For V</span>
+</nav>
+
+<div class="hero">
+  <h1>Everything you need,<br /><em>in one place.</em></h1>
+  <p>What it is, who it's for, and exactly how to help.</p>
+</div>
+
+<div class="wrap">
+
+  <div class="section" style="border-top:none; padding-top:0;">
+    <div class="section-num">What It Is</div>
+    <div class="section-title">A free app for hospice families</div>
+    <p>LifeGuide helps families going through hospice or end-of-life care with a loved one. It tells them what documents they need, what to ask the doctor, and has an AI chat they can use anytime, even at 2am.</p>
+    <p><strong>It's free for families to start. No credit card, no catch.</strong></p>
+  </div>
+
+  <div class="section">
+    <div class="section-num">Who It's For</div>
+    <div class="section-title">Our target</div>
+    <p>You're not looking for sick patients or grieving families directly. You're reaching <strong>the people who already work with them every day</strong> — and asking them to pass it along.</p>
+    <div class="card">
+      <div class="card-title">🕊️ Hospice social workers</div>
+      <p>Staff at hospice organizations who hand families resource lists.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">🏥 Hospital discharge planners</div>
+      <p>Staff who help patients leave the hospital and get set up with hospice care.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-num">Flyers</div>
+    <div class="section-title">How and who to give them to</div>
+    <p>Drop them off at hospice offices and hospital discharge departments. <strong>Nathan Adelson Hospice</strong> is a great first stop. At hospitals, ask the front desk for <strong>"discharge planning"</strong> — that's the right department.</p>
+    <div class="script-box">
+      <div class="script-label">Say this</div>
+      <div class="script-text">"Hi, I help with a free app for hospice families called LifeGuide. It's free, no credit card needed. Can I leave a flyer for your team?"</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-num">Email</div>
+    <div class="section-title">Who to email</div>
+    <p>Same two groups — search for hospice agencies or hospitals near you, and look for a general email like <strong>info@</strong> or a social worker's name on their staff page.</p>
+    <div class="script-box">
+      <div class="script-label">Copy and send</div>
+      <div class="script-text">Subject: A free resource for the families you work with<br /><br />Hi, my name is V. I help spread the word about LifeGuide, a free app for hospice families — it helps with paperwork, doctor questions, and has a 24/7 AI chat. Completely free to use. Thought it might be helpful for the families you work with. You can check it out at thelifeguide.app. Thanks for everything you do.</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-num">The Link</div>
+    <div class="section-title">Where everyone goes</div>
+    <a class="link-btn" href="https://thelifeguide.app">thelifeguide.app</a>
+  </div>
+
+  <div class="section">
+    <div class="section-num">Your Share</div>
+    <div class="section-title">What you earn</div>
+    <p>Families can pay <strong>$20/month</strong> or <strong>$97 one time for 6 months</strong>. You get <strong>50% of whatever they pay</strong>, for as long as they pay it.</p>
+
+    <div class="card">
+      <div class="card-title">💵 Monthly plan — $20/mo</div>
+      <p>You earn <strong>$10 every month</strong> that family stays subscribed.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">💵 6-month plan — $97 one time</div>
+      <p>You earn <strong>$48.50</strong> as a one-time payout.</p>
+    </div>
+
+    <div class="commission-box">
+      <div class="label">If you refer 20 families on the monthly plan</div>
+      <div class="big">$200/month</div>
+      <p style="margin-top:10px; font-size:15px;">Just from those 20 people staying subscribed — every single month.</p>
+    </div>
+    <div class="commission-box" style="margin-top:14px;">
+      <div class="label">If those same 20 families go with the 6-month plan instead</div>
+      <div class="big">$970</div>
+      <p style="margin-top:10px; font-size:15px;">One time, paid out as soon as they sign up.</p>
+    </div>
+
+    <p style="margin-top:16px;">Just let Lorenz know who you talked to so it can be tracked back to you.</p>
+  </div>
+
+</div>
+
+<footer>
+  <p>Built by Lorenz · thelifeguide.app · Thanks for helping! 🤙</p>
+</footer>
+
+</body>
+</html>
