@@ -410,14 +410,14 @@ function LandingScreen({ onStart, onNurse, onLogin }) {
       {/* FIX #4: added paddingTop so hero section content starts below the fixed nav
           instead of underneath it. Nav bar is roughly 68-72px tall, so 90px gives
           comfortable clearance on all phone sizes. */}
-      <section style={{ minHeight: "100vh", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center", padding: "150px 20px 60px", position: "relative", zIndex: 1 }}>
+      <section style={{ minHeight: "100vh", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center", padding: "100px 20px 60px", position: "relative", zIndex: 1 }}>
         <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 60% 50% at 50% 60%, rgba(200,169,126,0.06) 0%, transparent 70%)" }} />
-        <img src="/logo.png" alt="LifeGuide" style={{ width: 90, height: 90, objectFit: "contain", marginBottom: 24 }} />
+        <img src="/logo.png" alt="LifeGuide" style={{ width: 80, height: 80, objectFit: "contain", marginBottom: 16 }} />
         <a href="https://hospicenews.com/2026/06/26/ai-end-of-life-navigation-takes-flight/" target="_blank" rel="noopener noreferrer"
-          style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(200,169,126,0.1)", border: "1px solid rgba(200,169,126,0.35)", borderRadius: 20, padding: "6px 16px", marginBottom: 20, textDecoration: "none", cursor: "pointer" }}>
+          style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(200,169,126,0.1)", border: "1px solid rgba(200,169,126,0.35)", borderRadius: 20, padding: "6px 16px", marginBottom: 16, textDecoration: "none", cursor: "pointer" }}>
           <span style={{ fontSize: 11, color: "#c8a97e", fontFamily: "sans-serif", letterSpacing: 1 }}>📰 As Featured In <strong style={{ color: "#e8d5b7" }}>Hospice News</strong></span>
         </a>
-        <p style={{ fontSize: 11, letterSpacing: 4, textTransform: "uppercase", color: "#c8a97e", marginBottom: 24 }}>Family Care Navigator</p>
+        <p style={{ fontSize: 11, letterSpacing: 4, textTransform: "uppercase", color: "#c8a97e", marginBottom: 16 }}>Family Care Navigator</p>
         <h1 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "clamp(48px, 10vw, 88px)", fontWeight: 300, lineHeight: 1.0, color: "#e8d5b7", marginBottom: 16, letterSpacing: -1 }}>
           When someone you love<br />is <em style={{ fontStyle: "italic", color: "#c8a97e" }}>declining</em>
         </h1>
