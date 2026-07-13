@@ -83,7 +83,7 @@ CONTACT: support@thelifeguide.app`;
 
 const questions = [
   { id: "situation", question: "What best describes your situation right now?", options: [
-    { label: "My parent is declining and I don't know what to do", value: "parent_declining" },
+    { label: "My loved one is declining and I don't know what to do", value: "parent_declining" },
     { label: "A loved one was just diagnosed with a terminal illness", value: "terminal_diagnosis" },
     { label: "We just received a hospice referral", value: "hospice_referral" },
     { label: "My loved one is already in hospice", value: "in_hospice" },
@@ -271,7 +271,7 @@ function LoginScreen({ email: initialEmail, onVerified, onBack, directLogin, sta
 
 function PaidGuideScreen({ user, answers, onReset, onFeature }) {
   const situation = answers.situation || "parent_declining";
-  const situationLabel = { parent_declining: "Parent Declining", terminal_diagnosis: "Terminal Diagnosis", hospice_referral: "Hospice Referral", in_hospice: "In Hospice" }[situation];
+  const situationLabel = { parent_declining: "Loved One Declining", terminal_diagnosis: "Terminal Diagnosis", hospice_referral: "Hospice Referral", in_hospice: "In Hospice" }[situation];
   const [visited, setVisited] = useState({});
 
   useEffect(() => {
@@ -714,7 +714,7 @@ function FreeGuideScreen({ answers, onUnlock, onReset }) {
   const [expanded, setExpanded] = useState(null);
   const situation = answers.situation || "parent_declining";
   const guide = firstWeekGuide[situation] || firstWeekGuide.parent_declining;
-  const situationLabel = { parent_declining: "Parent Declining", terminal_diagnosis: "Terminal Diagnosis", hospice_referral: "Hospice Referral", in_hospice: "In Hospice" }[situation];
+  const situationLabel = { parent_declining: "Loved One Declining", terminal_diagnosis: "Terminal Diagnosis", hospice_referral: "Hospice Referral", in_hospice: "In Hospice" }[situation];
 
   return (
     <div style={{ maxWidth: 560, width: "100%", margin: "0 auto", padding: "50px 24px 120px" }}>
