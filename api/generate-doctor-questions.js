@@ -1,13 +1,14 @@
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
-
-  const { condition, stage, need } = req.body;
-
+  const { condition, stage, need, ownQuestion } = req.body;
   if (!condition || !stage || !need) {
     return res.status(400).json({ error: 'Missing required fields' });
   }
-
   try {
+    const ownQuestionBlock = ownQuestion && ownQuestion.trim()
+      ? `\nThe family member specifically wants to know: "${ownQuestion.trim()}"\nMake sure at least one of the 10 questions directly addresses this, phrased clearly for the doctor.`
+      : '';
+
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -22,12 +23,10 @@ export default async function handler(req, res) {
           {
             role: 'user',
             content: `You are a compassionate medical advocate helping a family member prepare for a doctor appointment. Generate exactly 10 specific, practical questions they should ask their doctor.
-
 Patient situation:
 - Condition: ${condition}
 - Current stage: ${stage}
-- Primary need: ${need}
-
+- Primary need: ${need}${ownQuestionBlock}
 Rules:
 - Questions must be specific to this exact situation, not generic
 - Questions should be things a non-medical person would actually need to ask
@@ -40,22 +39,17 @@ Rules:
         ]
       })
     });
-
     const data = await response.json();
-
     if (!response.ok) {
       console.error('Anthropic API error:', JSON.stringify(data));
       return res.status(500).json({ error: 'API error', detail: data });
     }
-
     if (!data.content || !data.content[0] || !data.content[0].text) {
       console.error('Unexpected API response:', JSON.stringify(data));
       return res.status(500).json({ error: 'Unexpected response format' });
     }
-
     const text = data.content[0].text.trim();
     const questions = JSON.parse(text);
-
     return res.status(200).json({ questions });
   } catch (e) {
     console.error('Doctor prep generation error:', e);
