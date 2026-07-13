@@ -14,7 +14,10 @@ const stages = [
     id: "early",
     icon: "🌅",
     label: "Early Stage",
-    subtitle: "Months to years",
+    // Softened per Elwood's feedback: avoid assigning a specific amount of
+    // time to live. Subtitles now describe the character of the stage
+    // rather than a duration estimate.
+    subtitle: "More independence, time to plan",
     color: "#8ac88a",
     overview: "Your loved one is declining but still has significant independence. This is the most important window — decisions made now will shape everything that comes later.",
     physical: [
@@ -51,7 +54,7 @@ const stages = [
     id: "middle",
     icon: "🌤️",
     label: "Middle Stage",
-    subtitle: "Weeks to months",
+    subtitle: "Increasing care and support needs",
     color: "#c8a97e",
     overview: "Your loved one now needs regular assistance with daily activities. Caregiver burnout becomes a real risk. Structure and outside support become essential.",
     physical: [
@@ -89,11 +92,11 @@ const stages = [
     id: "late",
     icon: "🌙",
     label: "Late Stage",
-    subtitle: "Days to weeks",
+    subtitle: "The body begins to let go",
     color: "#7aabcf",
     overview: "Your loved one is transitioning. The body is naturally shutting down. Your role shifts from doing to being present. This is one of the most sacred times a family can share.",
     physical: [
-      "Sleeping 20+ hours per day — very difficult to wake",
+      "Sleeping most of the day — very difficult to wake",
       "Minimal to no food or water intake — this is not causing suffering",
       "Breathing changes — periods of no breathing followed by deeper breaths (Cheyne-Stokes)",
       "Skin color changes — mottling (blotchy purple/blue pattern) starting in legs and feet",
@@ -122,7 +125,7 @@ const stages = [
       "Keep the environment peaceful — limit visitors if needed",
       "Trust that they are not suffering — the body prepares gently",
     ],
-    watchFor: "Call your hospice nurse when you see mottling below the knees, breathing changes to very irregular, or the jaw relaxes completely. Death is likely within hours.",
+    watchFor: "Contact your hospice nurse when you notice mottling below the knees, very irregular breathing, or the jaw relaxing completely. These are signs the body is very close to letting go — your hospice team can help you understand timing for your specific situation.",
   },
   {
     id: "passing",
