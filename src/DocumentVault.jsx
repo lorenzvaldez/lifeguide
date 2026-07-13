@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 const S = {
   dark: "#0a1520",
@@ -95,13 +95,146 @@ const documents = [
   },
 ];
 
-export default function DocumentVault({ onBack }) {
+const MAX_FILE_MB = 8;
+
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result); // includes data: prefix
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+// Upload widget for a single document type. Keeps its own local state so one
+// doc type's upload in progress doesn't affect the others.
+function DocumentUpload({ docId, docName, userEmail, files, onFilesChanged }) {
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState("");
+  const inputRef = useRef(null);
+
+  const handleFileSelect = async (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    e.target.value = ""; // allow re-selecting the same file later
+
+    if (file.size > MAX_FILE_MB * 1024 * 1024) {
+      setError(`File too large. Please keep uploads under ${MAX_FILE_MB}MB.`);
+      return;
+    }
+
+    setError("");
+    setUploading(true);
+    try {
+      const base64 = await fileToBase64(file);
+      const res = await fetch("/api/upload-document", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: userEmail,
+          docType: docId,
+          fileName: file.name,
+          mimeType: file.type || "application/octet-stream",
+          fileData: base64,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.document) {
+        setError(data.error || "Upload failed. Please try again.");
+      } else {
+        onFilesChanged([...(files || []), data.document]);
+      }
+    } catch (e2) {
+      setError("Upload failed. Please check your connection and try again.");
+    }
+    setUploading(false);
+  };
+
+  const handleDelete = async (docRecord) => {
+    try {
+      const res = await fetch("/api/delete-document", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: userEmail, id: docRecord.id }),
+      });
+      if (res.ok) {
+        onFilesChanged((files || []).filter((f) => f.id !== docRecord.id));
+      }
+    } catch (e2) {}
+  };
+
+  return (
+    <div style={{ marginTop: 4 }}>
+      <p style={{ fontSize: 11, color: S.gold, fontFamily: "sans-serif", letterSpacing: 2, textTransform: "uppercase", marginBottom: 10 }}>
+        Your uploaded files
+      </p>
+
+      {(files || []).length > 0 && (
+        <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 12 }}>
+          {files.map((f) => (
+            <div key={f.id} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 12px", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(200,169,126,0.15)", borderRadius: 8 }}>
+              <span style={{ fontSize: 16, flexShrink: 0 }}>📄</span>
+              <a href={f.url} target="_blank" rel="noopener noreferrer" style={{ flex: 1, fontSize: 13, color: S.goldLight, fontFamily: "sans-serif", textDecoration: "underline", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                {f.fileName}
+              </a>
+              <button onClick={() => handleDelete(f)} style={{ background: "none", border: "none", color: S.textFaint, fontSize: 12, cursor: "pointer", fontFamily: "sans-serif", textDecoration: "underline", flexShrink: 0 }}>
+                Remove
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <input ref={inputRef} type="file" accept=".pdf,.jpg,.jpeg,.png,.heic" onChange={handleFileSelect} style={{ display: "none" }} />
+      <button onClick={() => inputRef.current && inputRef.current.click()} disabled={uploading}
+        style={{ background: "rgba(200,169,126,0.1)", border: "1px solid rgba(200,169,126,0.3)", borderRadius: 8, padding: "12px 20px", fontSize: 13, color: S.gold, cursor: uploading ? "default" : "pointer", fontFamily: "sans-serif", opacity: uploading ? 0.6 : 1 }}>
+        {uploading ? "Uploading..." : `+ Upload ${docName}`}
+      </button>
+      <p style={{ fontSize: 11, color: S.textFaint, fontFamily: "sans-serif", marginTop: 8 }}>PDF or photo, up to {MAX_FILE_MB}MB. Only you can see or download these files.</p>
+      {error && <p style={{ fontSize: 12, color: "rgba(255,100,100,0.85)", fontFamily: "sans-serif", marginTop: 8 }}>{error}</p>}
+    </div>
+  );
+}
+
+export default function DocumentVault({ onBack, user }) {
   const [expanded, setExpanded] = useState(null);
   const [completedDocs, setCompletedDocs] = useState({});
+  const [docFiles, setDocFiles] = useState({}); // { poa: [ {id, fileName, url}, ... ], ... }
+  const [loadingFiles, setLoadingFiles] = useState(true);
+  const userEmail = user && user.email;
+
+  useEffect(() => {
+    if (!userEmail) { setLoadingFiles(false); return; }
+    let cancelled = false;
+    fetch(`/api/get-documents?email=${encodeURIComponent(userEmail)}`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (cancelled) return;
+        if (data.documents) {
+          const grouped = {};
+          for (const d of data.documents) {
+            if (!grouped[d.docType]) grouped[d.docType] = [];
+            grouped[d.docType].push(d);
+          }
+          setDocFiles(grouped);
+          // auto-mark a doc type as secured if there's at least one file for it
+          const autoCompleted = {};
+          Object.keys(grouped).forEach((k) => { if (grouped[k].length > 0) autoCompleted[k] = true; });
+          setCompletedDocs((prev) => ({ ...autoCompleted, ...prev }));
+        }
+      })
+      .catch(() => {})
+      .finally(() => { if (!cancelled) setLoadingFiles(false); });
+    return () => { cancelled = true; };
+  }, [userEmail]);
 
   const toggleComplete = (id, e) => {
     e.stopPropagation();
     setCompletedDocs(prev => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const setFilesForDoc = (docId, newFiles) => {
+    setDocFiles((prev) => ({ ...prev, [docId]: newFiles }));
   };
 
   const completedCount = Object.values(completedDocs).filter(Boolean).length;
@@ -119,7 +252,7 @@ export default function DocumentVault({ onBack }) {
           The 5 documents every family needs.
         </h2>
         <p style={{ fontSize: 14, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.7, marginBottom: 24 }}>
-          Missing even one of these at the wrong moment can cause enormous stress, family conflict, and expense. Here is everything explained in plain language — no legal jargon.
+          Missing even one of these at the wrong moment can cause enormous stress, family conflict, and expense. Here is everything explained in plain language — plus a place to securely store the actual documents once you have them.
         </p>
 
         {/* Progress */}
@@ -153,6 +286,11 @@ export default function DocumentVault({ onBack }) {
                 </div>
                 <h3 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 20, fontWeight: 400, color: S.goldLight, marginBottom: 4, lineHeight: 1.3 }}>{doc.name}</h3>
                 <p style={{ fontSize: 13, color: S.textFaint, fontFamily: "sans-serif", lineHeight: 1.5 }}>{doc.tagline}</p>
+                {(docFiles[doc.id] || []).length > 0 && (
+                  <p style={{ fontSize: 11, color: "#8ac88a", fontFamily: "sans-serif", marginTop: 6 }}>
+                    {docFiles[doc.id].length} file{docFiles[doc.id].length > 1 ? "s" : ""} uploaded
+                  </p>
+                )}
               </div>
             </div>
 
@@ -211,6 +349,22 @@ export default function DocumentVault({ onBack }) {
                       {completedDocs[doc.id] ? "Marked complete" : "Mark as secured"}
                     </button>
                   </div>
+
+                  {/* Upload section — the actual document storage Dr. Haas and
+                      Elwood both flagged as missing. */}
+                  <div style={{ marginTop: 8, paddingTop: 16, borderTop: "1px dashed rgba(200,169,126,0.2)" }}>
+                    {userEmail ? (
+                      <DocumentUpload
+                        docId={doc.id}
+                        docName={doc.name}
+                        userEmail={userEmail}
+                        files={docFiles[doc.id]}
+                        onFilesChanged={(files) => setFilesForDoc(doc.id, files)}
+                      />
+                    ) : (
+                      <p style={{ fontSize: 12, color: S.textFaint, fontFamily: "sans-serif" }}>Log in to upload and store this document securely.</p>
+                    )}
+                  </div>
                 </div>
               </div>
             )}
@@ -220,7 +374,7 @@ export default function DocumentVault({ onBack }) {
 
       <div style={{ marginTop: 32, background: "rgba(200,169,126,0.04)", border: "1px solid rgba(200,169,126,0.15)", borderRadius: 12, padding: "18px 20px" }}>
         <p style={{ fontSize: 11, color: S.gold, letterSpacing: 2, textTransform: "uppercase", fontFamily: "sans-serif", marginBottom: 8 }}>Important</p>
-        <p style={{ fontSize: 12, color: S.textFaint, fontFamily: "sans-serif", lineHeight: 1.7 }}>LifeGuide provides general information only. This is not legal advice. Laws and forms vary by state. For complex situations or if your loved one has already lost capacity, consult a licensed elder law attorney in your state.</p>
+        <p style={{ fontSize: 12, color: S.textFaint, fontFamily: "sans-serif", lineHeight: 1.7 }}>LifeGuide provides general information only. This is not legal advice. Laws and forms vary by state. For complex situations or if your loved one has already lost capacity, consult a licensed elder law attorney in your state. Uploaded documents are private to your account and are not shared, sold, or accessed by anyone else.</p>
       </div>
 
       <button onClick={onBack} style={{ background: "none", border: "none", color: S.textFaint, fontSize: 12, cursor: "pointer", fontFamily: "sans-serif", display: "block", margin: "24px auto 0", textDecoration: "underline" }}>
