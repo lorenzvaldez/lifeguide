@@ -5,7 +5,7 @@ import { createClient } from '@supabase/supabase-js';
 // behalf after we've verified the request is for their own email.
 const supabase = createClient(
   process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
+  process.env.SUPABASE_SERVICE_KEY
 );
 
 const BUCKET = 'user-documents';
