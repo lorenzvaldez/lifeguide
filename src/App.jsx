@@ -964,7 +964,7 @@ export default function App() {
       {screen === "paid" && !activeFeature && <PaidGuideScreen user={loggedInUser} answers={answers} onReset={handleReset} onFeature={setActiveFeature} />}
       {screen === "paid" && activeFeature === "doctor" && <DoctorVisitPrep onBack={() => setActiveFeature(null)} />}
       {screen === "paid" && activeFeature === "documents" && <DocumentVault onBack={() => setActiveFeature(null)} user={loggedInUser} />}
-      {screen === "paid" && activeFeature === "family" && <FamilyCoordination onBack={() => setActiveFeature(null)} />}
+      {screen === "paid" && activeFeature === "family" && <FamilyCoordination onBack={() => setActiveFeature(null)} user={loggedInUser} />}
       {screen === "paid" && activeFeature === "stages" && <StageByStageGuide onBack={() => setActiveFeature(null)} />}
       {screen === "paid" && activeFeature === "finaldays" && <FinalDaysGuide onBack={() => setActiveFeature(null)} />}
       {screen === "paid" && activeFeature === "after" && <AfterGuide onBack={() => setActiveFeature(null)} />}
