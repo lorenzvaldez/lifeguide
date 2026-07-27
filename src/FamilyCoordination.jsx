@@ -82,10 +82,12 @@ const roles = [
   },
 ];
 
-const updates = [
-  { id: 1, date: "Today", author: "Medical POC", content: "Spoke with Dr. Martinez. He confirmed the current medications are managing pain well. Next appointment is Thursday at 2pm. He recommends we start thinking about hospice transition in the next few weeks." },
-  { id: 2, date: "Yesterday", author: "Daily Coordinator", content: "Mom had a better day today. She ate half her lunch and was awake for a few hours in the afternoon. She asked about the grandkids and seemed happy when we showed her photos." },
-];
+// FIX: previously hardcoded with two fake sample entries (Medical POC /
+// Daily Coordinator) that looked like real posts but were static demo
+// content baked into the component. That was misleading — a new user
+// had no way to tell those weren't real. Now starts empty; only real
+// posts a user actually submits will ever appear here.
+const updates = [];
 
 export default function FamilyCoordination({ onBack }) {
   const [activeTab, setActiveTab] = useState("roles");
@@ -238,17 +240,30 @@ export default function FamilyCoordination({ onBack }) {
             </button>
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            {updateList.map((update) => (
-              <div key={update.id} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 12, padding: "16px 18px" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
-                  <span style={{ fontSize: 12, color: S.gold, fontFamily: "sans-serif", fontWeight: 600 }}>{update.author}</span>
-                  <span style={{ fontSize: 11, color: S.textFaint, fontFamily: "sans-serif" }}>{update.date}</span>
+          {updateList.length === 0 ? (
+            <div style={{
+              textAlign: "center", padding: "32px 20px",
+              background: "rgba(255,255,255,0.02)",
+              border: "1px solid rgba(255,255,255,0.06)",
+              borderRadius: 12
+            }}>
+              <p style={{ fontSize: 13, color: S.textFaint, fontFamily: "sans-serif", lineHeight: 1.6 }}>
+                No updates yet. Be the first to share what's happening.
+              </p>
+            </div>
+          ) : (
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              {updateList.map((update) => (
+                <div key={update.id} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 12, padding: "16px 18px" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
+                    <span style={{ fontSize: 12, color: S.gold, fontFamily: "sans-serif", fontWeight: 600 }}>{update.author}</span>
+                    <span style={{ fontSize: 11, color: S.textFaint, fontFamily: "sans-serif" }}>{update.date}</span>
+                  </div>
+                  <p style={{ fontSize: 14, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.7 }}>{update.content}</p>
                 </div>
-                <p style={{ fontSize: 14, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.7 }}>{update.content}</p>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
 
           <div style={{ marginTop: 20, background: "rgba(200,169,126,0.04)", border: "1px solid rgba(200,169,126,0.1)", borderRadius: 10, padding: "14px 16px" }}>
             <p style={{ fontSize: 12, color: S.textFaint, fontFamily: "sans-serif", lineHeight: 1.6 }}>Updates are stored locally on this device. For shared family updates, consider using a free CaringBridge page or a dedicated group chat.</p>
