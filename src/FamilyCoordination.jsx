@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const S = {
   dark: "#0a1520",
@@ -82,20 +82,39 @@ const roles = [
   },
 ];
 
-// FIX: previously hardcoded with two fake sample entries (Medical POC /
-// Daily Coordinator) that looked like real posts but were static demo
-// content baked into the component. That was misleading — a new user
-// had no way to tell those weren't real. Now starts empty; only real
-// posts a user actually submits will ever appear here.
-const updates = [];
-
-export default function FamilyCoordination({ onBack }) {
+export default function FamilyCoordination({ onBack, user }) {
   const [activeTab, setActiveTab] = useState("roles");
   const [assignedRoles, setAssignedRoles] = useState({});
   const [expandedRole, setExpandedRole] = useState(null);
   const [newUpdate, setNewUpdate] = useState("");
-  const [updateList, setUpdateList] = useState(updates);
+  const [updateList, setUpdateList] = useState([]);
+  const [loadingUpdates, setLoadingUpdates] = useState(true);
+  const [posting, setPosting] = useState(false);
   const [assignInput, setAssignInput] = useState({});
+
+  const userEmail = user?.email;
+
+  // Load real, saved updates from Supabase when this screen opens.
+  useEffect(() => {
+    if (!userEmail) {
+      setLoadingUpdates(false);
+      return;
+    }
+    fetch(`/api/get-updates?email=${encodeURIComponent(userEmail)}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.updates) {
+          setUpdateList(data.updates.map(u => ({
+            id: u.id,
+            date: new Date(u.created_at).toLocaleDateString(),
+            author: u.author,
+            content: u.content,
+          })));
+        }
+      })
+      .catch(err => console.error('Failed to load updates:', err))
+      .finally(() => setLoadingUpdates(false));
+  }, [userEmail]);
 
   const assignRole = (roleId) => {
     const name = assignInput[roleId];
@@ -104,16 +123,30 @@ export default function FamilyCoordination({ onBack }) {
     setAssignInput(prev => ({ ...prev, [roleId]: "" }));
   };
 
-  const postUpdate = () => {
-    if (!newUpdate.trim()) return;
-    const update = {
-      id: Date.now(),
-      date: "Just now",
-      author: "You",
-      content: newUpdate.trim(),
-    };
-    setUpdateList(prev => [update, ...prev]);
-    setNewUpdate("");
+  const postUpdate = async () => {
+    if (!newUpdate.trim() || !userEmail || posting) return;
+    setPosting(true);
+    try {
+      const res = await fetch('/api/post-update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: userEmail, author: 'You', content: newUpdate.trim() }),
+      });
+      const data = await res.json();
+      if (data.update) {
+        setUpdateList(prev => [{
+          id: data.update.id,
+          date: 'Just now',
+          author: data.update.author,
+          content: data.update.content,
+        }, ...prev]);
+        setNewUpdate("");
+      }
+    } catch (e) {
+      console.error('Failed to post update:', e);
+    } finally {
+      setPosting(false);
+    }
   };
 
   const tabs = [
@@ -235,12 +268,16 @@ export default function FamilyCoordination({ onBack }) {
               placeholder="Share what happened today — doctor visit, how they're feeling, what needs to be done..."
               style={{ width: "100%", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(200,169,126,0.2)", color: S.text, padding: "14px 16px", fontFamily: "sans-serif", fontSize: 13, outline: "none", borderRadius: 10, minHeight: 100, resize: "vertical", lineHeight: 1.6 }}
             />
-            <button onClick={postUpdate} style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", border: "none", borderRadius: 8, color: S.dark, padding: "12px 24px", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif", marginTop: 10, width: "100%" }}>
-              Post Update
+            <button onClick={postUpdate} disabled={posting || !newUpdate.trim()} style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", border: "none", borderRadius: 8, color: S.dark, padding: "12px 24px", fontSize: 13, fontWeight: 700, cursor: posting ? "default" : "pointer", fontFamily: "sans-serif", marginTop: 10, width: "100%", opacity: posting || !newUpdate.trim() ? 0.6 : 1 }}>
+              {posting ? "Posting..." : "Post Update"}
             </button>
           </div>
 
-          {updateList.length === 0 ? (
+          {loadingUpdates ? (
+            <div style={{ textAlign: "center", padding: "24px", color: S.textFaint, fontSize: 13, fontFamily: "sans-serif" }}>
+              Loading updates...
+            </div>
+          ) : updateList.length === 0 ? (
             <div style={{
               textAlign: "center", padding: "32px 20px",
               background: "rgba(255,255,255,0.02)",
@@ -266,7 +303,7 @@ export default function FamilyCoordination({ onBack }) {
           )}
 
           <div style={{ marginTop: 20, background: "rgba(200,169,126,0.04)", border: "1px solid rgba(200,169,126,0.1)", borderRadius: 10, padding: "14px 16px" }}>
-            <p style={{ fontSize: 12, color: S.textFaint, fontFamily: "sans-serif", lineHeight: 1.6 }}>Updates are stored locally on this device. For shared family updates, consider using a free CaringBridge page or a dedicated group chat.</p>
+            <p style={{ fontSize: 12, color: S.textFaint, fontFamily: "sans-serif", lineHeight: 1.6 }}>Updates are saved to your account and visible each time you log back in. Full family sharing across logins is coming soon.</p>
           </div>
         </div>
       )}
