@@ -95,12 +95,15 @@ export default function FamilyCoordination({ onBack, user }) {
   const userEmail = user?.email;
 
   // Load real, saved updates from Supabase when this screen opens.
+  // Both GET and POST for family updates live on the same combined
+  // /api/family-updates route to stay under Vercel's serverless
+  // function limit on the Hobby plan.
   useEffect(() => {
     if (!userEmail) {
       setLoadingUpdates(false);
       return;
     }
-    fetch(`/api/get-updates?email=${encodeURIComponent(userEmail)}`)
+    fetch(`/api/family-updates?email=${encodeURIComponent(userEmail)}`)
       .then(res => res.json())
       .then(data => {
         if (data.updates) {
@@ -127,7 +130,7 @@ export default function FamilyCoordination({ onBack, user }) {
     if (!newUpdate.trim() || !userEmail || posting) return;
     setPosting(true);
     try {
-      const res = await fetch('/api/post-update', {
+      const res = await fetch('/api/family-updates', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: userEmail, author: 'You', content: newUpdate.trim() }),
