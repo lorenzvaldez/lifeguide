@@ -127,10 +127,14 @@ function DocumentUpload({ docId, docName, userEmail, files, onFilesChanged }) {
     setUploading(true);
     try {
       const base64 = await fileToBase64(file);
-      const res = await fetch("/api/upload-document", {
+      // Upload and delete for documents both live on the same combined
+      // /api/document-vault route (distinguished by body.action) to stay
+      // under Vercel's serverless function limit on the Hobby plan.
+      const res = await fetch("/api/document-vault", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          action: "upload",
           email: userEmail,
           docType: docId,
           fileName: file.name,
@@ -152,10 +156,10 @@ function DocumentUpload({ docId, docName, userEmail, files, onFilesChanged }) {
 
   const handleDelete = async (docRecord) => {
     try {
-      const res = await fetch("/api/delete-document", {
+      const res = await fetch("/api/document-vault", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: userEmail, id: docRecord.id }),
+        body: JSON.stringify({ action: "delete", email: userEmail, id: docRecord.id }),
       });
       if (res.ok) {
         onFilesChanged((files || []).filter((f) => f.id !== docRecord.id));
@@ -206,7 +210,7 @@ export default function DocumentVault({ onBack, user }) {
   useEffect(() => {
     if (!userEmail) { setLoadingFiles(false); return; }
     let cancelled = false;
-    fetch(`/api/get-documents?email=${encodeURIComponent(userEmail)}`)
+    fetch(`/api/document-vault?email=${encodeURIComponent(userEmail)}`)
       .then((r) => r.json())
       .then((data) => {
         if (cancelled) return;
