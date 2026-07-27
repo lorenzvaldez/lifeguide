@@ -9,12 +9,15 @@ const S = {
   text: "#ffffff", textDim: "#c0b8b0", textFaint: "#a89f93",
 };
 
+// Reordered per Elwood's feedback: build from immediate/uncertain
+// questions toward later-stage understanding, not random order.
 const STARTERS = [
-  "What does terminal lucidity mean?",
-  "How do I coordinate getting a hospital bed delivered?",
+  "Is it time to consider hospice?",
   "What questions should I ask the hospice intake nurse?",
   "How does Medicare cover hospice care?",
   "What documents do I need to have ready?",
+  "How do I coordinate getting a hospital bed delivered?",
+  "What does terminal lucidity mean?",
   "What are the signs that someone is in their final days?",
 ];
 
