@@ -205,11 +205,13 @@ export default function DocumentVault({ onBack, user }) {
   const [completedDocs, setCompletedDocs] = useState({});
   const [docFiles, setDocFiles] = useState({}); // { poa: [ {id, fileName, url}, ... ], ... }
   const [loadingFiles, setLoadingFiles] = useState(true);
+  const [loadingProgress, setLoadingProgress] = useState(true);
   const userEmail = user && user.email;
 
   useEffect(() => {
-    if (!userEmail) { setLoadingFiles(false); return; }
+    if (!userEmail) { setLoadingFiles(false); setLoadingProgress(false); return; }
     let cancelled = false;
+
     fetch(`/api/document-vault?email=${encodeURIComponent(userEmail)}`)
       .then((r) => r.json())
       .then((data) => {
@@ -229,12 +231,35 @@ export default function DocumentVault({ onBack, user }) {
       })
       .catch(() => {})
       .finally(() => { if (!cancelled) setLoadingFiles(false); });
+
+    // Load saved "mark as secured" state. This shares the same combined
+    // /api/user-progress route used for Assign Roles and the Quick Checklist,
+    // to stay under Vercel's serverless function limit on the Hobby plan.
+    fetch(`/api/user-progress?email=${encodeURIComponent(userEmail)}`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (cancelled) return;
+        if (data.completedDocs) {
+          setCompletedDocs((prev) => ({ ...prev, ...data.completedDocs }));
+        }
+      })
+      .catch(() => {})
+      .finally(() => { if (!cancelled) setLoadingProgress(false); });
+
     return () => { cancelled = true; };
   }, [userEmail]);
 
   const toggleComplete = (id, e) => {
     e.stopPropagation();
-    setCompletedDocs(prev => ({ ...prev, [id]: !prev[id] }));
+    const updated = { ...completedDocs, [id]: !completedDocs[id] };
+    setCompletedDocs(updated);
+    if (userEmail) {
+      fetch('/api/user-progress', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: userEmail, field: 'completedDocs', value: updated }),
+      }).catch(err => console.error('Failed to save secured status:', err));
+    }
   };
 
   const setFilesForDoc = (docId, newFiles) => {
