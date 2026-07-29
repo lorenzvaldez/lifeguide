@@ -82,27 +82,43 @@ const roles = [
   },
 ];
 
+const quickChecklist = [
+  { task: "Assign a Medical Point of Contact" },
+  { task: "Assign a Financial & Legal Manager" },
+  { task: "Assign a Daily Care Coordinator" },
+  { task: "Set up a family group chat or communication channel" },
+  { task: "Share the doctor's contact information with all family members" },
+  { task: "Create a shared document with all important numbers and contacts" },
+  { task: "Schedule a family check-in call this week" },
+  { task: "Identify who will take the first overnight shift if needed" },
+  { task: "Make sure everyone knows the hospice nurse's after-hours number" },
+  { task: "Agree on a single communication channel for urgent updates" },
+];
+
 export default function FamilyCoordination({ onBack, user }) {
   const [activeTab, setActiveTab] = useState("roles");
   const [assignedRoles, setAssignedRoles] = useState({});
+  const [checklistState, setChecklistState] = useState({});
   const [expandedRole, setExpandedRole] = useState(null);
   const [newUpdate, setNewUpdate] = useState("");
   const [updateList, setUpdateList] = useState([]);
   const [loadingUpdates, setLoadingUpdates] = useState(true);
+  const [loadingProgress, setLoadingProgress] = useState(true);
   const [posting, setPosting] = useState(false);
   const [assignInput, setAssignInput] = useState({});
 
   const userEmail = user?.email;
 
-  // Load real, saved updates from Supabase when this screen opens.
-  // Both GET and POST for family updates live on the same combined
-  // /api/family-updates route to stay under Vercel's serverless
-  // function limit on the Hobby plan.
+  // Load saved family updates AND saved roles/checklist progress when this
+  // screen opens. Both persistence layers live on their own combined API
+  // routes to stay under Vercel's serverless function limit on the Hobby plan.
   useEffect(() => {
     if (!userEmail) {
       setLoadingUpdates(false);
+      setLoadingProgress(false);
       return;
     }
+
     fetch(`/api/family-updates?email=${encodeURIComponent(userEmail)}`)
       .then(res => res.json())
       .then(data => {
@@ -117,13 +133,50 @@ export default function FamilyCoordination({ onBack, user }) {
       })
       .catch(err => console.error('Failed to load updates:', err))
       .finally(() => setLoadingUpdates(false));
+
+    fetch(`/api/user-progress?email=${encodeURIComponent(userEmail)}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.assignedRoles) setAssignedRoles(data.assignedRoles);
+        if (data.checklistState) setChecklistState(data.checklistState);
+      })
+      .catch(err => console.error('Failed to load progress:', err))
+      .finally(() => setLoadingProgress(false));
   }, [userEmail]);
+
+  const saveProgress = async (field, value) => {
+    if (!userEmail) return;
+    try {
+      await fetch('/api/user-progress', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: userEmail, field, value }),
+      });
+    } catch (e) {
+      console.error('Failed to save progress:', e);
+    }
+  };
 
   const assignRole = (roleId) => {
     const name = assignInput[roleId];
     if (!name || !name.trim()) return;
-    setAssignedRoles(prev => ({ ...prev, [roleId]: name.trim() }));
+    const updated = { ...assignedRoles, [roleId]: name.trim() };
+    setAssignedRoles(updated);
+    saveProgress('assignedRoles', updated);
     setAssignInput(prev => ({ ...prev, [roleId]: "" }));
+  };
+
+  const removeRole = (roleId) => {
+    const updated = { ...assignedRoles };
+    delete updated[roleId];
+    setAssignedRoles(updated);
+    saveProgress('assignedRoles', updated);
+  };
+
+  const toggleChecklistItem = (i) => {
+    const updated = { ...checklistState, [i]: !checklistState[i] };
+    setChecklistState(updated);
+    saveProgress('checklistState', updated);
   };
 
   const postUpdate = async () => {
@@ -157,23 +210,6 @@ export default function FamilyCoordination({ onBack, user }) {
     { id: "updates", label: "Family Updates" },
     { id: "checklist", label: "Quick Checklist" },
   ];
-
-  const quickChecklist = [
-    { task: "Assign a Medical Point of Contact", done: !!assignedRoles.medical },
-    { task: "Assign a Financial & Legal Manager", done: !!assignedRoles.financial },
-    { task: "Assign a Daily Care Coordinator", done: !!assignedRoles.daily },
-    { task: "Set up a family group chat or communication channel", done: false },
-    { task: "Share the doctor's contact information with all family members", done: false },
-    { task: "Create a shared document with all important numbers and contacts", done: false },
-    { task: "Schedule a family check-in call this week", done: false },
-    { task: "Identify who will take the first overnight shift if needed", done: false },
-    { task: "Make sure everyone knows the hospice nurse's after-hours number", done: false },
-    { task: "Agree on a single communication channel for urgent updates", done: false },
-  ];
-
-  const [checklistState, setChecklistState] = useState(
-    quickChecklist.reduce((acc, item, i) => ({ ...acc, [i]: item.done }), {})
-  );
 
   return (
     <div style={{ maxWidth: 560, width: "100%", margin: "0 auto", padding: "40px 24px 120px" }}>
@@ -212,7 +248,10 @@ export default function FamilyCoordination({ onBack, user }) {
                   <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
                     <h3 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 18, fontWeight: 400, color: S.goldLight }}>{role.title}</h3>
                     {assignedRoles[role.id] && (
-                      <span style={{ fontSize: 11, color: "#6ab56a", background: "rgba(106,181,106,0.1)", padding: "2px 8px", borderRadius: 10, fontFamily: "sans-serif" }}>{assignedRoles[role.id]}</span>
+                      <span style={{ fontSize: 11, color: "#6ab56a", background: "rgba(106,181,106,0.1)", padding: "2px 8px", borderRadius: 10, fontFamily: "sans-serif", display: "inline-flex", alignItems: "center", gap: 6 }}>
+                        {assignedRoles[role.id]}
+                        <span onClick={(e) => { e.stopPropagation(); removeRole(role.id); }} style={{ cursor: "pointer", color: "#8ac88a" }}>×</span>
+                      </span>
                     )}
                   </div>
                   <p style={{ fontSize: 12, color: S.textFaint, fontFamily: "sans-serif", lineHeight: 1.5 }}>{role.description.substring(0, 60)}...</p>
@@ -250,8 +289,13 @@ export default function FamilyCoordination({ onBack, user }) {
                       style={{ flex: 1, background: "rgba(255,255,255,0.04)", border: "1px solid rgba(200,169,126,0.2)", color: S.text, padding: "10px 14px", fontFamily: "sans-serif", fontSize: 13, outline: "none", borderRadius: 8 }}
                     />
                     <button onClick={() => assignRole(role.id)} style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", border: "none", borderRadius: 8, color: S.dark, padding: "10px 16px", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif", whiteSpace: "nowrap" }}>
-                      Assign
+                      {assignedRoles[role.id] ? "Update" : "Assign"}
                     </button>
+                    {assignedRoles[role.id] && (
+                      <button onClick={() => removeRole(role.id)} style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, color: S.textFaint, padding: "10px 14px", fontSize: 13, cursor: "pointer", fontFamily: "sans-serif", whiteSpace: "nowrap" }}>
+                        Remove
+                      </button>
+                    )}
                   </div>
                 </div>
               )}
@@ -317,16 +361,22 @@ export default function FamilyCoordination({ onBack, user }) {
           <p style={{ fontSize: 14, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.7, marginBottom: 20 }}>
             The families who navigate this best get organized in the first week. Here are the most important coordination tasks to complete now.
           </p>
-          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-            {quickChecklist.map((item, i) => (
-              <div key={i} onClick={() => setChecklistState(prev => ({ ...prev, [i]: !prev[i] }))} style={{ background: checklistState[i] ? "rgba(106,181,106,0.06)" : "rgba(255,255,255,0.02)", border: `1px solid ${checklistState[i] ? "rgba(106,181,106,0.3)" : "rgba(255,255,255,0.06)"}`, borderRadius: 12, padding: "14px 16px", display: "flex", gap: 12, alignItems: "center", cursor: "pointer", transition: "all 0.3s" }}>
-                <div style={{ width: 20, height: 20, borderRadius: "50%", border: `2px solid ${checklistState[i] ? "#6ab56a" : "rgba(200,169,126,0.4)"}`, background: checklistState[i] ? "#6ab56a" : "transparent", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 11, transition: "all 0.2s" }}>
-                  {checklistState[i] ? "✓" : ""}
+          {loadingProgress ? (
+            <div style={{ textAlign: "center", padding: "24px", color: S.textFaint, fontSize: 13, fontFamily: "sans-serif" }}>
+              Loading...
+            </div>
+          ) : (
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              {quickChecklist.map((item, i) => (
+                <div key={i} onClick={() => toggleChecklistItem(i)} style={{ background: checklistState[i] ? "rgba(106,181,106,0.06)" : "rgba(255,255,255,0.02)", border: `1px solid ${checklistState[i] ? "rgba(106,181,106,0.3)" : "rgba(255,255,255,0.06)"}`, borderRadius: 12, padding: "14px 16px", display: "flex", gap: 12, alignItems: "center", cursor: "pointer", transition: "all 0.3s" }}>
+                  <div style={{ width: 20, height: 20, borderRadius: "50%", border: `2px solid ${checklistState[i] ? "#6ab56a" : "rgba(200,169,126,0.4)"}`, background: checklistState[i] ? "#6ab56a" : "transparent", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 11, transition: "all 0.2s" }}>
+                    {checklistState[i] ? "✓" : ""}
+                  </div>
+                  <p style={{ fontSize: 14, color: checklistState[i] ? S.textFaint : S.textDim, fontFamily: "sans-serif", lineHeight: 1.5, textDecoration: checklistState[i] ? "line-through" : "none" }}>{item.task}</p>
                 </div>
-                <p style={{ fontSize: 14, color: checklistState[i] ? S.textFaint : S.textDim, fontFamily: "sans-serif", lineHeight: 1.5, textDecoration: checklistState[i] ? "line-through" : "none" }}>{item.task}</p>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
 
           <div style={{ marginTop: 20, padding: "14px 16px", background: "rgba(200,169,126,0.06)", border: "1px solid rgba(200,169,126,0.2)", borderRadius: 10, textAlign: "center" }}>
             <p style={{ fontSize: 13, color: S.gold, fontFamily: "sans-serif" }}>{Object.values(checklistState).filter(Boolean).length} of {quickChecklist.length} completed</p>
