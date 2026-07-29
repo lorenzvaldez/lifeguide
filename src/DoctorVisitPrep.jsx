@@ -43,7 +43,7 @@ const needs = [
   "Plan for discharge or home care",
 ];
 
-export default function DoctorVisitPrep({ onBack }) {
+export default function DoctorVisitPrep({ onBack, user }) {
   const [step, setStep] = useState("intro");
   const [condition, setCondition] = useState("");
   const [stage, setStage] = useState("");
@@ -55,18 +55,25 @@ export default function DoctorVisitPrep({ onBack }) {
   const [selectedTop3, setSelectedTop3] = useState([]);
   const [savedTop3, setSavedTop3] = useState(false);
 
-  // Load any previously saved top-3 questions (per Dr. Haas's feedback —
-  // physicians realistically only have time for a handful of questions
-  // per visit, so this gives families a focused shortlist to bring in).
+  const userEmail = user?.email;
+
+  // Load any previously saved top-3 questions from Supabase (per Dr. Haas's
+  // feedback — physicians realistically only have time for a handful of
+  // questions per visit, so this gives families a focused shortlist to
+  // bring in). Shares the same combined /api/user-progress route used by
+  // Assign Roles, the Quick Checklist, and Mark as Secured, to stay under
+  // Vercel's serverless function limit on the Hobby plan.
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem("lifeguide_top3_questions");
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (parsed && parsed.questions) setSelectedTop3(parsed.questions);
-      }
-    } catch (e) {}
-  }, []);
+    if (!userEmail) return;
+    fetch(`/api/user-progress?email=${encodeURIComponent(userEmail)}`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.savedQuestions && data.savedQuestions.length > 0) {
+          setSelectedTop3(data.savedQuestions);
+        }
+      })
+      .catch(() => {});
+  }, [userEmail]);
 
   const generate = async () => {
     setStep("loading");
@@ -107,10 +114,18 @@ export default function DoctorVisitPrep({ onBack }) {
     setSavedTop3(false);
   };
 
-  const saveTop3 = () => {
-    try {
-      localStorage.setItem("lifeguide_top3_questions", JSON.stringify({ questions: selectedTop3, savedAt: Date.now() }));
-    } catch (e) {}
+  const saveTop3 = async () => {
+    if (userEmail) {
+      try {
+        await fetch('/api/user-progress', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: userEmail, field: 'savedQuestions', value: selectedTop3 }),
+        });
+      } catch (e) {
+        console.error('Failed to save top 3:', e);
+      }
+    }
     setSavedTop3(true);
     setTimeout(() => setSavedTop3(false), 2500);
   };
@@ -143,6 +158,16 @@ export default function DoctorVisitPrep({ onBack }) {
           <p style={{ fontSize: 14, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.7, marginBottom: 32 }}>
             Tell us what's on your mind, or answer 3 quick questions about your loved one's situation. We'll generate personalized questions to bring to your next appointment.
           </p>
+          {selectedTop3.length > 0 && (
+            <div style={{ background: "rgba(200,169,126,0.08)", border: "1px solid rgba(200,169,126,0.3)", borderRadius: 12, padding: "16px 18px", marginBottom: 24, textAlign: "left" }}>
+              <p style={{ fontSize: 11, color: S.gold, letterSpacing: 2, textTransform: "uppercase", fontFamily: "sans-serif", marginBottom: 10 }}>Your saved questions</p>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                {selectedTop3.map((q, i) => (
+                  <p key={i} style={{ fontSize: 13, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.6 }}>{i + 1}. {q}</p>
+                ))}
+              </div>
+            </div>
+          )}
           <button onClick={() => setStep("questions")} style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", color: S.dark, border: "none", borderRadius: 10, padding: "18px 48px", fontSize: 15, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif", width: "100%" }}>
             Generate My Questions
           </button>
