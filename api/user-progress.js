@@ -30,6 +30,7 @@ export default async function handler(req, res) {
         checklistState: data?.checklist_state || {},
         completedDocs: data?.completed_docs || {},
         savedQuestions: data?.saved_questions || [],
+        afterChecklist: data?.after_checklist || {},
       });
     } catch (e) {
       console.error('Get progress error:', e);
@@ -38,7 +39,8 @@ export default async function handler(req, res) {
   }
 
   // POST — save one field at a time. Body: { email, field, value }
-  // field is one of: assignedRoles, checklistState, completedDocs, savedQuestions
+  // field is one of: assignedRoles, checklistState, completedDocs,
+  // savedQuestions, afterChecklist
   if (req.method === 'POST') {
     const { email, field, value } = req.body;
     if (!email || !field) return res.status(400).json({ error: 'Missing required fields' });
@@ -48,6 +50,7 @@ export default async function handler(req, res) {
       checklistState: 'checklist_state',
       completedDocs: 'completed_docs',
       savedQuestions: 'saved_questions',
+      afterChecklist: 'after_checklist',
     };
     const column = columnMap[field];
     if (!column) return res.status(400).json({ error: 'Invalid field' });
