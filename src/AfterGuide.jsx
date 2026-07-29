@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const S = {
   dark: "#0a1520",
@@ -82,14 +82,40 @@ const weeks = [
   },
 ];
 
-export default function AfterGuide({ onBack }) {
+export default function AfterGuide({ onBack, user }) {
   const [expanded, setExpanded] = useState(null);
   const [completed, setCompleted] = useState({});
+  const [loadingProgress, setLoadingProgress] = useState(true);
+
+  const userEmail = user?.email;
+
+  // Load and save the checklist through the same combined /api/user-progress
+  // route used by Assign Roles, the Quick Checklist, Mark as Secured, and
+  // Doctor Visit Prep's top 3, to stay under Vercel's serverless function
+  // limit on the Hobby plan.
+  useEffect(() => {
+    if (!userEmail) { setLoadingProgress(false); return; }
+    fetch(`/api/user-progress?email=${encodeURIComponent(userEmail)}`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.afterChecklist) setCompleted(data.afterChecklist);
+      })
+      .catch(() => {})
+      .finally(() => setLoadingProgress(false));
+  }, [userEmail]);
 
   const toggleComplete = (weekId, taskIndex, e) => {
     e.stopPropagation();
     const key = `${weekId}-${taskIndex}`;
-    setCompleted(prev => ({ ...prev, [key]: !prev[key] }));
+    const updated = { ...completed, [key]: !completed[key] };
+    setCompleted(updated);
+    if (userEmail) {
+      fetch('/api/user-progress', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: userEmail, field: 'afterChecklist', value: updated }),
+      }).catch(err => console.error('Failed to save checklist:', err));
+    }
   };
 
   const getCompletedCount = (weekId, taskCount) => {
