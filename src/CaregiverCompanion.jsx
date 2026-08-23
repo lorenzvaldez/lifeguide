@@ -1,7 +1,9 @@
 // src/CaregiverCompanion.jsx
 // Drop this into your /src folder in GitHub
+// Requires: npm install react-markdown
 
 import { useState, useRef, useEffect } from 'react';
+import ReactMarkdown from 'react-markdown';
 
 const S = {
   dark: "#0a1520", darkMid: "#111e2b", darkCard: "#0d1526",
@@ -20,6 +22,26 @@ const STARTERS = [
   "What does terminal lucidity mean?",
   "What are the signs that someone is in their final days?",
 ];
+
+// Markdown component overrides so ReactMarkdown's output matches the
+// existing dark navy / gold theme instead of using browser default styles.
+const markdownComponents = {
+  p: ({ children }) => (
+    <p style={{ margin: '0 0 10px 0' }}>{children}</p>
+  ),
+  strong: ({ children }) => (
+    <strong style={{ color: S.goldLight, fontWeight: 600 }}>{children}</strong>
+  ),
+  ul: ({ children }) => (
+    <ul style={{ margin: '4px 0 12px 0', paddingLeft: 20 }}>{children}</ul>
+  ),
+  ol: ({ children }) => (
+    <ol style={{ margin: '4px 0 12px 0', paddingLeft: 20 }}>{children}</ol>
+  ),
+  li: ({ children }) => (
+    <li style={{ marginBottom: 6 }}>{children}</li>
+  ),
+};
 
 export default function CaregiverCompanion({ onBack }) {
   const [messages, setMessages] = useState([]);
@@ -178,7 +200,17 @@ export default function CaregiverCompanion({ onBack }) {
               borderBottomRightRadius: m.role === 'user' ? 4 : 12,
               borderBottomLeftRadius: m.role === 'assistant' ? 4 : 12,
             }}>
-              {m.content}
+              {/* User messages are always plain text (no markdown needed).
+                  Assistant messages are rendered through ReactMarkdown so
+                  Gemini's **bold** and list formatting actually displays
+                  instead of showing raw asterisks in one dense block. */}
+              {m.role === 'user' ? (
+                m.content
+              ) : (
+                <ReactMarkdown components={markdownComponents}>
+                  {m.content}
+                </ReactMarkdown>
+              )}
             </div>
           </div>
         ))}
