@@ -388,7 +388,7 @@ function LandingScreen({ onStart, onLogin }) {
           <button onClick={onLogin} style={{ background: "rgba(200,169,126,0.1)", border: "1px solid rgba(200,169,126,0.3)", color: "#c8a97e", padding: "8px 16px", fontFamily: "sans-serif", fontSize: 11, letterSpacing: 2, textTransform: "uppercase", cursor: "pointer", borderRadius: 2 }}>Log In</button>
         </div>
       </nav>
-      <section style={{ minHeight: "100vh", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center", padding: "100px 20px 60px", position: "relative", zIndex: 1 }}>
+      <section style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center", padding: "160px 20px 120px", position: "relative", zIndex: 1 }}>
         <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 60% 50% at 50% 60%, rgba(200,169,126,0.06) 0%, transparent 70%)" }} />
         <img src="/logo.png" alt="LifeGuide" style={{ width: 80, height: 80, objectFit: "contain", marginBottom: 16 }} />
         <a href="https://hospicenews.com/2026/06/26/ai-end-of-life-navigation-takes-flight/" target="_blank" rel="noopener noreferrer"
