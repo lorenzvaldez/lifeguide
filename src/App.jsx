@@ -376,16 +376,7 @@ function FoundingMembersCounter() {
   );
 }
 
-function LandingScreen({ onStart, onNurse, onLogin }) {
-  const [email, setEmail] = useState("");
-  const [submitted, setSubmitted] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const handleWaitlist = async () => {
-    if (!email || !email.includes("@")) return;
-    setLoading(true);
-    try { await fetch("/api/subscribe", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, tag: "landing-waitlist" }) }); } catch (e) {}
-    setLoading(false); setSubmitted(true);
-  };
+function LandingScreen({ onStart, onLogin }) {
   return (
     <div style={{ minHeight: "100vh", background: "linear-gradient(135deg, #0a1520 0%, #1a2a3a 50%, #0a1520 100%)", color: "#ffffff", fontFamily: "sans-serif" }}>
       <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 500, padding: "16px 20px", display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(10,21,32,0.97)", backdropFilter: "blur(10px)", borderBottom: "1px solid rgba(200,169,126,0.08)" }}>
@@ -394,7 +385,6 @@ function LandingScreen({ onStart, onNurse, onLogin }) {
           <span style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 20, fontWeight: 400, color: "#e8d5b7", letterSpacing: 1 }}>LifeGuide</span>
         </div>
         <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-          <button onClick={onNurse} style={{ background: "transparent", border: "1px solid rgba(200,169,126,0.3)", color: "#c8a97e", padding: "8px 16px", fontFamily: "sans-serif", fontSize: 11, letterSpacing: 2, textTransform: "uppercase", cursor: "pointer", borderRadius: 2 }}>For Nurses</button>
           <button onClick={onLogin} style={{ background: "rgba(200,169,126,0.1)", border: "1px solid rgba(200,169,126,0.3)", color: "#c8a97e", padding: "8px 16px", fontFamily: "sans-serif", fontSize: 11, letterSpacing: 2, textTransform: "uppercase", cursor: "pointer", borderRadius: 2 }}>Log In</button>
         </div>
       </nav>
@@ -415,19 +405,6 @@ function LandingScreen({ onStart, onNurse, onLogin }) {
         <button onClick={onStart} style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", color: "#0a1520", border: "none", borderRadius: 8, padding: "20px 56px", fontSize: 16, fontWeight: 700, cursor: "pointer", fontFamily: "sans-serif", letterSpacing: 1, boxShadow: "0 8px 32px rgba(200,169,126,0.3)", marginBottom: 16, position: "relative", zIndex: 200 }}>
           Start My Free Guide
         </button>
-        <div style={{ marginTop: 48, maxWidth: 480, width: "100%" }}>
-          <p style={{ fontSize: 13, color: "#5a5650", marginBottom: 16 }}>Or join the waitlist for updates</p>
-          {submitted ? (
-            <p style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 18, color: "#c8a97e" }}>You're on the list. We'll be in touch.</p>
-          ) : (
-            <div style={{ display: "flex" }}>
-              <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Your email address" style={{ flex: 1, background: "rgba(255,255,255,0.04)", border: "1px solid rgba(200,169,126,0.2)", borderRight: "none", color: "#ffffff", padding: "16px 20px", fontFamily: "sans-serif", fontSize: 14, outline: "none", borderRadius: "4px 0 0 4px" }} />
-              <button onClick={handleWaitlist} disabled={loading} style={{ background: "rgba(200,169,126,0.15)", border: "1px solid rgba(200,169,126,0.3)", color: "#c8a97e", padding: "16px 24px", fontFamily: "sans-serif", fontSize: 12, fontWeight: 600, letterSpacing: 1, cursor: "pointer", borderRadius: "0 4px 4px 0", whiteSpace: "nowrap" }}>
-                {loading ? "..." : "Join Waitlist"}
-              </button>
-            </div>
-          )}
-        </div>
       </section>
       <section style={{ background: "#111e2b", padding: "60px 20px" }}>
         <div style={{ maxWidth: 900, margin: "0 auto", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 32, alignItems: "center" }}>
@@ -497,17 +474,6 @@ function LandingScreen({ onStart, onNurse, onLogin }) {
           </div>
         </div>
       </section>
-      <section style={{ padding: "60px 20px" }}>
-        <div style={{ maxWidth: 700, margin: "0 auto", textAlign: "center" }}>
-          <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(200,169,126,0.08)", border: "1px solid rgba(200,169,126,0.2)", borderRadius: 20, padding: "6px 16px", marginBottom: 24 }}>
-            <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#c8a97e", display: "inline-block" }} />
-            <span style={{ fontSize: 11, color: "#c8a97e", letterSpacing: 2, textTransform: "uppercase" }}>Coming Soon</span>
-          </div>
-          <h2 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "clamp(28px, 5vw, 42px)", fontWeight: 300, color: "#e8d5b7", marginBottom: 16, lineHeight: 1.2 }}>Introducing <em style={{ color: "#c8a97e", fontStyle: "italic" }}>LifeGuide Pro</em></h2>
-          <p style={{ fontSize: 15, color: "#7a7268", lineHeight: 1.7, marginBottom: 32 }}>Built for hospice nurses, social workers, and care teams. Give every family you serve a personalized roadmap on day one.</p>
-          <button onClick={onNurse} style={{ background: "transparent", border: "1px solid rgba(200,169,126,0.4)", color: "#c8a97e", padding: "14px 32px", fontFamily: "sans-serif", fontSize: 12, fontWeight: 600, letterSpacing: 2, textTransform: "uppercase", cursor: "pointer", borderRadius: 4 }}>Learn About LifeGuide Pro</button>
-        </div>
-      </section>
       <div style={{ background: "rgba(200,169,126,0.04)", borderTop: "1px solid rgba(200,169,126,0.1)", borderBottom: "1px solid rgba(200,169,126,0.1)", padding: "16px 24px", textAlign: "center" }}>
         <p style={{ fontSize: 11, color: "#8a8278", maxWidth: 700, margin: "0 auto", lineHeight: 1.6 }}>
           <strong style={{ color: "#a89f93" }}>Important:</strong> LifeGuide is an informational and organizational tool only. It does not provide medical advice, diagnosis, or treatment recommendations. Always consult your physician or healthcare provider.
@@ -525,29 +491,20 @@ function LandingScreen({ onStart, onNurse, onLogin }) {
   );
 }
 
-function DisclaimerScreen({ onFamily, onNurse, onModal }) {
+function DisclaimerScreen({ onFamily, onModal }) {
   return (
     <div style={{ maxWidth: 520, width: "100%", margin: "0 auto", padding: "60px 24px 40px", textAlign: "center" }}>
       <img src="/logo.png" alt="LifeGuide" style={{ width: 80, height: 80, margin: "0 auto 20px", display: "block", objectFit: "contain" }} />
       <h1 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 40, fontWeight: 300, color: S.goldLight, marginBottom: 4, letterSpacing: -1 }}>LifeGuide</h1>
       <p style={{ fontSize: 11, letterSpacing: 4, textTransform: "uppercase", color: S.gold, marginBottom: 28, fontFamily: "sans-serif" }}>Family Care Navigator</p>
-      <p style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 22, color: S.goldLight, marginBottom: 20 }}>Are you a family or a professional?</p>
-      <div onClick={onFamily} style={{ background: "linear-gradient(135deg, rgba(200,169,126,0.15), rgba(200,169,126,0.05))", border: "1px solid rgba(200,169,126,0.4)", borderRadius: 16, padding: "28px 24px", marginBottom: 12, cursor: "pointer", boxShadow: "0 8px 40px rgba(200,169,126,0.15)", position: "relative", overflow: "hidden" }}>
+      <div onClick={onFamily} style={{ background: "linear-gradient(135deg, rgba(200,169,126,0.15), rgba(200,169,126,0.05))", border: "1px solid rgba(200,169,126,0.4)", borderRadius: 16, padding: "28px 24px", marginBottom: 20, cursor: "pointer", boxShadow: "0 8px 40px rgba(200,169,126,0.15)", position: "relative", overflow: "hidden" }}>
         <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: "linear-gradient(90deg, transparent, #c8a97e, transparent)" }} />
         <div style={{ fontSize: 32, marginBottom: 10 }}>🕊️</div>
-        <h3 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 24, fontWeight: 400, color: S.goldLight, marginBottom: 8, lineHeight: 1.2 }}>Family member or caregiver</h3>
+        <h3 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 24, fontWeight: 400, color: S.goldLight, marginBottom: 8, lineHeight: 1.2 }}>Get your personalized guide</h3>
         <p style={{ fontSize: 13, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.6, marginBottom: 20 }}>Someone I love is declining and I need guidance, clarity, and a roadmap.</p>
         <div style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", borderRadius: 8, padding: "14px 24px", display: "inline-block" }}>
           <span style={{ color: S.dark, fontSize: 14, fontWeight: 700, fontFamily: "sans-serif" }}>Show Me What To Do</span>
         </div>
-      </div>
-      <div onClick={onNurse} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, padding: "16px 20px", marginBottom: 20, cursor: "pointer", display: "flex", alignItems: "center", gap: 14, textAlign: "left" }}>
-        <div style={{ fontSize: 24, flexShrink: 0 }}>⚕️</div>
-        <div style={{ flex: 1 }}>
-          <p style={{ fontSize: 15, color: S.textDim, fontFamily: "Cormorant Garamond, serif", marginBottom: 2 }}>Hospice or healthcare professional</p>
-          <p style={{ fontSize: 12, color: S.textFaint, fontFamily: "sans-serif" }}>Learn about LifeGuide Pro built for care teams</p>
-        </div>
-        <span style={{ color: S.textFaint, fontSize: 18, flexShrink: 0 }}>→</span>
       </div>
       <div style={{ background: "rgba(200,169,126,0.04)", border: "1px solid rgba(200,169,126,0.15)", borderRadius: 12, padding: "16px 18px", marginBottom: 20, textAlign: "left" }}>
         <p style={{ fontSize: 10, letterSpacing: 2, textTransform: "uppercase", color: S.gold, fontFamily: "sans-serif", marginBottom: 8 }}>Important Notice</p>
@@ -558,65 +515,6 @@ function DisclaimerScreen({ onFamily, onNurse, onModal }) {
         <span onClick={() => onModal("terms")} style={{ color: S.gold, cursor: "pointer", textDecoration: "underline" }}>Terms</span>{" "}and{" "}
         <span onClick={() => onModal("privacy")} style={{ color: S.gold, cursor: "pointer", textDecoration: "underline" }}>Privacy Policy</span>.
       </p>
-    </div>
-  );
-}
-
-function NurseScreen({ onBack }) {
-  const [submitted, setSubmitted] = useState(false);
-  const [email, setEmail] = useState("");
-  const handleSubmit = async () => {
-    if (!email || !email.includes("@")) return;
-    try { await fetch("/api/subscribe", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, tag: "lifeguide-pro-nurse" }) }); } catch (e) {}
-    setSubmitted(true);
-  };
-  return (
-    <div style={{ maxWidth: 520, width: "100%", margin: "0 auto", padding: "60px 24px 120px" }}>
-      <button onClick={onBack} style={{ background: "none", border: "none", color: S.textFaint, fontSize: 13, cursor: "pointer", fontFamily: "sans-serif", marginBottom: 32 }}>Back</button>
-      <div style={{ textAlign: "center", marginBottom: 40 }}>
-        <div style={{ fontSize: 48, marginBottom: 16 }}>⚕️</div>
-        <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(200,169,126,0.08)", border: "1px solid rgba(200,169,126,0.2)", borderRadius: 20, padding: "6px 16px", marginBottom: 20 }}>
-          <span style={{ width: 6, height: 6, borderRadius: "50%", background: S.gold, display: "inline-block" }} />
-          <span style={{ fontSize: 11, color: S.gold, fontFamily: "sans-serif", letterSpacing: 2, textTransform: "uppercase" }}>Coming Soon</span>
-        </div>
-        <h2 style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 34, fontWeight: 300, color: S.goldLight, marginBottom: 12, lineHeight: 1.2 }}>LifeGuide Pro</h2>
-        <p style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 18, fontStyle: "italic", color: S.textDim, marginBottom: 24 }}>For hospice nurses, social workers, and care teams</p>
-        <p style={{ fontSize: 14, color: S.textDim, fontFamily: "sans-serif", lineHeight: 1.7, marginBottom: 40 }}>You show up every day for families in the hardest moments of their lives. LifeGuide Pro gives you the tools to support every family you serve.</p>
-      </div>
-      <div style={{ display: "flex", flexDirection: "column", gap: 14, marginBottom: 40 }}>
-        {[
-          { icon: "📤", title: "Family Onboarding", desc: "Send a personalized LifeGuide link to every new family on day one." },
-          { icon: "📊", title: "Family Dashboard", desc: "See where each family is in their journey. Know what they need before they call you." },
-          { icon: "💬", title: "Direct Messaging", desc: "Share resources and notes directly into the family's guide." },
-          { icon: "📋", title: "Custom Resource Library", desc: "Build your own resource library for your patients. Tailored to your organization." },
-        ].map((f, i) => (
-          <div key={i} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 12, padding: "18px 20px", display: "flex", gap: 14, alignItems: "flex-start" }}>
-            <span style={{ fontSize: 22, flexShrink: 0 }}>{f.icon}</span>
-            <div>
-              <p style={{ fontSize: 15, color: S.goldLight, fontFamily: "Cormorant Garamond, serif", marginBottom: 4 }}>{f.title}</p>
-              <p style={{ fontSize: 12, color: S.textFaint, fontFamily: "sans-serif", lineHeight: 1.6 }}>{f.desc}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-      <div style={{ background: "rgba(200,169,126,0.06)", border: "1px solid rgba(200,169,126,0.2)", borderRadius: 16, padding: "28px 24px", textAlign: "center" }}>
-        {submitted ? (
-          <div>
-            <p style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 22, color: S.goldLight, marginBottom: 8 }}>You're on the list.</p>
-            <p style={{ fontSize: 13, color: S.textDim, fontFamily: "sans-serif" }}>We'll reach out when LifeGuide Pro launches. Thank you for what you do.</p>
-          </div>
-        ) : (
-          <div>
-            <p style={{ fontFamily: "Cormorant Garamond, serif", fontSize: 20, color: S.goldLight, marginBottom: 8 }}>Join the LifeGuide Pro waitlist</p>
-            <p style={{ fontSize: 13, color: S.textDim, fontFamily: "sans-serif", marginBottom: 20 }}>Early access members help shape the product and lock in founding pricing.</p>
-            <div style={{ display: "flex", gap: 0, marginBottom: 12 }}>
-              <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Your work email" style={{ flex: 1, background: "rgba(255,255,255,0.04)", border: "1px solid rgba(200,169,126,0.2)", borderRight: "none", color: S.text, padding: "14px 18px", fontFamily: "sans-serif", fontSize: 14, outline: "none", borderRadius: "8px 0 0 8px" }} />
-              <button onClick={handleSubmit} style={{ background: "linear-gradient(135deg, #c8a97e, #a8895e)", border: "none", color: S.dark, padding: "14px 20px", fontFamily: "sans-serif", fontSize: 13, fontWeight: 700, cursor: "pointer", borderRadius: "0 8px 8px 0", whiteSpace: "nowrap" }}>Join Pro List</button>
-            </div>
-            <p style={{ fontSize: 11, color: S.textFaint, fontFamily: "sans-serif" }}>No commitment. We'll reach out when Pro launches.</p>
-          </div>
-        )}
-      </div>
     </div>
   );
 }
@@ -908,13 +806,12 @@ export default function App() {
     } catch (e) {}
   };
 
-  if (screen === "landing") return <LandingScreen onStart={() => setScreen("disclaimer")} onNurse={() => setScreen("nurse")} onLogin={() => setScreen("direct_login")} />;
+  if (screen === "landing") return <LandingScreen onStart={() => setScreen("disclaimer")} onLogin={() => setScreen("direct_login")} />;
 
   return (
     <div style={{ minHeight: "100vh", background: "linear-gradient(135deg, #0a1520 0%, #1a2a3a 50%, #0a1520 100%)", color: S.text, display: "flex", flexDirection: "column", alignItems: "center", paddingBottom: 80 }}>
       {modal && <Modal title={modal === "terms" ? "Terms of Service" : "Privacy Policy"} content={modal === "terms" ? TERMS : PRIVACY} onClose={() => setModal(null)} />}
-      {screen === "disclaimer" && <DisclaimerScreen onFamily={() => setScreen("quiz")} onNurse={() => setScreen("nurse")} onModal={setModal} />}
-      {screen === "nurse" && <NurseScreen onBack={() => setScreen("landing")} />}
+      {screen === "disclaimer" && <DisclaimerScreen onFamily={() => setScreen("quiz")} onModal={setModal} />}
       {screen === "quiz" && <QuizScreen currentQ={currentQ} onAnswer={handleAnswer} />}
       {screen === "email" && <EmailScreen onContinue={handleEmailContinue} situation={answers.situation} />}
       {screen === "guide" && <FreeGuideScreen answers={answers} onUnlock={() => { setUserEmail(""); setScreen("direct_login"); }} onReset={handleReset} userEmail={userEmail} />}
