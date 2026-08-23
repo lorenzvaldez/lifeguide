@@ -1,9 +1,8 @@
 // src/CaregiverCompanion.jsx
 // Drop this into your /src folder in GitHub
-// Requires: npm install react-markdown
+// No new packages needed — formatting is handled inline, nothing to install.
 
 import { useState, useRef, useEffect } from 'react';
-import ReactMarkdown from 'react-markdown';
 
 const S = {
   dark: "#0a1520", darkMid: "#111e2b", darkCard: "#0d1526",
@@ -23,25 +22,60 @@ const STARTERS = [
   "What are the signs that someone is in their final days?",
 ];
 
-// Markdown component overrides so ReactMarkdown's output matches the
-// existing dark navy / gold theme instead of using browser default styles.
-const markdownComponents = {
-  p: ({ children }) => (
-    <p style={{ margin: '0 0 10px 0' }}>{children}</p>
-  ),
-  strong: ({ children }) => (
-    <strong style={{ color: S.goldLight, fontWeight: 600 }}>{children}</strong>
-  ),
-  ul: ({ children }) => (
-    <ul style={{ margin: '4px 0 12px 0', paddingLeft: 20 }}>{children}</ul>
-  ),
-  ol: ({ children }) => (
-    <ol style={{ margin: '4px 0 12px 0', paddingLeft: 20 }}>{children}</ol>
-  ),
-  li: ({ children }) => (
-    <li style={{ marginBottom: 6 }}>{children}</li>
-  ),
-};
+// Lightweight inline formatter — no external package required.
+// Handles the patterns Gemini actually produces: **bold** text,
+// lines starting with "* " or "- " as bullets, and blank-line-
+// separated paragraphs. Not a full markdown parser, just enough
+// to turn Gemini's structured output into readable, scannable text.
+function FormattedMessage({ text }) {
+  const blocks = text.split(/\n\s*\n/);
+
+  function renderInlineBold(line, keyPrefix) {
+    const parts = line.split(/(\*\*[^*]+\*\*)/g);
+    return parts.map((part, i) => {
+      if (part.startsWith('**') && part.endsWith('**')) {
+        return (
+          <strong key={`${keyPrefix}-${i}`} style={{ color: S.goldLight, fontWeight: 600 }}>
+            {part.slice(2, -2)}
+          </strong>
+        );
+      }
+      return <span key={`${keyPrefix}-${i}`}>{part}</span>;
+    });
+  }
+
+  return (
+    <>
+      {blocks.map((block, bIndex) => {
+        const lines = block.split('\n').filter(l => l.trim().length > 0);
+        const isBulletBlock = lines.length > 0 && lines.every(l => /^[\*\-]\s+/.test(l.trim()));
+
+        if (isBulletBlock) {
+          return (
+            <ul key={bIndex} style={{ margin: '4px 0 10px 0', paddingLeft: 20 }}>
+              {lines.map((line, lIndex) => (
+                <li key={lIndex} style={{ marginBottom: 6 }}>
+                  {renderInlineBold(line.trim().replace(/^[\*\-]\s+/, ''), `${bIndex}-${lIndex}`)}
+                </li>
+              ))}
+            </ul>
+          );
+        }
+
+        return (
+          <p key={bIndex} style={{ margin: bIndex === blocks.length - 1 ? 0 : '0 0 10px 0' }}>
+            {lines.map((line, lIndex) => (
+              <span key={lIndex}>
+                {renderInlineBold(line, `${bIndex}-${lIndex}`)}
+                {lIndex < lines.length - 1 && <br />}
+              </span>
+            ))}
+          </p>
+        );
+      })}
+    </>
+  );
+}
 
 export default function CaregiverCompanion({ onBack }) {
   const [messages, setMessages] = useState([]);
@@ -153,11 +187,6 @@ export default function CaregiverCompanion({ onBack }) {
               Ask anything about hospice logistics, paperwork,<br />
               Medicare, coordination, or what to do next.
             </div>
-            {/* FIX #6: starter buttons brightened so they read as clearly tappable
-                prompts rather than blending in as passive body text. Background
-                opacity raised 0.06 -> 0.12, border raised 0.15 -> 0.45, text
-                switched from dim gray to gold-light + bold weight, and an arrow
-                icon added as a visual affordance signaling "this does something." */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               {STARTERS.map((s, i) => (
                 <button key={i} onClick={() => send(s)} style={{
@@ -200,16 +229,10 @@ export default function CaregiverCompanion({ onBack }) {
               borderBottomRightRadius: m.role === 'user' ? 4 : 12,
               borderBottomLeftRadius: m.role === 'assistant' ? 4 : 12,
             }}>
-              {/* User messages are always plain text (no markdown needed).
-                  Assistant messages are rendered through ReactMarkdown so
-                  Gemini's **bold** and list formatting actually displays
-                  instead of showing raw asterisks in one dense block. */}
               {m.role === 'user' ? (
                 m.content
               ) : (
-                <ReactMarkdown components={markdownComponents}>
-                  {m.content}
-                </ReactMarkdown>
+                <FormattedMessage text={m.content} />
               )}
             </div>
           </div>
